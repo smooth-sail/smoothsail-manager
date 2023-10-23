@@ -1,7 +1,10 @@
+import pg from "../db/segments";
+import Segment from "../models/segments";
+
 export const getAllSegments = async (req, res) => {
   let segments;
   try {
-    // database query to get all segments
+    segments = await pg.getAllSegments();
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -14,7 +17,7 @@ export const getSegmentById = async (req, res) => {
 
   let segment;
   try {
-    // database query to get segment by id
+    segment = await pg.getSegment(segmentId);
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -30,12 +33,13 @@ export const getSegmentById = async (req, res) => {
 
 export const createSegment = async (req, res) => {
   try {
-    // database query to create a segment
+    let newSegment = new Segment(req.body);
+    let segment = await pg.createSegment(newSegment);
+    res.status(200).json(segment);
+    // sse notification(?)
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
-
-  res.status(200).json(segment);
 };
 
 export const deleteSegment = async (req, res) => {
@@ -43,7 +47,7 @@ export const deleteSegment = async (req, res) => {
 
   let segment;
   try {
-    // database query to delete segment
+    segment = pg.deleteSegment(segmentId);
     if (!segment) {
       res
         .status(404)
@@ -52,6 +56,7 @@ export const deleteSegment = async (req, res) => {
     }
 
     res.status(200).json({ message: "Segment successfully deleted." });
+    // sse notification(?)
   } catch (error) {
     res
       .status(500)
@@ -64,7 +69,7 @@ export const updateSegment = async (req, res) => {
 
   let segment;
   try {
-    // database query to get segment by id
+    segment = await pg.getSegment(segmentId);
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -75,15 +80,15 @@ export const updateSegment = async (req, res) => {
       .json({ error: `Segment with id ${segmentId} does not exist.` });
   }
 
-  // let newSegment = new Segment(segment);
-  // newSegment.updateProps(req.body);
+  let newSegment = new Segment(segment);
+  newSegment.updateProps(req.body);
   try {
-    // database query to update segment
+    let updatedSegment = await pg.updateSegment(segmentId, newSegment);
+    res.status(200).json(updatedSegment);
+    // sse notification(?)
   } catch (error) {
     res
       .status(500)
       .json({ error: "Internal error occurred. Could not update segment." });
   }
-
-  res.status(200).json(updatedSegment);
 };

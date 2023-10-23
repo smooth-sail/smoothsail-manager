@@ -35,6 +35,7 @@ export const getFlagById = async (req, res) => {
 
 export const createFlag = async (req, res) => {
   try {
+    console.log(req.body);
     let newFlag = new Flag(req.body);
     let flag = await pg.createFlag(newFlag);
     res.status(200).json(flag);
