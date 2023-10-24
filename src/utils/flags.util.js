@@ -16,16 +16,14 @@ export const transformFlagData = (flags) => {
 
     // Add segment information
     const { s_key, rules_operator } = flag;
-    obj[f_key].segments = obj[f_key].segments || [];
-
-    if (s_key && segmentNotAdded(obj[f_key], s_key)) {
-      obj[f_key].segments.push({ s_key, rules_operator, rules: [] });
-    }
-
-    // Add rule to segment.
     if (s_key) {
-      const { r_key, a_key, type, operator, value } = flag;
+      obj[f_key].segments = obj[f_key].segments || [];
+      if (segmentNotAdded(obj[f_key], s_key)) {
+        obj[f_key].segments.push({ s_key, rules_operator, rules: [] });
+      }
 
+      // Add rule to segment
+      const { r_key, a_key, type, operator, value } = flag;
       const segment = getSegmentBySKey(obj[f_key], s_key);
       segment.rules.push({ r_key, a_key, type, operator, value });
     }
