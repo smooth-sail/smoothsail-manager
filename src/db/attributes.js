@@ -1,22 +1,12 @@
 import { getClient } from "../config/pg";
 
-// Temporary queries, need to use imported constants later
-const GET_ALL_ATTRIBUTES = "SELECT a_key, name, type FROM attributes;";
-
-const GET_ATTRIBUTE = "SELECT * FROM attributes WHERE a_key = $1;";
-
-const CREATE_ATTRIBUTE = `
-  INSERT INTO attributes (a_key, name, type)
-  VALUES ($1, $2, $3) 
-  RETURNING *;
-`;
-
-const DELETE_ATTRIBUTE = "DELETE FROM attributes WHERE a_key = $1;";
-
-const UPDATE_ATTRIBUTE = `
-  UPDATE attributes SET (name, type) = ($1, $2) 
-  WHERE a_key = $3 RETURNING *;
-`;
+import {
+  GET_ATTRIBUTES,
+  GET_ATTRIBUTE_BY_KEY,
+  CREATE_ATTRIBUTE,
+  DELETE_ATTRIBUTE,
+  UPDATE_ATTRIBUTE,
+} from "../sql/attributes.queries";
 
 const getAllAttributes = async () => {
   const client = await getClient();
