@@ -13,11 +13,11 @@ export const getAllSegments = async (req, res) => {
 };
 
 export const getSegmentById = async (req, res) => {
-  const segmentId = req.params.id;
+  const segmentKey = req.params.s_key;
 
   let segment;
   try {
-    segment = await pg.getSegment(segmentId);
+    segment = await pg.getSegment(segmentKey);
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -25,7 +25,7 @@ export const getSegmentById = async (req, res) => {
   if (!segment) {
     res
       .status(404)
-      .json({ error: `Segment with id ${segmentId} does not exist` });
+      .json({ error: `Segment with key '${segmentKey}' does not exist` });
   }
 
   res.status(200).json(segment);
@@ -43,15 +43,15 @@ export const createSegment = async (req, res) => {
 };
 
 export const deleteSegment = async (req, res) => {
-  const segmentId = req.params.id;
+  const segmentKey = req.params.s_key;
 
   let segment;
   try {
-    segment = pg.deleteSegment(segmentId);
+    segment = pg.deleteSegment(segmentKey);
     if (!segment) {
       res
         .status(404)
-        .json({ error: `Segment with id ${segmentId} does not exist.` });
+        .json({ error: `Segment with key '${segmentKey}' does not exist.` });
       return;
     }
 
@@ -65,11 +65,11 @@ export const deleteSegment = async (req, res) => {
 };
 
 export const updateSegment = async (req, res) => {
-  const segmentId = req.params.id;
+  const segmentKey = req.params.s_key;
 
   let segment;
   try {
-    segment = await pg.getSegment(segmentId);
+    segment = await pg.getSegment(segmentKey);
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -77,13 +77,13 @@ export const updateSegment = async (req, res) => {
   if (!segment) {
     res
       .status(404)
-      .json({ error: `Segment with id ${segmentId} does not exist.` });
+      .json({ error: `Segment with key '${segmentKey}' does not exist.` });
   }
 
   let newSegment = new Segment(segment);
   newSegment.updateProps(req.body);
   try {
-    let updatedSegment = await pg.updateSegment(segmentId, newSegment);
+    let updatedSegment = await pg.updateSegment(segmentKey, newSegment);
     res.status(200).json(updatedSegment);
     // sse notification(?)
   } catch (error) {

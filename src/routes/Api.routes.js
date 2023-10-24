@@ -14,10 +14,10 @@ router.put("/flags/:id", flagsController.updateFlag);
 
 // Segment API routes
 router.get("/segments", segmentsController.getAllSegments);
-router.get("/segments/:id", segmentsController.getSegmentById);
+router.get("/segments/:s_key", segmentsController.getSegmentById);
 router.post("/segments", segmentsController.createSegment);
-router.delete("/segments/:id", segmentsController.deleteSegment);
-router.patch("/segments/:id", segmentsController.updateSegment);
+router.delete("/segments/:s_key", segmentsController.deleteSegment);
+router.patch("/segments/:s_key", segmentsController.updateSegment);
 
 // Attributes API routes
 router.get("/attributes", attributesController.getAllAttributes);
