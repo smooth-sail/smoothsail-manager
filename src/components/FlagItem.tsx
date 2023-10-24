@@ -8,7 +8,6 @@ type FlagItemProps = Flag;
 export default function FlagItem({
   is_active,
   created_at,
-  id,
   f_key,
   title,
   updated_at,
@@ -20,7 +19,7 @@ export default function FlagItem({
     console.log(checked);
     setIsActive(checked);
     // useMutation
-    mutateAsync({ is_active: checked, flagKey: f_key, id });
+    mutateAsync({ is_active: checked, flagKey: f_key });
   };
   return (
     <tr>

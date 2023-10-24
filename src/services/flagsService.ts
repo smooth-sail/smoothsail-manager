@@ -1,24 +1,42 @@
 import axios from "axios";
-import { Flag } from "../types";
+import { Flag, NewFlag } from "../types";
 
 const BASE_URL = "http://localhost:3000";
 
+type AllFlagsResponse = {
+  payload: Flag[];
+};
+
+type FlagResponse = {
+  payload: Flag;
+};
+
 export const fetchFlags = async (): Promise<Flag[]> => {
-  const { data } = await axios.get<Flag[]>(`${BASE_URL}/api/flags`);
-  return data;
+  const { data } = await axios.get<AllFlagsResponse>(`${BASE_URL}/api/flags`);
+  return data.payload;
 };
 
 export const fetchToggleFlag = async ({
   flagKey,
   is_active,
-  id,
 }: {
   flagKey: string;
   is_active: boolean;
-  id: number;
 }): Promise<Flag> => {
-  const { data } = await axios.put<Flag>(`${BASE_URL}/api/flags/${id}`, {
-    is_active,
-  });
-  return data;
+  const { data } = await axios.patch<FlagResponse>(
+    `${BASE_URL}/api/flags/${flagKey}`,
+    {
+      action: "toggle",
+      payload: { is_active },
+    },
+  );
+  return data.payload;
+};
+
+export const fetchCreateFlag = async (newFlag: NewFlag) => {
+  const { data } = await axios.post<FlagResponse>(
+    `${BASE_URL}/api/flags`,
+    newFlag,
+  );
+  return data.payload;
 };
