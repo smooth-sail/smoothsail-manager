@@ -14,17 +14,17 @@ router.patch("/flags/:f_key", flagsController.updateFlag);
 
 // Segment API routes
 router.get("/segments", segmentsController.getAllSegments);
-router.get("/segment/:id", segmentsController.getSegmentById);
+router.get("/segments/:s_key", segmentsController.getSegmentByKey);
 router.post("/segments", segmentsController.createSegment);
-router.delete("/segments/:id", segmentsController.deleteSegment);
-router.patch("/segments/:id", segmentsController.updateSegment);
+router.delete("/segments/:s_key", segmentsController.deleteSegment);
+router.patch("/segments/:s_key", segmentsController.updateSegment);
 
 // Attributes API routes
 router.get("/attributes", attributesController.getAllAttributes);
-router.get("/attribute/:id", attributesController.getAttributeById);
+router.get("/attributes/:a_key", attributesController.getAttributeByKey);
 router.post("/attributes", attributesController.createAttribute);
-router.delete("/attributes/:id", attributesController.deleteAttribute);
-router.patch("/attributes/:id", attributesController.updateAttribute);
+router.delete("/attributes/:a_key", attributesController.deleteAttribute);
+router.patch("/attributes/:a_key", attributesController.updateAttribute);
 
 // SSE API routes
 router.get("/ff-updates-stream", flagsController.sseNotifications);
