@@ -1,4 +1,5 @@
 import pg from "../db/attributes";
+import Attribute from "../models/attributes";
 
 export const getAllAttributes = async (req, res) => {
   let attributes;
@@ -32,8 +33,10 @@ export const getAttributeByKey = async (req, res) => {
 
 export const createAttribute = async (req, res) => {
   try {
+    console.log(req.body);
     let newAttribute = new Attribute(req.body);
-    let attribute = await pg.createSegment(newAttribute);
+    console.log(newAttribute);
+    let attribute = await pg.createAttribute(newAttribute);
     res.status(200).json(attribute);
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
@@ -80,7 +83,7 @@ export const updateAttribute = async (req, res) => {
   let newAttribute = new Attribute(attribute);
   newAttribute.updateProps(req.body);
   try {
-    let updatedAttribute = await pg.updateAttribute(attributeKey, newAttribute);
+    let updatedAttribute = await pg.updateAttribute(attribute.id, newAttribute);
     res.status(200).json(updatedAttribute);
   } catch (error) {
     res

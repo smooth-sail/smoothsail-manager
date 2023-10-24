@@ -5,21 +5,21 @@ class Segment {
     this.rules_operator = Segment.parseRulesOperator(rules_operator);
   }
 
-  static parseSKey(s_key) {
-    if (!Segment.validateSKey(s_key)) {
+  static parseSKey(segmentKey) {
+    if (!Segment.validateSKey(segmentKey)) {
       throw new Error({ error: "Valid s_key is required" });
     }
 
-    if (s_key.length > 20) {
-      s_key = s_key.slice(0, 20);
+    if (segmentKey.length > 20) {
+      segmentKey = segmentKey.slice(0, 20);
     }
 
-    return s_key;
+    return segmentKey;
   }
 
-  static validateSKey(s_key) {
+  static validateSKey(segmentKey) {
     let re = new RegExp("^[A-Za-z0-9._-]+$");
-    return re.test(s_key);
+    return re.test(segmentKey);
   }
 
   static parseTitle(title) {

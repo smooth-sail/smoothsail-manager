@@ -32,9 +32,9 @@ const getAttribute = async (attributeKey) => {
   return rows[0];
 };
 
-const createAttribute = async ({ attributeKey, name, type }) => {
+const createAttribute = async ({ a_key, name, type }) => {
   const client = await getClient();
-  const values = [attributeKey, name, type];
+  const values = [a_key, name, type];
   const { rows } = await client.query(CREATE_ATTRIBUTE, values);
   client.release();
   return rows[0];
@@ -47,9 +47,9 @@ const deleteAttribute = async (attributeKey) => {
   return rows[0];
 };
 
-const updateAttribute = async (attributeKey, { name, type }) => {
+const updateAttribute = async (id, { name, type }) => {
   const client = await getClient();
-  const values = [name, type, attributeKey];
+  const values = [name, type, id];
   const { rows } = await client.query(UPDATE_ATTRIBUTE, values);
   client.release();
   return rows[0];
