@@ -10,14 +10,14 @@ import {
 
 const getAllAttributes = async () => {
   const client = await getClient();
-  const { rows } = await client.query(GET_ALL_ATTRIBUTES);
+  const { rows } = await client.query(GET_ATTRIBUTES);
   client.release();
   return rows;
 };
 
 const getAttribute = async (attributeKey) => {
   const client = await getClient();
-  const { rows } = await client.query(GET_ATTRIBUTE, [attributeKey]);
+  const { rows } = await client.query(GET_ATTRIBUTE_BY_KEY, [attributeKey]);
   client.release();
   return rows[0];
 };

@@ -4,7 +4,7 @@ CREATE TABLE
   flags (
     id serial PRIMARY KEY,
     f_key varchar(20) NOT NULL UNIQUE CHECK (f_key ~ '^[A-Za-z0-9._-]+$'),
-    title varchar(100) NOT NULL UNIQUE,
+    title varchar(100) NOT NULL DEFAULT '',
     description text,
     is_active boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT current_timestamp,
