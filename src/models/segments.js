@@ -1,7 +1,8 @@
 class Segment {
-  constructor({ s_key, title, rules_operator }) {
+  constructor({ s_key, title, description, rules_operator }) {
     this.s_key = Segment.parseSKey(s_key);
     this.title = Segment.parseTitle(title);
+    this.description = Segment.parseDescription(description);
     this.rules_operator = Segment.parseRulesOperator(rules_operator);
   }
 
@@ -34,6 +35,18 @@ class Segment {
     return !!title;
   }
 
+  static parseDescription(description) {
+    if (!Segment.validateDescription(description)) {
+      description = "";
+    }
+
+    return description;
+  }
+
+  static validateDescription(description) {
+    return !!description;
+  }
+
   static parseRulesOperator(rules_operator) {
     if (!Segment.validateRulesOperator(rules_operator)) {
       // is there a default rules_operator?
@@ -46,9 +59,13 @@ class Segment {
     return ["all", "any"].indexOf(rules_operator) !== -1;
   }
 
-  updateProps({ title, rules_operator }) {
+  updateProps({ title, description, rules_operator }) {
     if (title) {
       this.title = Segment.parseTitle(title);
+    }
+
+    if (description) {
+      this.description = Segment.parseDescription(description);
     }
 
     if (rules_operator) {

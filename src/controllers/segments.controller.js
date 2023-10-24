@@ -83,7 +83,7 @@ export const updateSegment = async (req, res) => {
   let newSegment = new Segment(segment);
   newSegment.updateProps(req.body);
   try {
-    let updatedSegment = await pg.updateSegment(segmentKey, newSegment);
+    let updatedSegment = await pg.updateSegment(segment.id, newSegment);
     res.status(200).json(updatedSegment);
     // sse notification(?)
   } catch (error) {

@@ -23,8 +23,8 @@ const DELETE_SEGMENT = "DELETE FROM segments WHERE s_key = $1 RETURNING *;";
 
 const UPDATE_SEGMENT = `
   UPDATE segments 
-  SET (title, rules_operator) = ($1, $2) 
-  WHERE s_key = $3
+  SET (title, description, rules_operator) = ($1, $2, $3) 
+  WHERE id = $4 
   RETURNING *;
 `;
 
@@ -42,10 +42,15 @@ const getSegment = async (segmentKey) => {
   return rows[0];
 };
 
-const createSegment = async ({ segmentKey, title, rules_operator }) => {
+const createSegment = async ({
+  s_key: segmentKey,
+  title,
+  description,
+  rules_operator,
+}) => {
   const client = await getClient();
-  console.log(segmentKey, title, rules_operator);
-  const values = [segmentKey, title, rules_operator];
+  console.log(segmentKey, title, description, rules_operator);
+  const values = [segmentKey, title, description, rules_operator];
   const { rows } = await client.query(CREATE_SEGMENT, values);
   // Should rows also be created when segments are created?
   // Need to know what format this information will be sent over from UI if there aren't separate API endpoints.
@@ -60,9 +65,9 @@ const deleteSegment = async (segmentKey) => {
   return rows[0];
 };
 
-const updateSegment = async (segmentKey, { title, rules_operator }) => {
+const updateSegment = async (id, { title, description, rules_operator }) => {
   const client = await getClient();
-  const values = [title, rules_operator, segmentKey];
+  const values = [title, description, rules_operator, id];
   const { rows } = await client.query(UPDATE_SEGMENT, values);
   client.release();
   return rows[0];
