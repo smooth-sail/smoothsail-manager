@@ -1,6 +1,7 @@
 import Clients from "../models/sse-clients";
 import pg from "../db/flags";
 import Flag from "../models/flags";
+import { trimFlagData } from "../utils/flags.util";
 
 let clients = new Clients();
 
@@ -172,6 +173,20 @@ export const sseNotifications = (req, res) => {
     console.log(`${clientId} Connection closed`);
     clients.closeClient(clientId);
   });
+};
+
+export const getSdkFlags = async (req, res) => {
+  let flags;
+  try {
+    flags = await pg.getSdkFlags();
+    flags.forEach((f) => {
+      delete f.id;
+    });
+    const trimmed = trimFlagData(flags);
+    res.status(200).json({ payload: trimmed });
+  } catch (err) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
 };
 
 // router.get('/status', (req, res) => res.json({clients: clients.length})); // tmp route
