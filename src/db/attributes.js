@@ -15,7 +15,7 @@ const DELETE_ATTRIBUTE = "DELETE FROM attributes WHERE a_key = $1;";
 
 const UPDATE_ATTRIBUTE = `
   UPDATE attributes SET (name, type) = ($1, $2) 
-  WHERE id = $3 RETURNING *;
+  WHERE a_key = $3 RETURNING *;
 `;
 
 const getAllAttributes = async () => {
@@ -47,9 +47,9 @@ const deleteAttribute = async (attributeKey) => {
   return rows[0];
 };
 
-const updateAttribute = async (id, { name, type }) => {
+const updateAttribute = async (attributeKey, { name, type }) => {
   const client = await getClient();
-  const values = [name, type, id];
+  const values = [name, type, attributeKey];
   const { rows } = await client.query(UPDATE_ATTRIBUTE, values);
   client.release();
   return rows[0];

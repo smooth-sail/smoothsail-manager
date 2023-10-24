@@ -47,7 +47,7 @@ class Attribute {
   }
 
   static validateType(type) {
-    return ["boolean", "string", "number"].indexOf(type) !== -1;
+    return !!type;
   }
 
   updateProps({ name, type }) {

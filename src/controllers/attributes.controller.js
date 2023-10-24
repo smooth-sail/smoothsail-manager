@@ -14,7 +14,6 @@ export const getAllAttributes = async (req, res) => {
 
 export const getAttributeByKey = async (req, res) => {
   const attributeKey = req.params.a_key;
-
   let attribute;
   try {
     attribute = await pg.getAttribute(attributeKey);
@@ -33,9 +32,7 @@ export const getAttributeByKey = async (req, res) => {
 
 export const createAttribute = async (req, res) => {
   try {
-    console.log(req.body);
     let newAttribute = new Attribute(req.body);
-    console.log(newAttribute);
     let attribute = await pg.createAttribute(newAttribute);
     res.status(200).json(attribute);
   } catch (error) {
@@ -50,9 +47,9 @@ export const deleteAttribute = async (req, res) => {
   try {
     attribute = pg.deleteAttribute(attributeKey);
     if (!attribute) {
-      res
-        .status(404)
-        .json({ error: `Attribute with id '${attributeKey}' does not exist.` });
+      res.status(404).json({
+        error: `Attribute with key '${attributeKey}' does not exist.`,
+      });
       return;
     }
 
@@ -73,17 +70,18 @@ export const updateAttribute = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
-
   if (!attribute) {
     res
       .status(404)
-      .json({ error: `Attribute with id '${attributeKey}' does not exist.` });
+      .json({ error: `Attribute with key '${attributeKey}' does not exist.` })
+      .send();
   }
-
   let newAttribute = new Attribute(attribute);
   newAttribute.updateProps(req.body);
+  console.log(attribute, "\n", newAttribute);
+
   try {
-    let updatedAttribute = await pg.updateAttribute(attribute.id, newAttribute);
+    let updatedAttribute = await pg.updateAttribute(attributeKey, newAttribute);
     res.status(200).json(updatedAttribute);
   } catch (error) {
     res
