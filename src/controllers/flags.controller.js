@@ -7,6 +7,12 @@ import pgA from "../db/attributes";
 import Flag from "../models/flags";
 import Segment from "../models/segments";
 
+// sequelize imports
+// import { Sequelize } from "sequelize";
+import { getDBClient } from "../tmp_orm_files/sequelize";
+
+const dbClient = getDBClient(); // tmp orm
+
 let clients = new Clients();
 
 const parseSegmRows = (segments) => {
