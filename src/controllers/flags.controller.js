@@ -1,7 +1,7 @@
 import Clients from "../models/sse-clients";
 import pg from "../db/flags";
 import Flag from "../models/flags";
-import { trimFlagData } from "../utils/flags.util";
+import { transformFlagData } from "../utils/flags.util";
 
 let clients = new Clients();
 
@@ -182,8 +182,8 @@ export const getSdkFlags = async (req, res) => {
     flags.forEach((f) => {
       delete f.id;
     });
-    const trimmed = trimFlagData(flags);
-    res.status(200).json({ payload: trimmed });
+    const data = transformFlagData(flags);
+    res.status(200).json({ payload: data });
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }

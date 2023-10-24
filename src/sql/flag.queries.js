@@ -18,3 +18,18 @@ export const UPDATE_FLAG_UPDATED_DATE =
 export const DELETE_SEGMENT_FROM_FLAG =
   "DELETE FROM flags_segments WHERE flags_id = $1 AND segments_id = $2;";
 // !!! and update flag too: , updated_at = current_timestamp
+
+export const GET_SDK_FLAGS = `
+  SELECT f.f_key, f.is_active, f.updated_at,
+      s.s_key, s.rules_operator,
+      a.a_key, a.type, r.operator, r.value, r.r_key
+  FROM flags as f 
+  LEFT JOIN flags_segments as fs 
+    ON f.id = fs.flags_id
+  LEFT JOIN segments as s
+    ON fs.segments_id = s.id
+  LEFT JOIN rules as r
+    ON r.segments_id = s.id
+  LEFT JOIN attributes as a
+    ON a.id = r.attributes_id;
+  `;

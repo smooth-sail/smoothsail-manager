@@ -57,25 +57,9 @@ const addSegment = async (f_id, s_id) => {
   return rows[0];
 };
 
-// Temporary query
-const GET_SDK_FLAGS = `
-  SELECT f.f_key, f.is_active, f.updated_at,
-      s.s_key, s.rules_operator,
-      a.a_key, a.type, r.operator, r.value, r.r_key
-  FROM flags as f 
-  LEFT JOIN flags_segments as fs 
-    ON f.id = fs.flags_id
-  LEFT JOIN segments as s
-    ON fs.segments_id = s.id
-  LEFT JOIN rules as r
-    ON r.segments_id = s.id
-  LEFT JOIN attributes as a
-    ON a.id = r.attributes_id;
-  `;
-
 const getSdkFlags = async () => {
   const client = await getClient();
-  const { rows } = await client.query(GET_SDK_FLAGS);
+  const { rows } = await client.query(queries.GET_SDK_FLAGS);
   client.release();
   return rows;
 };
