@@ -7,10 +7,10 @@ const router = express.Router();
 
 // Flag API routes
 router.get("/flags", flagsController.getAllFlags);
-router.get("/flags/:id", flagsController.getFlagById);
+router.get("/flags/:f_key", flagsController.getFlagById);
 router.post("/flags", flagsController.createFlag);
-router.delete("/flags/:id", flagsController.deleteFlag);
-router.put("/flags/:id", flagsController.updateFlag);
+router.delete("/flags/:f_key", flagsController.deleteFlag);
+router.patch("/flags/:f_key", flagsController.updateFlag);
 
 // Segment API routes
 router.get("/segments", segmentsController.getAllSegments);
@@ -27,6 +27,6 @@ router.delete("/attributes/:id", attributesController.deleteAttribute);
 router.patch("/attributes/:id", attributesController.updateAttribute);
 
 // SSE API routes
-router.get("/ff-updates-stream", flagsControllers.sseNotifications);
+router.get("/ff-updates-stream", flagsController.sseNotifications);
 
 export default router;
