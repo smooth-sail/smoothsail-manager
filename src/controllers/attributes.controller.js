@@ -1,7 +1,9 @@
+import pg from "../db/attributes";
+
 export const getAllAttributes = async (req, res) => {
   let attributes;
   try {
-    // database query to get all attributes
+    attributes = await pg.getAllAttributes();
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -9,12 +11,12 @@ export const getAllAttributes = async (req, res) => {
   res.status(200).json(attributes);
 };
 
-export const getAttributeById = async (req, res) => {
-  const attributeId = req.params.id;
+export const getAttributeByKey = async (req, res) => {
+  const attributeKey = req.params.a_key;
 
   let attribute;
   try {
-    // database query to get attribute by id
+    attribute = await pg.getAttribute(attributeKey);
   } catch (err) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -22,7 +24,7 @@ export const getAttributeById = async (req, res) => {
   if (!attribute) {
     res
       .status(404)
-      .json({ error: `Attribute with id ${attributeId} does not exist` });
+      .json({ error: `Attribute with key '${attributeKey}' does not exist` });
   }
 
   res.status(200).json(attribute);
@@ -30,24 +32,24 @@ export const getAttributeById = async (req, res) => {
 
 export const createAttribute = async (req, res) => {
   try {
-    // database query to create a attribute
+    let newAttribute = new Attribute(req.body);
+    let attribute = await pg.createSegment(newAttribute);
+    res.status(200).json(attribute);
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
-
-  res.status(200).json(attribute);
 };
 
 export const deleteAttribute = async (req, res) => {
-  const attributeId = req.params.id;
+  const attributeKey = req.params.a_key;
 
   let attribute;
   try {
-    // database query to delete attribute
+    attribute = pg.deleteAttribute(attributeKey);
     if (!attribute) {
       res
         .status(404)
-        .json({ error: `Attribute with id ${attributeId} does not exist.` });
+        .json({ error: `Attribute with id '${attributeKey}' does not exist.` });
       return;
     }
 
@@ -60,11 +62,11 @@ export const deleteAttribute = async (req, res) => {
 };
 
 export const updateAttribute = async (req, res) => {
-  const attributeId = req.params.id;
+  const attributeKey = req.params.a_key;
 
   let attribute;
   try {
-    // database query to get attribute by id
+    attribute = await pg.getAttribute(attributeKey);
   } catch (error) {
     res.status(500).json({ error: "Internal error occurred." });
   }
@@ -72,18 +74,17 @@ export const updateAttribute = async (req, res) => {
   if (!attribute) {
     res
       .status(404)
-      .json({ error: `Attribute with id ${attributeId} does not exist.` });
+      .json({ error: `Attribute with id '${attributeKey}' does not exist.` });
   }
 
-  // let newAttribute = new Attribute(attribute);
-  // newAttribute.updateProps(req.body);
+  let newAttribute = new Attribute(attribute);
+  newAttribute.updateProps(req.body);
   try {
-    // database query to update attribute
+    let updatedAttribute = await pg.updateAttribute(attributeKey, newAttribute);
+    res.status(200).json(updatedAttribute);
   } catch (error) {
     res
       .status(500)
       .json({ error: "Internal error occurred. Could not update attribute." });
   }
-
-  res.status(200).json(updatedAttribute);
 };

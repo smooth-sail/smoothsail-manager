@@ -12,7 +12,7 @@ export const getAllSegments = async (req, res) => {
   res.status(200).json(segments);
 };
 
-export const getSegmentById = async (req, res) => {
+export const getSegmentByKey = async (req, res) => {
   const segmentKey = req.params.s_key;
 
   let segment;
