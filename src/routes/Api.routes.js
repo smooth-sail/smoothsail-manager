@@ -29,5 +29,6 @@ router.put("/attributes/:aKey", mainControllers.updateAttribute);
 
 // SSE API routes
 router.get("/ff-updates-stream", mainControllers.sseNotifications);
+router.get("/sdk/flags", mainControllers.getSdkFlags);
 
 export default router;

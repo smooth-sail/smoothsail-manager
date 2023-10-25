@@ -692,7 +692,7 @@ export const updateAttribute = async (req, res) => {
   return res.status(200).json({ payload: plainAttr });
 };
 
-// =================== SSE
+// =================== SSE / SDK
 
 export const sseNotifications = (req, res) => {
   const headers = {
@@ -714,4 +714,18 @@ export const sseNotifications = (req, res) => {
     console.log(`${clientId} Connection closed`);
     clients.closeClient(clientId);
   });
+};
+
+export const getSdkFlags = async (req, res) => {
+  let flags;
+  try {
+    flags = await pg.getSdkFlags();
+    flags.forEach((f) => {
+      delete f.id;
+    });
+    const data = transformFlagData(flags);
+    res.status(200).json({ payload: data });
+  } catch (err) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
 };
