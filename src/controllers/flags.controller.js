@@ -8,11 +8,9 @@ import Flag from "../models/flags";
 import Segment from "../models/segments";
 
 // sequelize imports
-// import { Sequelize } from "sequelize";
-import { getDBClient } from "../tmp_orm_files/sequelize";
+import FlagModel from "../tmp_orm_files/sequelize";
 
-const dbClient = getDBClient(); // tmp orm
-
+// sse imports
 let clients = new Clients();
 
 const parseSegmRows = (segments) => {
@@ -98,34 +96,21 @@ export const getFlagById = async (req, res) => {
 
 export const createFlag = async (req, res) => {
   let { f_key, title, description } = req.body;
-  let newFlag;
-  try {
-    newFlag = new Flag({ f_key, title, description });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
 
   try {
-    let existingFlag = await pg.getFlag(f_key);
-    if (existingFlag) {
-      return res
-        .status(400)
-        .json({ error: "Flag with the same key already exists." });
-    }
-  } catch (error) {
-    return res.status(500).json({ error: "Internal error occurred." });
-  }
+    let newFlag = await FlagModel.create({
+      fKey: f_key,
+      title: title,
+      description: description,
+    });
 
-  try {
-    let flag = await pg.createFlag(newFlag);
-    delete flag.id;
-
-    let sseMsg = { type: "new-flag", payload: flag };
+    let sseMsg = { type: "new-flag", payload: newFlag }; // returns id, need to change this
     clients.sendNotificationToAllClients(sseMsg);
 
-    return res.status(200).json({ payload: flag });
+    return res.status(200).json({ payload: newFlag });
   } catch (error) {
-    return res.status(500).json({ error: "Internal error occurred." });
+    console.log(error.message);
+    return res.status(500).json({ error: error.message }); // must support other res stats codes
   }
 };
 
