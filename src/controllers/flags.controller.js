@@ -7,6 +7,8 @@ import pgA from "../db/attributes";
 import Flag from "../models/flags";
 import Segment from "../models/segments";
 
+import { transformFlagData } from "../utils/flags.util";
+
 let clients = new Clients();
 
 const parseSegmRows = (segments) => {
@@ -428,7 +430,7 @@ export const updateSegment = async (req, res) => {
   clients.sendNotificationToAllClients(sseMsg);
 };
 
-// =================== SSE
+// =================== SSE / SDK
 
 export const sseNotifications = (req, res) => {
   const headers = {
@@ -450,4 +452,18 @@ export const sseNotifications = (req, res) => {
     console.log(`${clientId} Connection closed`);
     clients.closeClient(clientId);
   });
+};
+
+export const getSdkFlags = async (req, res) => {
+  let flags;
+  try {
+    flags = await pg.getSdkFlags();
+    flags.forEach((f) => {
+      delete f.id;
+    });
+    const data = transformFlagData(flags);
+    res.status(200).json({ payload: data });
+  } catch (err) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
 };
