@@ -2,7 +2,7 @@ import { useState } from "react";
 import FlagItem from "../components/FlagItem";
 import Button from "../components/ui/Button";
 import { useFlags } from "../hooks/flags";
-import FlagModal from "../components/FlagModal";
+import CreateFlagModal from "../components/CreateFlagModal";
 
 export default function FlagsTable() {
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function FlagsTable() {
             </h1>
             <p className="mt-2 text-sm text-gray-700">
               A list of all all feature flags created. Click edit to view full
-              details.
+              details and add any segments you've created.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -72,7 +72,7 @@ export default function FlagsTable() {
           </table>
         </div>
       </div>
-      <FlagModal open={open} setOpen={setOpen} />
+      <CreateFlagModal open={open} setOpen={setOpen} />
     </>
   );
 }

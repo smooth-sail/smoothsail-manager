@@ -1,15 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateFlagMutation } from "../hooks/flags";
-import { NewFlag } from "../types";
+import { Flag, NewFlag } from "../types";
+import Toggle from "./ui/Toggle";
 
-export default function CreateFlagForm({
+export default function UpdateFlagForm({
   setOpen,
+  ...props
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+} & Flag) {
+  const [isActive, setIsActive] = useState(props.is_active);
   const schema = z.object({
     title: z.string().trim().min(1, { message: "Flag name is required" }),
     f_key: z.string().trim().min(1, { message: "Flag key is required" }),
@@ -20,20 +23,33 @@ export default function CreateFlagForm({
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<NewFlag>({
+  } = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      title: props.title,
+      description: props.description,
+    },
   });
 
   const { mutateAsync } = useCreateFlagMutation();
 
   return (
     <form
-      onSubmit={handleSubmit((newFlag) => {
+      onSubmit={handleSubmit((data) => {
+        const newFlag = data as NewFlag;
         mutateAsync(newFlag);
         setOpen(false);
       })}
       className="flex flex-col gap-3"
     >
+      <div className="w-full flex gap-3 items-center">
+        <span className="text-sm font-medium leading-6 text-gray-900">
+          Currently Active:
+        </span>
+        <div className="mt-2">
+          <Toggle is_active={isActive} onIsActive={setIsActive} />
+        </div>
+      </div>
       <div className="flex-col flex sm:flex-row gap-3">
         <div className="w-full">
           <label
@@ -57,24 +73,35 @@ export default function CreateFlagForm({
           </div>
         </div>
         <div className="w-full">
-          <label
-            htmlFor="f_key"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
+          <p className="block text-sm font-medium leading-6 text-gray-900">
             Flag Key
-          </label>
+          </p>
           <div className="mt-2">
-            <input
-              {...register("f_key")}
-              type="text"
-              name="f_key"
-              id="f_key"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder="Enter a flag key"
-            />
-            {errors.f_key?.message && (
-              <p>{errors.f_key?.message as ReactNode}</p>
-            )}
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {props.f_key}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex-col flex sm:flex-row gap-3">
+        <div className="w-full">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Created At
+          </p>
+          <div className="mt-2">
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {props.created_at}
+            </span>
+          </div>
+        </div>
+        <div className="w-full">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Updated At
+          </p>
+          <div className="mt-2">
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {props.updated_at}
+            </span>
           </div>
         </div>
       </div>

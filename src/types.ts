@@ -11,7 +11,6 @@ export type NavLink = {
 };
 
 export type Flag = {
-  id: number;
   f_key: string;
   title: string;
   description?: string;
@@ -23,6 +22,5 @@ export type Flag = {
 export type NewFlag = {
   f_key: string;
   title: string;
-  is_active?: boolean;
   description?: string;
 };

@@ -11,12 +11,12 @@ type FlagResponse = {
   payload: Flag;
 };
 
-export const fetchFlags = async (): Promise<Flag[]> => {
+export const getFlags = async (): Promise<Flag[]> => {
   const { data } = await axios.get<AllFlagsResponse>(`${BASE_URL}/api/flags`);
   return data.payload;
 };
 
-export const fetchToggleFlag = async ({
+export const toggleFlag = async ({
   flagKey,
   is_active,
 }: {
@@ -33,7 +33,7 @@ export const fetchToggleFlag = async ({
   return data.payload;
 };
 
-export const fetchCreateFlag = async (newFlag: NewFlag) => {
+export const createFlag = async (newFlag: NewFlag) => {
   const { data } = await axios.post<FlagResponse>(
     `${BASE_URL}/api/flags`,
     newFlag,

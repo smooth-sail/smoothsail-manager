@@ -1,19 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  fetchCreateFlag,
-  fetchFlags,
-  fetchToggleFlag,
-} from "../services/flagsService";
+import { createFlag, getFlags, toggleFlag } from "../services/flagsService";
 
 export const useFlags = () => {
-  return useQuery({ queryKey: ["flags"], queryFn: fetchFlags });
+  return useQuery({ queryKey: ["flags"], queryFn: getFlags });
 };
 
 export const useCreateFlagMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: fetchCreateFlag,
+    mutationFn: createFlag,
     onSuccess: () => {
       queryClient.invalidateQueries(["flags"]);
     },
@@ -23,7 +19,7 @@ export const useCreateFlagMutation = () => {
 
 export const useFlagToggleMutation = () => {
   return useMutation({
-    mutationFn: fetchToggleFlag,
+    mutationFn: toggleFlag,
     onSuccess: () => {},
   });
 };

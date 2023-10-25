@@ -2,12 +2,15 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import CreateFlagForm from "./CreateFlagForm";
 
-type FlagModalProps = {
+type CreateFlagModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function FlagModal({ open, setOpen }: FlagModalProps) {
+export default function CreateFlagModal({
+  open,
+  setOpen,
+}: CreateFlagModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
