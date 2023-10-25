@@ -40,3 +40,10 @@ export const createFlag = async (newFlag: NewFlag) => {
   );
   return data.payload;
 };
+
+export const deleteFlag = async (flagKey: string) => {
+  const { data } = await axios.delete<{ message: string }>(
+    `${BASE_URL}/api/flags/${flagKey}`,
+  );
+  return data.message;
+};
