@@ -54,7 +54,17 @@ const addSegment = async (f_id, s_id) => {
     s_id,
   ]);
   client.release();
-  return rows[0];
+  return rows[0]; // do not expect return value
+};
+
+const removeSegment = async (f_id, s_id) => {
+  const client = await getClient();
+  const { rows } = await client.query(queries.DELETE_SEGMENT_FROM_FLAG, [
+    f_id,
+    s_id,
+  ]);
+  client.release();
+  return rows[0]; // do not expect return value
 };
 
 export default {
@@ -65,4 +75,5 @@ export default {
   updateFlagInfo,
   updateIsActive,
   addSegment,
+  removeSegment,
 };

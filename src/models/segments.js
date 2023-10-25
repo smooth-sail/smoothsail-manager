@@ -4,6 +4,7 @@ class Segment {
     this.title = Segment.parseTitle(title);
     this.description = Segment.parseDescription(description);
     this.rules_operator = Segment.parseRulesOperator(rules_operator);
+    this.rules = [];
   }
 
   static parseSKey(segmentKey) {
@@ -11,23 +12,23 @@ class Segment {
       throw new Error({ error: "Valid s_key is required" });
     }
 
-    if (segmentKey.length > 20) {
-      segmentKey = segmentKey.slice(0, 20);
-    }
-
     return segmentKey;
   }
 
   static validateSKey(segmentKey) {
     let re = new RegExp("^[A-Za-z0-9._-]+$");
-    return re.test(segmentKey);
+    return (
+      re.test(segmentKey) && segmentKey.length < 20 && segmentKey.length > 0
+    );
   }
 
   static parseTitle(title) {
     if (!Segment.validateTitle(title)) {
-      title = "";
+      throw new Error({ error: "Valid title is required" });
     }
-
+    if (title.length > 100) {
+      title = title.slice(0, 100);
+    }
     return title;
   }
 
@@ -49,7 +50,7 @@ class Segment {
 
   static parseRulesOperator(rules_operator) {
     if (!Segment.validateRulesOperator(rules_operator)) {
-      // is there a default rules_operator?
+      rules_operator = "all";
     }
 
     return rules_operator;

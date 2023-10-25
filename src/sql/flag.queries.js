@@ -16,5 +16,5 @@ export const UPDATE_FLAG_UPDATED_DATE =
 // !!! and update flag too: , updated_at = current_timestamp
 // -- delete segment from flag
 export const DELETE_SEGMENT_FROM_FLAG =
-  "DELETE FROM flags_segments WHERE flags_id = $1 AND segments_id = $2;";
+  "DELETE FROM flags_segments WHERE flags_id = $1 AND segments_id = $2 RETURNING *;";
 // !!! and update flag too: , updated_at = current_timestamp

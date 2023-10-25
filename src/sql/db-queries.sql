@@ -60,6 +60,20 @@ SELECT s.s_key, s.title, s.description, s.rules_operator,
     ON s.id = r.segments_id
   LEFT JOIN attributes as a
     ON r.attributes_id = a.id;
+
+SELECT s.s_key, s.title, s.description, s.rules_operator, 
+    r.r_key, r.operator, r.value, 
+    a.a_key, a.type 
+  FROM flags as f
+   JOIN flags_segments as fs
+    ON f.id = fs.flags_id
+  LEFT JOIN segments as s 
+    ON fs.segments_id = s.id
+  LEFT JOIN rules as r 
+    ON s.id = r.segments_id 
+  LEFT JOIN attributes as a 
+    ON r.attributes_id = a.id
+  WHERE f.f_key = 'flag-1';
 -- GET /api/segments/:id
 SELECT * FROM segments WHERE s_key = $1;
 -- POST /api/segments 
