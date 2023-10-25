@@ -27,6 +27,6 @@ router.delete("/attributes/:id", attributesController.deleteAttribute);
 router.patch("/attributes/:id", attributesController.updateAttribute);
 
 // SSE API routes
-router.get("/ff-updates-stream", flagsController.sseNotifications);
+router.get("/ff-updates-stream", mainControllers.sseNotifications);
 
 export default router;
