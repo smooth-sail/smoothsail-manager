@@ -205,13 +205,6 @@ export const updateFlag = async (req, res) => {
       }
 
       await pg.addSegment(newFlag.id, segmentId);
-      // update 'last updated' field on the flags table => IMPORTANT - here is where we need to improve
-      // the logic - what if second sql statement fails, but the first one not - then data is going
-      // to be inconsistent!
-
-      // ADD: uniqness of f_key & s_key combo for flags_segments db
-      // and enforce absence of repetion on the backend (here)
-
       let sseMsg = {
         type: "segment add",
         payload: { f_key: newFlag.f_key, segment: segment },
@@ -319,13 +312,6 @@ export const deleteSegment = async (req, res) => {
     }
 
     res.status(200).json({ message: "Segment successfully deleted." });
-    // sse notification - yes
-
-    // let sseMsg = {
-    //   type: "segment remove",
-    //   payload: { f_key: newFlag.f_key, s_key },
-    // };
-    // clients.sendNotificationToAllClients(sseMsg);
   } catch (error) {
     res
       .status(500)
@@ -386,7 +372,7 @@ export const updateSegment = async (req, res) => {
       delete newRule.attributes_id;
       newRule.a_key = req.body.payload.a_key;
       newRule.s_key = segmentKey;
-      // sse notification
+
       sseMsg = {
         type: "rule add",
         payload: newRule,
@@ -401,7 +387,7 @@ export const updateSegment = async (req, res) => {
           .json({ error: `Rule with key '${r_key}' does not exist.` });
         return;
       }
-      // sse notification
+
       sseMsg = {
         type: "rule remove",
         payload: { r_key, s_key: segmentKey },
@@ -426,9 +412,9 @@ export const updateSegment = async (req, res) => {
       delete newRule.attributes_id;
       newRule.a_key = attribute.a_key;
       newRule.s_key = segmentKey;
-      // sse notification
+
       sseMsg = {
-        type: "segment update",
+        type: "rule update",
         payload: newRule,
       };
       res.status(200).json({ payload: newRule });
@@ -439,7 +425,6 @@ export const updateSegment = async (req, res) => {
       .json({ error: "Internal error occurred. Could not update segment." });
   }
 
-  // do SSE notification sending here
   clients.sendNotificationToAllClients(sseMsg);
 };
 
@@ -466,5 +451,3 @@ export const sseNotifications = (req, res) => {
     clients.closeClient(clientId);
   });
 };
-
-// router.get('/status', (req, res) => res.json({clients: clients.length})); // tmp route
