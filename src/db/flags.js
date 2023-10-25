@@ -67,6 +67,13 @@ const removeSegment = async (f_id, s_id) => {
   return rows[0]; // do not expect return value
 };
 
+const getSdkFlags = async () => {
+  const client = await getClient();
+  const { rows } = await client.query(queries.GET_SDK_FLAGS);
+  client.release();
+  return rows;
+};
+
 export default {
   getAllFlags,
   getFlag,
@@ -76,4 +83,5 @@ export default {
   updateIsActive,
   addSegment,
   removeSegment,
+  getSdkFlags,
 };
