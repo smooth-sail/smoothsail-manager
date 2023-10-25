@@ -1,7 +1,11 @@
 import Clients from "../models/sse-clients";
+
 import pg from "../db/flags";
 import pgS from "../db/segments";
+import pgA from "../db/attributes";
+
 import Flag from "../models/flags";
+import Segment from "../models/segments";
 
 let clients = new Clients();
 
@@ -41,6 +45,18 @@ const parseSegmRows = (segments) => {
   });
   return result;
 };
+function generateRandomString() {
+  const allowedCharacters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-";
+  let randomString = "";
+
+  for (let i = 0; i < 20; i++) {
+    const randomIndex = Math.floor(Math.random() * allowedCharacters.length);
+    randomString += allowedCharacters[randomIndex];
+  }
+
+  return randomString;
+}
 
 export const getAllFlags = async (req, res) => {
   let flags;
@@ -225,7 +241,7 @@ export const updateFlag = async (req, res) => {
 
       let sseMsg = {
         type: "segment remove",
-        payload: { f_key: newFlag.id, s_key },
+        payload: { f_key: newFlag.f_key, s_key },
       };
       clients.sendNotificationToAllClients(sseMsg);
       res.status(200).json({ message: "Segment was successfully removed." });
@@ -236,6 +252,198 @@ export const updateFlag = async (req, res) => {
       .json({ error: "Internal error occurred. Could not update flag." });
   }
 };
+
+// ================== SEGMENTS
+export const getAllSegments = async (req, res) => {
+  let flagKey = req.query.f_key;
+
+  try {
+    let segments;
+    if (flagKey) {
+      // should check if flag exists and give appropriate error.
+      segments = await pgS.getSegmentByFlagKey(flagKey);
+    } else {
+      segments = await pgS.getAllSegments();
+    }
+    const result = parseSegmRows(segments);
+
+    res.status(200).json({ payload: result });
+  } catch (err) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
+};
+
+export const getSegmentByKey = async (req, res) => {
+  const segmentKey = req.params.s_key;
+
+  let segment;
+  try {
+    let segmentRows = await pgS.getSegment(segmentKey);
+    segment = parseSegmRows(segmentRows)[0];
+  } catch (err) {
+    return res.status(500).json({ error: "Internal error occurred." });
+  }
+
+  if (!segment) {
+    return res
+      .status(404)
+      .json({ error: `Segment with key '${segmentKey}' does not exist` });
+  }
+
+  res.status(200).json({ payload: segment });
+};
+
+export const createSegment = async (req, res) => {
+  try {
+    let newSegment = new Segment(req.body);
+    let segmentVals = await pgS.createSegment(newSegment);
+    let segment = new Segment(segmentVals);
+
+    res.status(200).json({ payload: segment });
+  } catch (error) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
+};
+
+export const deleteSegment = async (req, res) => {
+  const segmentKey = req.params.s_key;
+
+  let segment;
+  try {
+    segment = pgS.deleteSegment(segmentKey);
+    if (!segment) {
+      res
+        .status(404)
+        .json({ error: `Segment with key '${segmentKey}' does not exist.` });
+      return;
+    }
+
+    res.status(200).json({ message: "Segment successfully deleted." });
+    // sse notification - yes
+
+    // let sseMsg = {
+    //   type: "segment remove",
+    //   payload: { f_key: newFlag.f_key, s_key },
+    // };
+    // clients.sendNotificationToAllClients(sseMsg);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal error occurred. Could not delete segment." });
+  }
+};
+
+export const updateSegment = async (req, res) => {
+  const segmentKey = req.params.s_key;
+
+  let segment;
+  let segmentId;
+  try {
+    let segmentRows = await pgS.getSegment(segmentKey);
+    segmentId = segmentRows[0] ? segmentRows[0].id : undefined;
+    segment = parseSegmRows(segmentRows)[0];
+  } catch (error) {
+    res.status(500).json({ error: "Internal error occurred." });
+  }
+
+  if (!segment) {
+    res
+      .status(404)
+      .json({ error: `Segment with key '${segmentKey}' does not exist.` });
+  }
+
+  let sseMsg;
+
+  try {
+    if (req.body.action === "body update") {
+      let newSegment = new Segment(segment);
+
+      newSegment.updateProps(req.body.payload);
+      let updatedSegment = await pgS.updateSegment(segmentId, newSegment);
+      delete updatedSegment.rules;
+      delete updatedSegment.id;
+      res.status(200).json({ payload: updatedSegment });
+      sseMsg = {
+        type: "segment body update",
+        payload: updatedSegment,
+      };
+    } else if (req.body.action === "rule add") {
+      let attribute = await pgA.getAttribute(req.body.payload.a_key);
+      // if no attribute - return 404;
+
+      let ruleSet = {
+        r_key: generateRandomString(),
+        operator: req.body.payload.operator,
+        value: req.body.payload.value,
+        segments_id: segmentId,
+        attributes_id: attribute.id,
+      };
+
+      let newRule = await pgS.addRule(ruleSet);
+
+      delete newRule.id;
+      delete newRule.segments_id;
+      delete newRule.attributes_id;
+      newRule.a_key = req.body.payload.a_key;
+      newRule.s_key = segmentKey;
+      // sse notification
+      sseMsg = {
+        type: "rule add",
+        payload: newRule,
+      };
+      res.status(200).json({ payload: newRule });
+    } else if (req.body.action === "rule remove") {
+      let r_key = req.body.payload.r_key;
+      let removedRule = await pgS.removeRule(r_key, segmentKey);
+      if (!removedRule) {
+        res
+          .status(404)
+          .json({ error: `Rule with key '${r_key}' does not exist.` });
+        return;
+      }
+      // sse notification
+      sseMsg = {
+        type: "rule remove",
+        payload: { r_key, s_key: segmentKey },
+      };
+      res.status(200).json({ message: "Rule successfully deleted." });
+    } else if (req.body.action === "rule update") {
+      let attribute = await pgA.getAttribute(req.body.payload.a_key);
+      console.log(attribute);
+      // if no attribute - return 404;
+
+      let ruleSet = {
+        operator: req.body.payload.operator,
+        value: req.body.payload.value,
+        a_key: attribute.id,
+        r_key: req.body.payload.r_key,
+      };
+
+      let newRule = await pgS.updateRule(ruleSet);
+
+      delete newRule.id;
+      delete newRule.segments_id;
+      delete newRule.attributes_id;
+      newRule.a_key = attribute.a_key;
+      newRule.s_key = segmentKey;
+      // sse notification
+      sseMsg = {
+        type: "segment update",
+        payload: newRule,
+      };
+      res.status(200).json({ payload: newRule });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Internal error occurred. Could not update segment." });
+  }
+
+  // do SSE notification sending here
+  clients.sendNotificationToAllClients(sseMsg);
+};
+
+// =================== SSE
 
 export const sseNotifications = (req, res) => {
   const headers = {
