@@ -19,5 +19,7 @@ export const updateFlagsSegmentsPath = (f_key: string) =>
 
 export const GET_SEGMENTS = `${BASE_URL}/api/segments`;
 
+export const CREATE_SEGMENT = `${BASE_URL}/api/segments`;
+
 export const flagsSegmentsPath = (f_key: string) =>
   `${BASE_URL}/api/segments?f_key=${f_key}`;

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
+  createSegment,
   getFlagsSegments,
   getSegments,
   updateFlagsSegment,
@@ -7,6 +8,17 @@ import {
 
 export const useSegments = () => {
   return useQuery({ queryKey: ["segments"], queryFn: getSegments });
+};
+
+export const useCreateSegmentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createSegment,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["segments"]);
+    },
+    // need to add optimistic updates
+  });
 };
 
 export const useFlagsSegments = (f_key: string) => {

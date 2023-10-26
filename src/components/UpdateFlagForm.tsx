@@ -146,13 +146,11 @@ export default function UpdateFlagForm({
           </button>
         </div>
       </form>
-      {openDeleteModal && (
-        <DeleteModal
-          open={openDeleteModal}
-          setOpen={setOpenDeleteModal}
-          onDelete={handleDeleteFlag}
-        />
-      )}
+      <DeleteModal
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
+        onDelete={handleDeleteFlag}
+      />
     </>
   );
 }
