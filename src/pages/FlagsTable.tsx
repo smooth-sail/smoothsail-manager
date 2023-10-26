@@ -5,7 +5,7 @@ import { useFlags } from "../hooks/flags";
 import CreateFlagModal from "../components/CreateFlagModal";
 
 export default function FlagsTable() {
-  const [open, setOpen] = useState(false);
+  const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
   const { data: flags, isLoading } = useFlags();
 
   if (isLoading) {
@@ -21,7 +21,7 @@ export default function FlagsTable() {
               Feature Flags
             </h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all all feature flags created. Click edit to view full
+              A list of all feature flags created. Click edit to view full
               details and add any segments you've created.
             </p>
           </div>
@@ -29,7 +29,7 @@ export default function FlagsTable() {
             <Button
               size="xl"
               text="Create New Flag"
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenCreateFlagModal(true)}
             />
           </div>
         </div>
@@ -59,6 +59,12 @@ export default function FlagsTable() {
                   scope="col"
                   className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
+                  <span className="sr-only">Segments</span>
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Toggle
                 </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -72,7 +78,10 @@ export default function FlagsTable() {
           </table>
         </div>
       </div>
-      <CreateFlagModal open={open} setOpen={setOpen} />
+      <CreateFlagModal
+        open={openCreateFlagModal}
+        setOpen={setOpenCreateFlagModal}
+      />
     </>
   );
 }
