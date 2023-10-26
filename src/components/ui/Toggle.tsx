@@ -15,7 +15,7 @@ export default function Toggle({ is_active, onIsActive }: ToggleProps) {
       checked={is_active}
       onChange={onIsActive}
       className={classNames(
-        is_active ? "bg-indigo-600" : "bg-gray-200",
+        is_active ? "bg-[#239cba]" : "bg-gray-200",
         "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
       )}
     >
@@ -59,7 +59,7 @@ export default function Toggle({ is_active, onIsActive }: ToggleProps) {
           aria-hidden="true"
         >
           <svg
-            className="h-3 w-3 text-indigo-600"
+            className="h-3 w-3 text-[#eb9486]"
             fill="currentColor"
             viewBox="0 0 12 12"
           >
