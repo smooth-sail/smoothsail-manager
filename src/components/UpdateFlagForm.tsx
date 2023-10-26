@@ -8,12 +8,14 @@ import Button from "./ui/Button";
 import DeleteModal from "./DeleteModal";
 import { flagUpdatesSchema } from "../models/flags";
 
+type UpdateFlagFormProps = {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+} & Flag;
+
 export default function UpdateFlagForm({
   setOpen,
   ...props
-}: {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Flag) {
+}: UpdateFlagFormProps) {
   const [isActive, setIsActive] = useState(props.is_active);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 

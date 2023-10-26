@@ -1,6 +1,10 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useFlagsSegments, useSegments } from "../hooks/segments";
+import {
+  useFlagsSegments,
+  useSegments,
+  useUpdateFlagsSegmentMutation,
+} from "../hooks/segments";
 
 type FlagsSegmentsModalProps = {
   open: boolean;
@@ -17,6 +21,9 @@ export default function FlagsSegmentsModal({
 }: FlagsSegmentsModalProps) {
   const { data: flagsSegments } = useFlagsSegments(f_key);
   const { data: segments } = useSegments();
+  const { mutateAsync: updateFlagsSegmentMutate } =
+    useUpdateFlagsSegmentMutation(f_key);
+
   return (
     <tr>
       <td>
@@ -65,7 +72,7 @@ export default function FlagsSegmentsModal({
                       </div>
                       <div>
                         <ul role="list" className="divide-y divide-gray-100">
-                          {segments?.map(({ title }) => (
+                          {segments?.map(({ title, s_key }) => (
                             <li
                               key={title}
                               className="flex items-center justify-between gap-x-6 py-5"
@@ -77,13 +84,35 @@ export default function FlagsSegmentsModal({
                                   </p>
                                 </div>
                               </div>
-                              <button className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                {flagsSegments?.some(
-                                  (segment) => segment.title === title,
-                                )
-                                  ? "Delete"
-                                  : "Add"}
-                              </button>
+                              {flagsSegments?.some(
+                                (segment) => segment.title === title,
+                              ) ? (
+                                <button
+                                  onClick={() => {
+                                    updateFlagsSegmentMutate({
+                                      flagKey: f_key,
+                                      segmentKey: s_key,
+                                      action: "segment remove",
+                                    });
+                                  }}
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                >
+                                  Delete
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    updateFlagsSegmentMutate({
+                                      flagKey: f_key,
+                                      segmentKey: s_key,
+                                      action: "segment add",
+                                    })
+                                  }
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                >
+                                  Add
+                                </button>
+                              )}
                             </li>
                           ))}
                         </ul>
