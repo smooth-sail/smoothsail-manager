@@ -1,10 +1,11 @@
 import axios from "axios";
-import { NewSegment, Segment } from "../types";
+import { NewSegment, Segment, SegmentUpdates } from "../types";
 import {
   CREATE_SEGMENT,
   GET_SEGMENTS,
   flagsSegmentsPath,
   updateFlagsSegmentsPath,
+  updateSegmentPath,
 } from "../constants/routes";
 
 type AllSegmentsResponse = {
@@ -56,4 +57,15 @@ export const updateFlagsSegment = async ({
     },
   );
   return data.s_key;
+};
+
+export const updateSegment = async (segmentUpdates: SegmentUpdates) => {
+  const { data } = await axios.patch<SegmentResponse>(
+    updateSegmentPath(segmentUpdates.s_key),
+    {
+      action: "body update",
+      payload: segmentUpdates,
+    },
+  );
+  return data.payload;
 };

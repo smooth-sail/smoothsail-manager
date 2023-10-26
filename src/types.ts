@@ -36,6 +36,7 @@ export type Segment = {
 };
 
 export type NewSegment = z.infer<typeof newSegmentSchema>;
+export type SegmentUpdates = NewSegment;
 export type SegmentOperator = z.infer<typeof segmentOperatorSchema>;
 
 export type Rule = {

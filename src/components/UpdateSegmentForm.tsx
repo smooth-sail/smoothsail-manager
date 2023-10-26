@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { NewSegment, SegmentOperator } from "../types";
+import { NewSegment, Segment, SegmentOperator } from "../types";
 import { newSegmentSchema } from "../models/segments";
-import { useCreateSegmentMutation } from "../hooks/segments";
+import { useUpdateSegmentMutation } from "../hooks/segments";
 import { RadioGroup } from "@headlessui/react";
 import { classNames } from "../utils/classNames";
 
@@ -18,25 +18,39 @@ const segmentRulesOperators = [
   },
 ];
 
-export default function CreateSegmentForm({
+export default function UpdateSegmentForm({
   setOpen,
+  ...props
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const [selected, setSelected] = useState(segmentRulesOperators[0]);
+} & Segment) {
+  const [selected, setSelected] = useState(() => {
+    return segmentRulesOperators[
+      segmentRulesOperators
+        .map(({ name }) => name.toLowerCase())
+        .indexOf(props.rules_operator)
+    ];
+  });
+
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<NewSegment>({
     resolver: zodResolver(newSegmentSchema),
+    defaultValues: {
+      title: props.title,
+      description: props.description,
+      s_key: props.s_key,
+    },
   });
 
-  const { mutateAsync } = useCreateSegmentMutation();
+  const { mutateAsync } = useUpdateSegmentMutation();
 
-  const onSubmit = handleSubmit((newSegment) => {
-    newSegment.rules_operator = selected.name.toLowerCase() as SegmentOperator;
-    mutateAsync(newSegment);
+  const onSubmit = handleSubmit((segmentUpdates) => {
+    segmentUpdates.rules_operator =
+      selected.name.toLowerCase() as SegmentOperator;
+    mutateAsync(segmentUpdates);
     setOpen(false);
   });
 
@@ -65,24 +79,13 @@ export default function CreateSegmentForm({
           </div>
         </div>
         <div className="w-full">
-          <label
-            htmlFor="s_key"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
+          <p className="block text-sm font-medium leading-6 text-gray-900">
             Segment Key
-          </label>
+          </p>
           <div className="mt-2">
-            <input
-              {...register("s_key")}
-              type="text"
-              name="s_key"
-              id="s_key"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder="Enter a segment key"
-            />
-            {errors.s_key?.message && (
-              <p>{errors.s_key?.message as ReactNode}</p>
-            )}
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {props.s_key}
+            </span>
           </div>
         </div>
       </div>

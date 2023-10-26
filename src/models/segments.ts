@@ -6,8 +6,14 @@ export const segmentOperatorSchema = z
   .default("any");
 
 export const newSegmentSchema = z.object({
-  title: z.string().trim().min(1, { message: "Flag name is required" }),
-  s_key: z.string().trim().min(1, { message: "Flag key is required" }),
+  title: z.string().trim().min(1, { message: "Segment name is required" }),
+  s_key: z.string().trim().min(1, { message: "Segment key is required" }),
+  description: z.string().optional(),
+  rules_operator: segmentOperatorSchema,
+});
+
+export const updateSegmentSchema = z.object({
+  title: z.string().trim().min(1, { message: "Segment name is required" }),
   description: z.string().optional(),
   rules_operator: segmentOperatorSchema,
 });

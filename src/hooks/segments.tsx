@@ -4,6 +4,7 @@ import {
   getFlagsSegments,
   getSegments,
   updateFlagsSegment,
+  updateSegment,
 } from "../services/segmentsService";
 
 export const useSegments = () => {
@@ -36,5 +37,17 @@ export const useUpdateFlagsSegmentMutation = (f_key: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries(["segments", f_key]);
     },
+  });
+};
+
+export const useUpdateSegmentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateSegment,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["segments"]);
+    },
+    // need to add optimistic updates
   });
 };
