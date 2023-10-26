@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { newFlagSchema } from "./models/flags";
+
 export type NavLink = {
   name: string;
   href: string;
@@ -19,11 +22,9 @@ export type Flag = {
   is_active: boolean;
 };
 
-export type NewFlag = {
-  f_key: string;
-  title: string;
-  description?: string;
-};
+export type NewFlag = z.infer<typeof newFlagSchema>;
+
+export type FlagUpdates = NewFlag;
 
 export type Segment = {
   s_key: string;

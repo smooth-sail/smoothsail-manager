@@ -1,39 +1,32 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useCreateFlagMutation } from "../hooks/flags";
 import { NewFlag } from "../types";
+import { newFlagSchema } from "../models/flags";
 
 export default function CreateFlagForm({
   setOpen,
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const schema = z.object({
-    title: z.string().trim().min(1, { message: "Flag name is required" }),
-    f_key: z.string().trim().min(1, { message: "Flag key is required" }),
-    description: z.string().optional(),
-  });
-
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<NewFlag>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(newFlagSchema),
   });
 
   const { mutateAsync } = useCreateFlagMutation();
 
+  const onSubmit = handleSubmit((newFlag) => {
+    mutateAsync(newFlag);
+    setOpen(false);
+  });
+
   return (
-    <form
-      onSubmit={handleSubmit((newFlag) => {
-        mutateAsync(newFlag);
-        setOpen(false);
-      })}
-      className="flex flex-col gap-3"
-    >
+    <form onSubmit={onSubmit} className="flex flex-col gap-3">
       <div className="flex-col flex sm:flex-row gap-3">
         <div className="w-full">
           <label
