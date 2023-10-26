@@ -24,3 +24,19 @@ export type NewFlag = {
   title: string;
   description?: string;
 };
+
+export type Segment = {
+  s_key: string;
+  title: string;
+  description?: string;
+  rules_operator: string;
+  rules: Rule[];
+};
+
+export type Rule = {
+  r_key: string;
+  a_key: string;
+  type: "boolean" | "string" | "number";
+  operator: string;
+  value: boolean | string | number;
+};
