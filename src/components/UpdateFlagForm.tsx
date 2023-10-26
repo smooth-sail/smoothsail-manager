@@ -3,7 +3,6 @@ import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDeleteFlagMutation, useUpdateFlagMutation } from "../hooks/flags";
 import { Flag } from "../types";
-import Toggle from "./ui/Toggle";
 import Button from "./ui/Button";
 import DeleteModal from "./DeleteModal";
 import { flagUpdatesSchema } from "../models/flags";
@@ -16,7 +15,6 @@ export default function UpdateFlagForm({
   setOpen,
   ...props
 }: UpdateFlagFormProps) {
-  const [isActive, setIsActive] = useState(props.is_active);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const {
@@ -42,7 +40,6 @@ export default function UpdateFlagForm({
   const onSubmit = handleSubmit((bodyUpdates) => {
     const flagUpdates = {
       ...bodyUpdates,
-      is_active: isActive,
       f_key: props.f_key,
     };
     updateFlagMutation(flagUpdates);
@@ -52,15 +49,7 @@ export default function UpdateFlagForm({
   return (
     <>
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium leading-6 text-gray-900">
-              Currently Active:
-            </span>
-            <div className="mt-2">
-              <Toggle is_active={isActive} onIsActive={setIsActive} />
-            </div>
-          </div>
+        <div className="w-full flex items-center">
           <Button
             classNames="bg-red-600 hover:bg-red-500"
             size="l"
