@@ -4,6 +4,7 @@ import {
   deleteFlag,
   getFlags,
   toggleFlag,
+  updateFlag,
 } from "../services/flagsService";
 
 export const useFlags = () => {
@@ -15,6 +16,18 @@ export const useCreateFlagMutation = () => {
 
   return useMutation({
     mutationFn: createFlag,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["flags"]);
+    },
+    // need to add optimistic updates
+  });
+};
+
+export const useUpdateFlagMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateFlag,
     onSuccess: () => {
       queryClient.invalidateQueries(["flags"]);
     },
