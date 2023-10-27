@@ -7,6 +7,8 @@ import pgA from "../db/attributes";
 import Flag from "../models/flags";
 import Segment from "../models/segments";
 
+import jsm from "../nats/JetStreamManager";
+
 import { transformFlagData } from "../utils/flags.util";
 
 let clients = new Clients();
@@ -117,7 +119,7 @@ export const createFlag = async (req, res) => {
     delete flag.id;
 
     let sseMsg = { type: "new-flag", payload: flag };
-    clients.sendNotificationToAllClients(sseMsg);
+    jsm.publishString(JSON.stringify(sseMsg));
 
     return res.status(200).json({ payload: flag });
   } catch (error) {
@@ -142,7 +144,7 @@ export const deleteFlag = async (req, res) => {
 
     delete flag.id;
     let sseMsg = { type: "deleted-flag", payload: flagKey };
-    return clients.sendNotificationToAllClients(sseMsg);
+    jsm.publishString(JSON.stringify(sseMsg));
   } catch (error) {
     res
       .status(500)
@@ -184,7 +186,7 @@ export const updateFlag = async (req, res) => {
       delete updatedFlag.id;
       res.status(200).json(updatedFlag);
       let sseMsg = { type: "toggle", payload: updatedFlag };
-      return clients.sendNotificationToAllClients(sseMsg);
+      return jsm.publishString(JSON.stringify(sseMsg));
     } else if (action === "segment add") {
       let { s_key } = req.body.payload;
 
@@ -212,7 +214,7 @@ export const updateFlag = async (req, res) => {
         payload: { f_key: newFlag.f_key, segment: segment },
       };
 
-      clients.sendNotificationToAllClients(sseMsg);
+      jsm.publishString(JSON.stringify(sseMsg));
       res.status(200).json({ payload: segment });
     } else if (action === "segment remove") {
       let { s_key } = req.body.payload;
@@ -238,7 +240,7 @@ export const updateFlag = async (req, res) => {
         type: "segment remove",
         payload: { f_key: newFlag.f_key, s_key },
       };
-      clients.sendNotificationToAllClients(sseMsg);
+      jsm.publishString(JSON.stringify(sseMsg));
       res.status(200).json({ message: "Segment was successfully removed." });
     }
   } catch (error) {
@@ -427,7 +429,7 @@ export const updateSegment = async (req, res) => {
       .json({ error: "Internal error occurred. Could not update segment." });
   }
 
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishString(JSON.stringify(sseMsg));
 };
 
 // =================== SSE / SDK
