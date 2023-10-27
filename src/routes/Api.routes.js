@@ -6,25 +6,25 @@ import * as attributesController from "../controllers/attributes.controller";
 const router = express.Router();
 
 // Flag API routes
-router.get("/flags", flagsController.getAllFlags);
-router.get("/flags/:id", flagsController.getFlagById);
-router.post("/flags", flagsController.createFlag);
-router.delete("/flags/:id", flagsController.deleteFlag);
-router.put("/flags/:id", flagsController.updateFlag);
+router.get("/flags", mainControllers.getAllFlags);
+router.get("/flags/:f_key", mainControllers.getFlagById);
+router.post("/flags", mainControllers.createFlag);
+router.delete("/flags/:f_key", mainControllers.deleteFlag);
+router.patch("/flags/:f_key", mainControllers.updateFlag);
 
 // Segment API routes
-router.get("/segments", segmentsController.getAllSegments);
-router.get("/segment/:id", segmentsController.getSegmentById);
-router.post("/segments", segmentsController.createSegment);
-router.delete("/segments/:id", segmentsController.deleteSegment);
-router.patch("/segments/:id", segmentsController.updateSegment);
+router.get("/segments", mainControllers.getAllSegments);
+router.get("/segments/:s_key", mainControllers.getSegmentByKey);
+router.post("/segments", mainControllers.createSegment);
+router.delete("/segments/:s_key", mainControllers.deleteSegment);
+router.patch("/segments/:s_key", mainControllers.updateSegment);
 
 // Attributes API routes
 router.get("/attributes", attributesController.getAllAttributes);
-router.get("/attribute/:id", attributesController.getAttributeById);
+router.get("/attributes/:a_key", attributesController.getAttributeByKey);
 router.post("/attributes", attributesController.createAttribute);
-router.delete("/attributes/:id", attributesController.deleteAttribute);
-router.patch("/attributes/:id", attributesController.updateAttribute);
+router.delete("/attributes/:a_key", attributesController.deleteAttribute);
+router.patch("/attributes/:a_key", attributesController.updateAttribute);
 
 // SSE API routes
 router.get("/ff-updates-stream", mainControllers.sseNotifications);
