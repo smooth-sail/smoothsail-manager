@@ -1,8 +1,5 @@
 import express from "express";
 import * as mainControllers from "../controllers/flags.controller";
-// import * as flagsController from "../controllers/flags.controller";
-// import * as segmentsController from "../controllers/segments.controller";
-import * as attributesController from "../controllers/attributes.controller";
 
 const router = express.Router();
 

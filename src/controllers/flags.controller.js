@@ -292,34 +292,42 @@ export const updateFlag = async (req, res) => {
 };
 
 // ================== SEGMENTS
-const formatSegment = (s) => {
+const formatSegment = (s, forSDK) => {
   if (typeof s.get === "function") {
     s = s.get({ plain: true });
   }
-
   delete s.id;
+  delete s.FlagSegments;
+
+  if (forSDK) {
+    delete s.title;
+    delete s.description;
+  }
   if (s.Rules) {
-    s.Rules = s.Rules.map((r) => {
+    let rules = s.Rules;
+    delete s.Rules;
+    s.rules = rules.map((r) => {
       if (typeof r.get === "function") {
         r = r.get({ plain: true });
       }
-      delete r.id;
-      delete r.AttributeId;
-      delete r.SegmentId;
+
       r.aKey = r.Attribute.aKey;
       r.type = r.Attribute.type;
       delete r.Attribute;
+      delete r.id;
+      delete r.AttributeId;
+      delete r.SegmentId;
       return r;
     });
   } else {
-    s.Rules = []; // replace Rules with rules when aliasing is done
+    s.rules = [];
   }
 
   return s;
 };
-const formatSegments = (segments) => {
+const formatSegments = (segments, forSDK) => {
   return segments.map((s) => {
-    return formatSegment(s);
+    return formatSegment(s, forSDK);
   });
 };
 
@@ -332,7 +340,6 @@ export const getAllSegments = async (req, res) => {
       let flag = await Flag.findOne({
         where: { fKey: flagKey },
         attributes: { exclude: ["id"] },
-        order: [["createdAt", "ASC"]],
         include: [
           {
             model: Segment,
@@ -717,15 +724,29 @@ export const sseNotifications = (req, res) => {
 };
 
 export const getSdkFlags = async (req, res) => {
-  let flags;
+  let data = {};
   try {
-    flags = await pg.getSdkFlags();
-    flags.forEach((f) => {
-      delete f.id;
+    let flags = await Flag.findAll({
+      attributes: { exclude: ["id", "title", "description", "createdAt"] },
+      include: {
+        model: Segment,
+        include: {
+          model: Rule,
+          include: {
+            model: Attribute,
+          },
+        },
+      },
     });
-    const data = transformFlagData(flags);
-    res.status(200).json({ payload: data });
+    flags.forEach((f) => {
+      f = f.toJSON();
+      f.segments = formatSegments(f.Segments, true);
+      delete f.Segments;
+      data[f.fKey] = f;
+    });
   } catch (err) {
-    res.status(500).json({ error: "Internal error occurred." });
+    console.log(err);
+    return res.status(500).json({ error: "Internal error occurred." });
   }
+  res.status(200).json({ payload: data });
 };
