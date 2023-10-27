@@ -1,23 +1,21 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
-import { Link } from "react-router-dom";
-import { NavLink } from "../types";
+import { Link, useLocation } from "react-router-dom";
 import { classNames } from "../utils/classNames";
+import { navigation as navLinks } from "../utils/navigation";
 
 type MobileSidebarProps = {
   sidebarOpen: boolean;
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  navLinks: NavLink[];
-  onCurrentLink: (name: string) => void;
 };
 
 export default function MobileSidebar({
   sidebarOpen,
   setSidebarOpen,
-  navLinks,
-  onCurrentLink,
 }: MobileSidebarProps) {
+  const path = useLocation().pathname;
+
   return (
     <Transition.Root show={sidebarOpen} as={Fragment}>
       <Dialog
@@ -87,10 +85,9 @@ export default function MobileSidebar({
                         {navLinks.map((item) => (
                           <li key={item.name}>
                             <Link
-                              onClick={() => onCurrentLink(item.name)}
                               to={item.href}
                               className={classNames(
-                                item.current
+                                item.href === path
                                   ? "bg-gray-800 text-white"
                                   : "text-gray-400 hover:text-white hover:bg-gray-800",
                                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",

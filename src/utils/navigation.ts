@@ -4,8 +4,9 @@ import {
   UserGroupIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
+import { NavLink } from "../types";
 
-export const navigation = [
+export const navigation: NavLink[] = [
   { name: "Dashboard", href: "/flags", icon: HomeIcon, current: false },
   { name: "Segments", href: "/segments", icon: UserGroupIcon, current: false },
   {
