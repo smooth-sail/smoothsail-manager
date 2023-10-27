@@ -26,3 +26,6 @@ export const flagsSegmentsPath = (f_key: string) =>
 
 export const updateSegmentPath = (s_key: string) =>
   `${BASE_URL}/api/segments/${s_key}`;
+
+export const deleteSegmentPath = (s_key: string) =>
+  `${BASE_URL}/api/segments/${s_key}`;

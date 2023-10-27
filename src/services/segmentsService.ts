@@ -3,6 +3,7 @@ import { NewSegment, Segment, SegmentUpdates } from "../types";
 import {
   CREATE_SEGMENT,
   GET_SEGMENTS,
+  deleteSegmentPath,
   flagsSegmentsPath,
   updateFlagsSegmentsPath,
   updateSegmentPath,
@@ -68,4 +69,11 @@ export const updateSegment = async (segmentUpdates: SegmentUpdates) => {
     },
   );
   return data.payload;
+};
+
+export const deleteSegment = async (segmentKey: string) => {
+  const { data } = await axios.delete<{ message: string }>(
+    deleteSegmentPath(segmentKey),
+  );
+  return data.message;
 };

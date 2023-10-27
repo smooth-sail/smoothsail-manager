@@ -35,6 +35,7 @@ export default function UpdateFlagForm({
   const handleDeleteFlag = () => {
     deleteFlagMutation(props.f_key);
     setOpenDeleteModal(false);
+    setOpen(false);
   };
 
   const onSubmit = handleSubmit((bodyUpdates) => {

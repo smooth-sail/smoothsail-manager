@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createSegment,
+  deleteSegment,
   getFlagsSegments,
   getSegments,
   updateFlagsSegment,
@@ -16,7 +17,7 @@ export const useCreateSegmentMutation = () => {
   return useMutation({
     mutationFn: createSegment,
     onSuccess: () => {
-      queryClient.invalidateQueries(["segments"]);
+      queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
     // need to add optimistic updates
   });
@@ -35,7 +36,7 @@ export const useUpdateFlagsSegmentMutation = (f_key: string) => {
   return useMutation({
     mutationFn: updateFlagsSegment,
     onSuccess: () => {
-      queryClient.invalidateQueries(["segments", f_key]);
+      queryClient.invalidateQueries({ queryKey: ["segments", f_key] });
     },
   });
 };
@@ -46,8 +47,22 @@ export const useUpdateSegmentMutation = () => {
   return useMutation({
     mutationFn: updateSegment,
     onSuccess: () => {
-      queryClient.invalidateQueries(["segments"]);
+      queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
     // need to add optimistic updates
+  });
+};
+
+export const useDeleteSegmentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteSegment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["segments"],
+        refetchType: "all",
+      });
+    },
   });
 };
