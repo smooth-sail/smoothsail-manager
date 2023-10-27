@@ -46,7 +46,7 @@ CREATE TABLE
     operator varchar(50) NOT NULL,
     value text,
     segment_id integer NOT NULL,
-    attributes_id integer NOT NULL,
+    attribute_id integer NOT NULL,
     FOREIGN KEY (segment_id) REFERENCES segments (id) ON DELETE CASCADE,
-    FOREIGN KEY (attributes_id) REFERENCES attributes (id) ON DELETE CASCADE
+    FOREIGN KEY (attribute_id) REFERENCES attributes (id) ON DELETE CASCADE
   );

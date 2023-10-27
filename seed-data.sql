@@ -28,7 +28,7 @@ VALUES
   (1, 2);
 
 INSERT INTO
-  rules (r_key, operator, value, segment_id, attributes_id)
+  rules (r_key, operator, value, segment_id, attribute_id)
 VALUES
   ('1abc', 'contains', '@gmail.com', 1, 1),
   ('bcd2', '=', true, 1, 3),

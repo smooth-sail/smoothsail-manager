@@ -5,6 +5,7 @@ import {
   Flag,
   Segment,
   Attribute,
+  Rule,
   sequelize,
 } from "../tmp_orm_files/sequelize";
 
@@ -291,6 +292,37 @@ export const updateFlag = async (req, res) => {
 };
 
 // ================== SEGMENTS
+const formatSegment = (s) => {
+  if (typeof s.get === "function") {
+    s = s.get({ plain: true });
+  }
+
+  delete s.id;
+  if (s.Rules) {
+    s.Rules = s.Rules.map((r) => {
+      if (typeof r.get === "function") {
+        r = r.get({ plain: true });
+      }
+      delete r.id;
+      delete r.AttributeId;
+      delete r.SegmentId;
+      r.aKey = r.Attribute.aKey;
+      r.type = r.Attribute.type;
+      delete r.Attribute;
+      return r;
+    });
+  } else {
+    s.Rules = []; // replace Rules with rules when aliasing is done
+  }
+
+  return s;
+};
+const formatSegments = (segments) => {
+  return segments.map((s) => {
+    return formatSegment(s);
+  });
+};
+
 export const getAllSegments = async (req, res) => {
   // should attach rules to segments
   let flagKey = req.query.fKey;
@@ -305,6 +337,12 @@ export const getAllSegments = async (req, res) => {
           {
             model: Segment,
             attributes: { exclude: ["id"] },
+            include: {
+              model: Rule,
+              include: {
+                model: Attribute,
+              },
+            },
           },
         ],
       });
@@ -318,12 +356,21 @@ export const getAllSegments = async (req, res) => {
     } else {
       segments = await Segment.findAll({
         attributes: { exclude: ["id"] },
+        include: {
+          model: Rule,
+          include: {
+            model: Attribute,
+          },
+        },
       });
     }
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: "Internal error occurred." });
   }
+
+  segments = formatSegments(segments);
+
   return res.status(200).json({ payload: segments });
 };
 
@@ -334,6 +381,12 @@ export const getSegmentByKey = async (req, res) => {
     segment = await Segment.findOne({
       where: { sKey: segmentKey },
       attributes: { exclude: ["id"] },
+      include: {
+        model: Rule,
+        include: {
+          model: Attribute,
+        },
+      },
     });
   } catch (error) {
     console.log(error.message);
@@ -345,24 +398,25 @@ export const getSegmentByKey = async (req, res) => {
       .status(404)
       .json({ error: `Segment with id ${segmentKey} does not exist.` });
   }
-  return res.status(200).json({ payload: segment });
+  let formatedSegment = formatSegment(segment); // refactor!
+  return res.status(200).json({ payload: formatedSegment });
 };
 
 export const createSegment = async (req, res) => {
-  let newSegment; // add rules to the segment
+  let newSegment;
   try {
     newSegment = await Segment.create(
       { ...req.body },
-      { fields: ["sKey", "title", "description", "rulesOperator"] }
+      {
+        fields: ["sKey", "title", "description", "rulesOperator"],
+      }
     );
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: error.message }); // must support other res stats codes
   }
 
-  let segment = newSegment.get({ plain: true });
-  delete segment.id;
-
+  let segment = formatSegment(newSegment);
   return res.status(200).json({ payload: segment });
 };
 
@@ -607,6 +661,7 @@ export const deleteAttribute = async (req, res) => {
 };
 
 export const updateAttribute = async (req, res) => {
+  // need to add check for attribute being in rules - if yes, then NO DELETION!
   const attrKey = req.params.aKey;
 
   let updatedAttr;
