@@ -1,18 +1,18 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Flag } from "../types";
-import UpdateFlagForm from "./UpdateFlagForm";
+import { Segment } from "../types";
+import UpdateSegmentForm from "./UpdateSegmentForm";
 
-type UpdateFlagModalProps = {
+type UpdateSegmentModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Flag;
+} & Segment;
 
-export default function UpdateFlagModal({
+export default function UpdateSegmentModal({
   open,
   setOpen,
   ...props
-}: UpdateFlagModalProps) {
+}: UpdateSegmentModalProps) {
   return (
     <tr>
       <td>
@@ -48,7 +48,7 @@ export default function UpdateFlagModal({
                           as="h3"
                           className="text-base font-semibold leading-6 text-gray-900"
                         >
-                          Edit flag: {props.title}
+                          Edit segment: {props.title}
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
@@ -58,7 +58,7 @@ export default function UpdateFlagModal({
                         </div>
                       </div>
                     </div>
-                    <UpdateFlagForm {...props} setOpen={setOpen} />
+                    <UpdateSegmentForm {...props} setOpen={setOpen} />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>

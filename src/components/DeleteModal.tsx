@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useLocation } from "react-router-dom";
 
 export default function DeleteModal({
   open,
@@ -11,6 +12,18 @@ export default function DeleteModal({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDelete: () => void;
 }) {
+  const path = useLocation().pathname;
+
+  const resource = (path: string) => {
+    switch (path) {
+      case "/flags":
+        return "flag";
+        break;
+      case "/segments":
+        return "segment";
+    }
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -50,12 +63,13 @@ export default function DeleteModal({
                       as="h3"
                       className="text-base font-semibold leading-6 text-gray-900"
                     >
-                      Delete Flag
+                      Delete {resource(path)}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to delete this flag? All of the
-                        flag data will be permanently removed from the database.
+                        Are you sure you want to delete this {resource(path)}?
+                        All of the {resource(path)} data will be permanently
+                        removed from the database.
                       </p>
                     </div>
                   </div>

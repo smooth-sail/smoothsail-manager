@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Segment } from "../types";
 import SegmentsRulesDropdown from "./SegmentsRulesDropdown";
+import UpdateSegmentModal from "./UpdateSegmentModal";
 
 type SegmentItemProps = Segment;
 
@@ -39,7 +40,7 @@ export default function SegmentItem(props: SegmentItemProps) {
           </span>
         </td>
       </tr>
-      {/* <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} /> */}
+      <UpdateSegmentModal {...props} open={openEdit} setOpen={setOpenEdit} />
     </>
   );
 }

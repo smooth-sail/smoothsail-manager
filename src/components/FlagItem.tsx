@@ -58,17 +58,13 @@ export default function FlagItem(props: FlagItemProps) {
           </span>
         </td>
       </tr>
-      {openEdit && (
-        <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
-      )}
-      {openSegmentsModal && (
-        <FlagsSegmentsModal
-          title={props.title}
-          f_key={props.f_key}
-          open={openSegmentsModal}
-          setOpen={setOpenSegmentsModal}
-        />
-      )}
+      <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
+      <FlagsSegmentsModal
+        title={props.title}
+        f_key={props.f_key}
+        open={openSegmentsModal}
+        setOpen={setOpenSegmentsModal}
+      />
     </>
   );
 }

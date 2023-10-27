@@ -2,11 +2,11 @@ import { useState } from "react";
 import Button from "../components/ui/Button";
 import { useSegments } from "../hooks/segments";
 import SegmentItem from "../components/SegmentItem";
+import CreateSegmentModal from "../components/CreateSegmentModal";
 
 export default function SegmentsTable() {
   const [open, setOpen] = useState(false);
   const { data: segments, isLoading } = useSegments();
-  console.log(segments);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -74,7 +74,7 @@ export default function SegmentsTable() {
           </table>
         </div>
       </div>
-      {/* <CreateFlagModal open={open} setOpen={setOpen} /> */}
+      <CreateSegmentModal open={open} setOpen={setOpen} />
     </>
   );
 }

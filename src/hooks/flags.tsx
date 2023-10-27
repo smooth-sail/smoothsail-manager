@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createFlag,
   deleteFlag,
@@ -17,7 +17,7 @@ export const useCreateFlagMutation = () => {
   return useMutation({
     mutationFn: createFlag,
     onSuccess: () => {
-      queryClient.invalidateQueries(["flags"]);
+      queryClient.invalidateQueries({ queryKey: ["flags"] });
     },
     // need to add optimistic updates
   });
@@ -29,7 +29,7 @@ export const useUpdateFlagMutation = () => {
   return useMutation({
     mutationFn: updateFlag,
     onSuccess: () => {
-      queryClient.invalidateQueries(["flags"]);
+      queryClient.invalidateQueries({ queryKey: ["flags"] });
     },
     // need to add optimistic updates
   });
@@ -48,7 +48,10 @@ export const useDeleteFlagMutation = () => {
   return useMutation({
     mutationFn: deleteFlag,
     onSuccess: () => {
-      queryClient.invalidateQueries(["flags"]);
+      queryClient.invalidateQueries({
+        queryKey: ["flags"],
+        refetchType: "all",
+      });
     },
   });
 };
