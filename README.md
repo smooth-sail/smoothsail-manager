@@ -8,6 +8,7 @@ PGHOST=localhost
 PGDATABASE=<databasename>
 PGPASSWORD=<yourpassword>
 PGPORT=5432
+NATS_SERVER="nats://localhost:<portnumber>"
 ```
 
 - if the name is between `<>` replace with your own credentials
@@ -20,12 +21,16 @@ Before running the Node.js application, it's essential to start the NATS server 
 
 1. **Install NATS Server**:
 
-   If you haven't already, you can download and install the NATS server by following the installation instructions provided on the [NATS.io website](https://nats.io/download/nats-io/nats-server/).
+   If you haven't already, you can download and install the NATS server by using the following command.
+
+   ```bash
+   npm install nats-server
+   ```
 
 2. **Start NATS Server**:
 
-   Once the NATS server is installed, you can start it as a background service. Open your terminal or command prompt and use the following command to start the NATS server. You can specify additional configuration options as needed.
+   Once the NATS server is installed, you can start it as a background service. Open your terminal or command prompt and use the following command to start the NATS server with NATS JetStream. You can specify additional configuration options as needed.
 
    ```bash
-   nats-server -p 4222
+   nats-server -js -p <portnumber>
    ```
