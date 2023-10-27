@@ -29,7 +29,7 @@ export default function SegmentItem(props: SegmentItemProps) {
           {props.rules_operator}
         </td>
         <td className="px-3 py-4 text-sm text-gray-500">
-          {<SegmentsRulesDropdown rules={props.rules} />}
+          {<SegmentsRulesDropdown s_key={props.s_key} rules={props.rules} />}
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span

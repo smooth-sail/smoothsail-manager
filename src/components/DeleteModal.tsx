@@ -13,15 +13,13 @@ export default function DeleteModal({
   onDelete: () => void;
 }) {
   const path = useLocation().pathname;
-
   const resource = (path: string) => {
-    switch (path) {
-      case "/flags":
-        return "flag";
-        break;
-      case "/segments":
-        return "segment";
-    }
+    const routes: { "/flags": string; "/segments": string } = {
+      "/flags": "flag",
+      "/segments": "segment",
+    };
+
+    return routes[path as keyof typeof routes];
   };
 
   return (

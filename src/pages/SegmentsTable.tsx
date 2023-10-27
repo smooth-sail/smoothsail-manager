@@ -21,8 +21,8 @@ export default function SegmentsTable() {
               Segments
             </h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all segments created. Click edit to view full details
-              and add any segments you've created.
+              A list of all segments created. Click edit to modify segment
+              details or click a rule to modify that rule.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">

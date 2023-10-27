@@ -1,10 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-import { useDeleteFlagMutation, useUpdateFlagMutation } from "../hooks/flags";
+import { useUpdateFlagMutation } from "../hooks/flags";
 import { Flag } from "../types";
-import Button from "./ui/Button";
-import DeleteModal from "./DeleteModal";
 import { flagUpdatesSchema } from "../models/flags";
 
 type UpdateFlagFormProps = {
@@ -15,8 +13,6 @@ export default function UpdateFlagForm({
   setOpen,
   ...props
 }: UpdateFlagFormProps) {
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
   const {
     handleSubmit,
     register,
@@ -30,13 +26,6 @@ export default function UpdateFlagForm({
   });
 
   const { mutateAsync: updateFlagMutation } = useUpdateFlagMutation();
-  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
-
-  const handleDeleteFlag = () => {
-    deleteFlagMutation(props.f_key);
-    setOpenDeleteModal(false);
-    setOpen(false);
-  };
 
   const onSubmit = handleSubmit((bodyUpdates) => {
     const flagUpdates = {
@@ -50,14 +39,6 @@ export default function UpdateFlagForm({
   return (
     <>
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <div className="w-full flex items-center">
-          <Button
-            classNames="bg-red-600 hover:bg-red-500"
-            size="l"
-            text="Delete"
-            onClick={() => setOpenDeleteModal(true)}
-          />
-        </div>
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -147,11 +128,6 @@ export default function UpdateFlagForm({
           </button>
         </div>
       </form>
-      <DeleteModal
-        open={openDeleteModal}
-        setOpen={setOpenDeleteModal}
-        onDelete={handleDeleteFlag}
-      />
     </>
   );
 }

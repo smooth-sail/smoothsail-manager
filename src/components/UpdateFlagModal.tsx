@@ -1,7 +1,10 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Flag } from "../types";
 import UpdateFlagForm from "./UpdateFlagForm";
+import Button from "./ui/Button";
+import DeleteModal from "./DeleteModal";
+import { useDeleteFlagMutation } from "../hooks/flags";
 
 type UpdateFlagModalProps = {
   open: boolean;
@@ -13,6 +16,14 @@ export default function UpdateFlagModal({
   setOpen,
   ...props
 }: UpdateFlagModalProps) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
+  const handleDeleteFlag = () => {
+    deleteFlagMutation(props.f_key);
+    setOpenDeleteModal(false);
+    setOpen(false);
+  };
+
   return (
     <tr>
       <td>
@@ -46,9 +57,17 @@ export default function UpdateFlagModal({
                       <div className="mt-3 sm:mt-5">
                         <Dialog.Title
                           as="h3"
-                          className="text-base font-semibold leading-6 text-gray-900"
+                          className="flex justify-between text-base font-semibold leading-6 text-gray-900"
                         >
-                          Edit flag: {props.title}
+                          <span className="self-end">
+                            Edit flag: {props.title}
+                          </span>
+                          <Button
+                            classNames="absolute right-6 top-6 bg-red-600 hover:bg-red-500"
+                            size="l"
+                            text="Delete"
+                            onClick={() => setOpenDeleteModal(true)}
+                          />
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
@@ -63,6 +82,11 @@ export default function UpdateFlagModal({
                 </Transition.Child>
               </div>
             </div>
+            <DeleteModal
+              open={openDeleteModal}
+              setOpen={setOpenDeleteModal}
+              onDelete={handleDeleteFlag}
+            />
           </Dialog>
         </Transition.Root>
       </td>

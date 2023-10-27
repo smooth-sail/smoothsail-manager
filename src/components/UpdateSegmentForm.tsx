@@ -3,14 +3,9 @@ import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NewSegment, Segment, SegmentOperator } from "../types";
 import { newSegmentSchema } from "../models/segments";
-import {
-  useDeleteSegmentMutation,
-  useUpdateSegmentMutation,
-} from "../hooks/segments";
+import { useUpdateSegmentMutation } from "../hooks/segments";
 import { RadioGroup } from "@headlessui/react";
 import { classNames } from "../utils/classNames";
-import Button from "./ui/Button";
-import DeleteModal from "./DeleteModal";
 
 const segmentRulesOperators = [
   {
@@ -29,7 +24,6 @@ export default function UpdateSegmentForm({
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Segment) {
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selected, setSelected] = useState(() => {
     return segmentRulesOperators[
       segmentRulesOperators
@@ -52,13 +46,6 @@ export default function UpdateSegmentForm({
   });
 
   const { mutateAsync: updateSegmentMutate } = useUpdateSegmentMutation();
-  const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
-
-  const handleDeleteSegment = () => {
-    deleteSegmentMutate(props.s_key);
-    setOpenDeleteModal(false);
-    setOpen(false);
-  };
 
   const onSubmit = handleSubmit((segmentUpdates) => {
     segmentUpdates.rules_operator =
@@ -70,14 +57,6 @@ export default function UpdateSegmentForm({
   return (
     <>
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <div className="w-full flex items-center">
-          <Button
-            classNames="bg-red-600 hover:bg-red-500"
-            size="l"
-            text="Delete"
-            onClick={() => setOpenDeleteModal(true)}
-          />
-        </div>
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -207,11 +186,6 @@ export default function UpdateSegmentForm({
           </button>
         </div>
       </form>
-      <DeleteModal
-        open={openDeleteModal}
-        setOpen={setOpenDeleteModal}
-        onDelete={handleDeleteSegment}
-      />
     </>
   );
 }
