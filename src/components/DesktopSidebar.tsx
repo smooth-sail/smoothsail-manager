@@ -1,17 +1,10 @@
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
-import { NavLink } from "../types";
+import { Link, useLocation } from "react-router-dom";
 import { classNames } from "../utils/classNames";
+import { navigation as navLinks } from "../utils/navigation";
 
-type DesktopSidebarProps = {
-  navLinks: NavLink[];
-  onCurrentLink: (name: string) => void;
-};
+export default function DesktopSidebar() {
+  const path = useLocation().pathname;
 
-export default function DesktopSidebar({
-  navLinks,
-  onCurrentLink,
-}: DesktopSidebarProps) {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-20 lg:flex lg:w-72 lg:flex-col">
       {/* Sidebar component, swap this element with another sidebar if you like */}
@@ -30,10 +23,9 @@ export default function DesktopSidebar({
                 {navLinks.map((item) => (
                   <li key={item.name}>
                     <Link
-                      onClick={() => onCurrentLink(item.name)}
                       to={item.href}
                       className={classNames(
-                        item.current
+                        item.href === path
                           ? "bg-gray-800 text-white"
                           : "text-gray-400 hover:text-white hover:bg-gray-800",
                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
