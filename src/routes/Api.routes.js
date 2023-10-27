@@ -8,24 +8,24 @@ const router = express.Router();
 
 // Flag API routes
 router.get("/flags", mainControllers.getAllFlags);
-router.get("/flags/:f_key", mainControllers.getFlagById);
+router.get("/flags/:fKey", mainControllers.getFlagById);
 router.post("/flags", mainControllers.createFlag);
-router.delete("/flags/:f_key", mainControllers.deleteFlag);
-router.patch("/flags/:f_key", mainControllers.updateFlag);
+router.delete("/flags/:fKey", mainControllers.deleteFlag);
+router.patch("/flags/:fKey", mainControllers.updateFlag);
 
 // Segment API routes
 router.get("/segments", mainControllers.getAllSegments);
-router.get("/segments/:s_key", mainControllers.getSegmentByKey);
+router.get("/segments/:sKey", mainControllers.getSegmentByKey);
 router.post("/segments", mainControllers.createSegment);
-router.delete("/segments/:s_key", mainControllers.deleteSegment);
-router.patch("/segments/:s_key", mainControllers.updateSegment);
+router.delete("/segments/:sKey", mainControllers.deleteSegment);
+router.patch("/segments/:sKey", mainControllers.updateSegment);
 
 // Attributes API routes
-router.get("/attributes", attributesController.getAllAttributes);
-router.get("/attributes/:a_key", attributesController.getAttributeByKey);
-router.post("/attributes", attributesController.createAttribute);
-router.delete("/attributes/:a_key", attributesController.deleteAttribute);
-router.patch("/attributes/:a_key", attributesController.updateAttribute);
+router.get("/attributes", mainControllers.getAllAttributes);
+router.get("/attributes/:aKey", mainControllers.getAttributeByKey);
+router.post("/attributes", mainControllers.createAttribute);
+router.delete("/attributes/:aKey", mainControllers.deleteAttribute);
+router.put("/attributes/:aKey", mainControllers.updateAttribute);
 
 // SSE API routes
 router.get("/ff-updates-stream", mainControllers.sseNotifications);

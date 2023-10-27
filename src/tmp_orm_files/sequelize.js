@@ -1,18 +1,29 @@
 import "dotenv/config";
+// import { Sequelize, DataTypes } from "sequelize";
 import { Sequelize, DataTypes } from "sequelize";
 
-const sequelize = new Sequelize(
+export const sequelize = new Sequelize(
   process.env.PGDATABASE,
   process.env.PGUSER,
   process.env.PGPASSWORD,
   {
     host: process.env.PGHOST,
     dialect: "postgres",
-    logging: (...msg) => console.log(msg), // might change this or delete (depending on what logging we want);
+    // logging: (...msg) => console.log(msg), // might change this or delete (depending on what logging we want);
   }
 );
 
-const Flag = sequelize.define(
+export const getDBClient = async () => {
+  try {
+    const dbClient = await sequelize.authenticate();
+    console.log("Sequelize: Connection has been established successfully.");
+    return dbClient;
+  } catch (err) {
+    console.error("Unable to connect to the database:", err);
+  }
+};
+
+export const Flag = sequelize.define(
   "Flag",
   {
     id: {
@@ -26,18 +37,36 @@ const Flag = sequelize.define(
       allowNull: false,
       unique: true,
       field: "f_key",
+      validate: {
+        is: /^[a-z0-9._-]+$/i,
+        len: [1, 20],
+      },
     },
     title: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      defaultValue: "",
+      validate: {
+        len: [1, 100],
+      },
     },
-    description: DataTypes.STRING,
+    description: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      allowNull: false,
+    },
     isActive: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
       field: "is_active",
+      validate: {
+        isBool(val) {
+          console.log("helo");
+          if (typeof val !== "boolean") {
+            throw new Error("The type of isActive must be boolean.");
+          }
+        },
+      },
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -56,11 +85,144 @@ const Flag = sequelize.define(
   },
   {
     sequelize,
-    modelName: "Flag",
+    // modelName: "Flag",
     tableName: "flags",
   }
 );
 
-// need to add: f_key  CHECK (f_key ~ '^[A-Za-z0-9._-]+$'),
+export const Segment = sequelize.define(
+  "Segment",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
+    sKey: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: true,
+      field: "s_key",
+      validate: {
+        is: /^[a-z0-9._-]+$/i,
+        len: [1, 20],
+      },
+    },
+    title: {
+      type: DataTypes.STRING(100),
+      unique: true,
+      allowNull: false,
+      validate: {
+        len: [1, 100],
+      },
+    },
+    description: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      allowNull: false,
+    },
+    rulesOperator: {
+      type: DataTypes.STRING(3),
+      allowNull: false,
+      field: "rules_operator",
+      defaultValue: "all",
+      validate: {
+        len: [3, 3],
+        is: /^(all|any)$/i,
+      },
+      set(val) {
+        this.setDataValue("rulesOperator", val.toLowerCase());
+      },
+    },
+  },
+  {
+    sequelize,
+    tableName: "segments",
+    timestamps: false,
+  }
+);
 
-export default Flag;
+const FlagSegments = sequelize.define(
+  "FlagSegments",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
+    FlagId: {
+      type: DataTypes.INTEGER,
+      field: "flag_id",
+      references: {
+        model: Flag,
+        key: "id",
+      },
+    },
+    SegmentId: {
+      type: DataTypes.INTEGER,
+      field: "segment_id",
+      references: {
+        model: Segment,
+        key: "id",
+      },
+    },
+  },
+  {
+    sequelize,
+    // modelName: "FlagSegments",
+    tableName: "flags_segments",
+    timestamps: false,
+  }
+);
+
+Flag.belongsToMany(Segment, { through: FlagSegments });
+Segment.belongsToMany(Flag, { through: FlagSegments });
+
+export const Attribute = sequelize.define(
+  "Attribute",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
+    aKey: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: true,
+      field: "a_key",
+      validate: {
+        is: /^[a-z0-9._-]+$/i,
+        len: [1, 20],
+      },
+    },
+    name: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      defaultValue: "",
+      validate: {
+        len: [0, 100],
+      },
+    },
+    type: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: "string",
+      validate: {
+        len: [1, 20],
+        is: /^(boolean|string|number)$/i,
+      },
+      set(val) {
+        this.setDataValue("type", val.toLowerCase());
+      },
+    },
+  },
+  {
+    sequelize,
+    tableName: "attributes",
+    timestamps: false,
+  }
+);
