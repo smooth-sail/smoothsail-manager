@@ -7,9 +7,7 @@ type ToggleProps = {
   onIsActive: (checked: boolean) => void;
 };
 
-export default function Toggle({ is_active, onIsActive }: ToggleProps) {
-  // const [enabled, setEnabled] = useState(is_active);
-
+function Toggle({ is_active, onIsActive }: ToggleProps) {
   return (
     <Switch
       checked={is_active}
@@ -70,3 +68,5 @@ export default function Toggle({ is_active, onIsActive }: ToggleProps) {
     </Switch>
   );
 }
+
+export default Toggle;

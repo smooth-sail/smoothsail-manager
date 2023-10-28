@@ -7,10 +7,7 @@ type CreateFlagModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function CreateFlagModal({
-  open,
-  setOpen,
-}: CreateFlagModalProps) {
+function CreateFlagModal({ open, setOpen }: CreateFlagModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -64,3 +61,5 @@ export default function CreateFlagModal({
     </Transition.Root>
   );
 }
+
+export default CreateFlagModal;

@@ -5,7 +5,7 @@ import UpdateSegmentModal from "./UpdateSegmentModal";
 
 type SegmentItemProps = Segment;
 
-export default function SegmentItem(props: SegmentItemProps) {
+function SegmentItem(props: SegmentItemProps) {
   const [openEdit, setOpenEdit] = useState(false);
 
   return (
@@ -44,3 +44,5 @@ export default function SegmentItem(props: SegmentItemProps) {
     </>
   );
 }
+
+export default SegmentItem;

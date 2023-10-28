@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { classNames } from "../utils/classNames";
 import { navigation as navLinks } from "../utils/navigation";
 
-export default function DesktopSidebar() {
+function DesktopSidebar() {
   const path = useLocation().pathname;
 
   return (
@@ -47,3 +47,5 @@ export default function DesktopSidebar() {
     </div>
   );
 }
+
+export default DesktopSidebar;

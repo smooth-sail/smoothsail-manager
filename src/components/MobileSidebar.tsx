@@ -10,10 +10,7 @@ type MobileSidebarProps = {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function MobileSidebar({
-  sidebarOpen,
-  setSidebarOpen,
-}: MobileSidebarProps) {
+function MobileSidebar({ sidebarOpen, setSidebarOpen }: MobileSidebarProps) {
   const path = useLocation().pathname;
 
   return (
@@ -113,3 +110,5 @@ export default function MobileSidebar({
     </Transition.Root>
   );
 }
+
+export default MobileSidebar;

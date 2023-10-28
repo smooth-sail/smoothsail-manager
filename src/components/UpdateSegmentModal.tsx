@@ -11,7 +11,7 @@ type UpdateSegmentModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Segment;
 
-export default function UpdateSegmentModal({
+function UpdateSegmentModal({
   open,
   setOpen,
   ...props
@@ -92,3 +92,5 @@ export default function UpdateSegmentModal({
     </tr>
   );
 }
+
+export default UpdateSegmentModal;

@@ -7,7 +7,7 @@ import FlagsSegmentsModal from "./FlagsSegmentsModal";
 
 type FlagItemProps = Flag;
 
-export default function FlagItem(props: FlagItemProps) {
+function FlagItem(props: FlagItemProps) {
   const [isActive, setIsActive] = useState(props.is_active);
   const [openSegmentsModal, setOpenSegmentsModal] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -68,3 +68,5 @@ export default function FlagItem(props: FlagItemProps) {
     </>
   );
 }
+
+export default FlagItem;

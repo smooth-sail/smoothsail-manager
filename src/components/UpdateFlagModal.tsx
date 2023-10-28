@@ -11,11 +11,7 @@ type UpdateFlagModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Flag;
 
-export default function UpdateFlagModal({
-  open,
-  setOpen,
-  ...props
-}: UpdateFlagModalProps) {
+function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
   const handleDeleteFlag = () => {
@@ -93,3 +89,5 @@ export default function UpdateFlagModal({
     </tr>
   );
 }
+
+export default UpdateFlagModal;

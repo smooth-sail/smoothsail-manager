@@ -18,7 +18,7 @@ const segmentRulesOperators = [
   },
 ];
 
-export default function UpdateSegmentForm({
+function UpdateSegmentForm({
   setOpen,
   ...props
 }: {
@@ -189,3 +189,5 @@ export default function UpdateSegmentForm({
     </>
   );
 }
+
+export default UpdateSegmentForm;

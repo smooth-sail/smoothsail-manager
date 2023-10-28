@@ -7,7 +7,7 @@ import FlagsTable from "./pages/FlagsTable";
 import NotFound from "./pages/NotFound";
 import SegmentsTable from "./pages/SegmentsTable";
 
-export default function App() {
+function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -33,3 +33,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;

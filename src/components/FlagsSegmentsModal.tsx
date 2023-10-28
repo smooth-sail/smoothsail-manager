@@ -13,7 +13,7 @@ type FlagsSegmentsModalProps = {
   f_key: string;
 };
 
-export default function FlagsSegmentsModal({
+function FlagsSegmentsModal({
   open,
   setOpen,
   title,
@@ -135,3 +135,5 @@ export default function FlagsSegmentsModal({
     </tr>
   );
 }
+
+export default FlagsSegmentsModal;

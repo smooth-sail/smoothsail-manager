@@ -9,10 +9,7 @@ type SegmentsRulesDropdownProps = {
   s_key: string;
 };
 
-export default function SegmentsRulesDropdown({
-  rules,
-  s_key,
-}: SegmentsRulesDropdownProps) {
+function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
   const [openRuleModal, setOpenRuleModal] = useState(false);
   return (
     <>
@@ -38,10 +35,10 @@ export default function SegmentsRulesDropdown({
         >
           <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
-              {rules?.map(({ r_key }) => (
+              {rules?.map(({ r_key }, idx) => (
                 <Menu.Item key={r_key}>
                   <div className="text-gray-700 px-4 py-2 text-sm hover:bg-gray-100">
-                    {r_key}
+                    Rule {idx + 1}
                   </div>
                 </Menu.Item>
               ))}
@@ -57,7 +54,13 @@ export default function SegmentsRulesDropdown({
           </Menu.Items>
         </Transition>
       </Menu>
-      <RuleModal setOpen={setOpenRuleModal} open={openRuleModal} />
+      <RuleModal
+        s_key={s_key}
+        setOpen={setOpenRuleModal}
+        open={openRuleModal}
+      />
     </>
   );
 }
+
+export default SegmentsRulesDropdown;

@@ -46,3 +46,9 @@ export type Rule = {
   operator: string;
   value: boolean | string | number;
 };
+
+export type Attribute = {
+  name: string;
+  a_key: string;
+  type: "boolean" | "string" | "number";
+};

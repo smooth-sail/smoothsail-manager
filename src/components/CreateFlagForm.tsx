@@ -5,7 +5,7 @@ import { useCreateFlagMutation } from "../hooks/flags";
 import { NewFlag } from "../types";
 import { newFlagSchema } from "../models/flags";
 
-export default function CreateFlagForm({
+function CreateFlagForm({
   setOpen,
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -107,3 +107,5 @@ export default function CreateFlagForm({
     </form>
   );
 }
+
+export default CreateFlagForm;

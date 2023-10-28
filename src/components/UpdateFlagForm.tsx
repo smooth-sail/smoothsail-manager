@@ -9,10 +9,7 @@ type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Flag;
 
-export default function UpdateFlagForm({
-  setOpen,
-  ...props
-}: UpdateFlagFormProps) {
+function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
   const {
     handleSubmit,
     register,
@@ -131,3 +128,5 @@ export default function UpdateFlagForm({
     </>
   );
 }
+
+export default UpdateFlagForm;
