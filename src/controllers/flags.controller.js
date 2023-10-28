@@ -1,12 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import Clients from "../models/sse-clients";
-import {
-  Flag,
-  Segment,
-  Attribute,
-  Rule,
-  sequelize,
-} from "../../models/sequelize";
+import { Flag, Segment, Attribute, Rule, sequelize } from "../models/sequelize";
 
 // sse related instances
 let clients = new Clients();
