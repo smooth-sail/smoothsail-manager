@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import Clients from "../models/sse-clients";
 
 // sequelize imports
@@ -33,7 +34,6 @@ export const getFlagById = async (req, res) => {
     flag = await Flag.findOne({
       where: { fKey: flagKey },
       attributes: { exclude: ["id"] },
-      // include: Segment,
     });
   } catch (error) {
     console.log(error.message);
@@ -119,7 +119,7 @@ const updateFlagBody = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
   let planeFlag = updatedFlag.get({ plain: true });
   delete planeFlag.id;
@@ -150,7 +150,7 @@ const toggleFlag = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
   let planeFlag = updatedFlag.get({ plain: true }); // repetition, can be extracted into method
   delete planeFlag.id;
@@ -183,9 +183,14 @@ const addSegmentToFlag = async (req, res) => {
       }
 
       let segment = await Segment.findOne(
-        // will need to include rules for SDK
         {
           where: { sKey: segmentKey },
+          include: {
+            model: Rule,
+            include: {
+              model: Attribute,
+            },
+          },
         },
         { transaction: t }
       );
@@ -196,20 +201,19 @@ const addSegmentToFlag = async (req, res) => {
           .json({ error: `Segment with id ${segmentKey} does not exist.` });
       }
 
-      flag.addSegment(segment, { transaction: t });
+      await flag.addSegment(segment, { transaction: t });
 
-      flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
+      await flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
 
       await flag.save({ fields: ["updatedAt"], transaction: t });
       return [segment, flag];
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
-  let plainSegment = updatedSegment.get({ plain: true }); // repetition, can be extracted into method
-  delete plainSegment.id;
 
+  let plainSegment = formatSegment(updatedSegment);
   let sseMsg = {
     type: "segment add",
     payload: {
@@ -254,16 +258,16 @@ const removeSegmentFromFlag = async (req, res) => {
           .json({ error: `Segment with id ${segmentKey} does not exist.` });
       }
 
-      flag.removeSegment(segment, { transaction: t });
+      await flag.removeSegment(segment, { transaction: t });
 
-      flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
+      await flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
 
       await flag.save({ fields: ["updatedAt"], transaction: t });
       return;
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
 
   let sseMsg = {
@@ -332,7 +336,6 @@ const formatSegments = (segments, forSDK) => {
 };
 
 export const getAllSegments = async (req, res) => {
-  // should attach rules to segments
   let flagKey = req.query.fKey;
   let segments;
   try {
@@ -376,9 +379,7 @@ export const getAllSegments = async (req, res) => {
     return res.status(500).json({ error: "Internal error occurred." });
   }
 
-  segments = formatSegments(segments);
-
-  return res.status(200).json({ payload: segments });
+  return res.status(200).json({ payload: formatSegments(segments) });
 };
 
 export const getSegmentByKey = async (req, res) => {
@@ -405,8 +406,7 @@ export const getSegmentByKey = async (req, res) => {
       .status(404)
       .json({ error: `Segment with id ${segmentKey} does not exist.` });
   }
-  let formatedSegment = formatSegment(segment); // refactor!
-  return res.status(200).json({ payload: formatedSegment });
+  return res.status(200).json({ payload: formatSegment(segment) });
 };
 
 export const createSegment = async (req, res) => {
@@ -423,8 +423,7 @@ export const createSegment = async (req, res) => {
     return res.status(500).json({ error: error.message }); // must support other res stats codes
   }
 
-  let segment = formatSegment(newSegment);
-  return res.status(200).json({ payload: segment });
+  return res.status(200).json({ payload: formatSegment(newSegment) });
 };
 
 export const deleteSegment = async (req, res) => {
@@ -501,91 +500,180 @@ const updateSegmentBody = async (req, res) => {
   return res.status(200).json(plainSegment);
 };
 
+const addRuleToSegment = async (req, res) => {
+  const segmentKey = req.params.sKey;
+  const attrKey = req.body.payload.aKey;
+
+  let payload;
+  try {
+    let segment = await Segment.findOne({
+      where: { sKey: segmentKey },
+    });
+    if (segment === null) {
+      return res
+        .status(404)
+        .jsn({ error: `Segment with id ${segmentKey} does not exist.` });
+    }
+
+    let attr = await Attribute.findOne({
+      where: { aKey: attrKey },
+    });
+    if (attr === null) {
+      return res
+        .status(404)
+        .jsn({ error: `Attribute with id ${attrKey} does not exist.` });
+    }
+
+    let rule = await Rule.create(
+      {
+        ...req.body.payload,
+        AttributeId: attr.id,
+        SegmentId: segment.id,
+        rKey: uuidv4(),
+      },
+      {
+        fields: ["AttributeId", "SegmentId", "operator", "value", "rKey"],
+      }
+    );
+
+    payload = {
+      aKey: attr.aKey,
+      rKey: rule.rKey,
+      sKey: segment.sKey,
+      type: attr.type,
+      operator: rule.operator,
+      value: rule.value,
+    };
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      error: "Internal error occurred. Could not delete the segment.",
+    });
+  }
+
+  let sseMsg = {
+    type: "rule add",
+    payload,
+  };
+  clients.sendNotificationToAllClients(sseMsg);
+  res.status(200).json({ payload });
+};
+
+const updateRule = async (req, res) => {
+  const segmentKey = req.params.sKey;
+  const attrKey = req.body.payload.aKey;
+  const ruleKey = req.body.payload.rKey;
+  let payload;
+  try {
+    payload = await sequelize.transaction(async (t) => {
+      let segment = await Segment.findOne(
+        {
+          where: { sKey: segmentKey },
+        },
+        { transaction: t }
+      );
+      if (segment === null) {
+        return res
+          .status(404)
+          .jsn({ error: `Segment with id ${segmentKey} does not exist.` });
+      }
+
+      let attr = await Attribute.findOne(
+        {
+          where: { aKey: attrKey },
+        },
+        { transaction: t }
+      );
+      if (attr === null) {
+        return res
+          .status(404)
+          .jsn({ error: `Attribute with id ${attrKey} does not exist.` });
+      }
+      let rule = await Rule.findOne(
+        {
+          where: { rKey: ruleKey },
+        },
+        { transaction: t }
+      );
+
+      if (rule === null) {
+        throw new Error(`Rule with id ${ruleKey} does not exist.`);
+      }
+
+      await rule.set({ ...req.body.payload }, { transaction: t });
+
+      await rule.save({
+        fields: ["operator", "value", "aKey", "rKey"],
+        transaction: t,
+      });
+      return (payload = {
+        rKey: rule.rKey,
+        aKey: attr.aKey,
+        operator: rule.operator,
+        value: rule.value,
+        type: attr.type,
+        sKey: segment.sKey,
+      });
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+  let sseMsg = {
+    type: "rule update",
+    payload: payload,
+  };
+  clients.sendNotificationToAllClients(sseMsg);
+  return res.status(200).json(payload);
+};
+
+const removeRule = async (req, res) => {
+  let ruleKey = req.body.payload.rKey;
+  const segmentKey = req.params.sKey;
+
+  let rowsImpacted;
+  try {
+    let segment = await Segment.findOne({
+      where: { sKey: segmentKey },
+    });
+    rowsImpacted = await Rule.destroy({
+      where: {
+        rKey: ruleKey,
+        SegmentId: segment.id,
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(500)
+      .json({ error: "Internal error occurred. Could not delete the rule." });
+  }
+
+  if (rowsImpacted === 0) {
+    return res
+      .status(404)
+      .json({ error: `Rule with id ${ruleKey} does not exist.` });
+  }
+
+  let sseMsg = {
+    type: "rule remove",
+    payload: { rKey: ruleKey, sKey: segmentKey },
+  };
+  clients.sendNotificationToAllClients(sseMsg);
+
+  return res.status(200).json({ message: "Flag successfully deleted." });
+};
 export const updateSegment = async (req, res) => {
   let action = req.body.action;
   if (action === "body update") {
     updateSegmentBody(req, res);
   } else if (action === "rule add") {
-    // add rule
+    addRuleToSegment(req, res);
   } else if (action === "rule remove") {
-    // remove rule
+    removeRule(req, res);
   } else if (action === "rule update") {
-    // rule update
+    updateRule(req, res);
   }
-
-  //   } else if (req.body.action === "rule add") {
-  //     let attribute = await pgA.getAttribute(req.body.payload.a_key);
-  //     // if no attribute - return 404;
-
-  //     let ruleSet = {
-  //       r_key: generateRandomString(),
-  //       operator: req.body.payload.operator,
-  //       value: req.body.payload.value,
-  //       segments_id: segmentId,
-  //       attributes_id: attribute.id,
-  //     };
-  //     let newRule = await pgS.addRule(ruleSet);
-  //     delete newRule.id;
-  //     delete newRule.segments_id;
-  //     delete newRule.attributes_id;
-  //     newRule.a_key = req.body.payload.a_key;
-  //     newRule.s_key = segmentKey;
-  //     // sse notification
-  //     sseMsg = {
-  //       type: "rule add",
-  //       payload: newRule,
-  //     };
-  //     res.status(200).json({ payload: newRule });
-  //
-  //
-  //   } else if (req.body.action === "rule remove") {
-  //     let r_key = req.body.payload.r_key;
-  //     let removedRule = await pgS.removeRule(r_key, segmentKey);
-  //     if (!removedRule) {
-  //       res
-  //         .status(404)
-  //         .json({ error: `Rule with key '${r_key}' does not exist.` });
-  //       return;
-  //     }
-  //     // sse notification
-  //     sseMsg = {
-  //       type: "rule remove",
-  //       payload: { r_key, s_key: segmentKey },
-  //     };
-  //     res.status(200).json({ message: "Rule successfully deleted." });
-  //
-  //
-  //   } else if (req.body.action === "rule update") {
-  //     let attribute = await pgA.getAttribute(req.body.payload.a_key);
-  //     console.log(attribute);
-  //     // if no attribute - return 404;
-  //     let ruleSet = {
-  //       operator: req.body.payload.operator,
-  //       value: req.body.payload.value,
-  //       a_key: attribute.id,
-  //       r_key: req.body.payload.r_key,
-  //     };
-  //     let newRule = await pgS.updateRule(ruleSet);
-  //     delete newRule.id;
-  //     delete newRule.segments_id;
-  //     delete newRule.attributes_id;
-  //     newRule.a_key = attribute.a_key;
-  //     newRule.s_key = segmentKey;
-  //     // sse notification
-  //     sseMsg = {
-  //       type: "segment update",
-  //       payload: newRule,
-  //     };
-  //     res.status(200).json({ payload: newRule });
-  //   }
-  // } catch (error) {
-  //   return res
-  //     .status(500)
-  //     .json({ error: "Internal error occurred. Could not update segment." });
-  // }
-
-  // // do SSE notification sending here
-  // clients.sendNotificationToAllClients(sseMsg);
 };
 
 // =================== Attributes
@@ -635,7 +723,7 @@ export const createAttribute = async (req, res) => {
     delete attr.id;
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." }); // must support other res stats codes
+    return res.status(500).json({ error: "Internal error occurred." });
   }
 
   return res.status(200).json({ payload: attr });
@@ -685,16 +773,16 @@ export const updateAttribute = async (req, res) => {
         throw new Error(`Attribute with id ${attrKey} does not exist.`);
       }
 
-      attr.set({ ...req.body });
+      await attr.set({ ...req.body });
 
       await attr.save({ fields: ["aKey", "name", "type"], transaction: t });
       return attr;
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
-  let plainAttr = updatedAttr.get({ plain: true });
+  let plainAttr = updatedAttr.get({ plain: true }); // toJSON?
   delete plainAttr.id;
   return res.status(200).json({ payload: plainAttr });
 };

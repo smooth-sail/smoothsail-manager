@@ -42,7 +42,7 @@ CREATE TABLE
 CREATE TABLE
   rules (
     id serial PRIMARY KEY,
-    r_key varchar(20) NOT NULL UNIQUE CHECK (r_key ~ '^[A-Za-z0-9._-]+$'),
+    r_key varchar(100) NOT NULL UNIQUE CHECK (r_key ~ '^[A-Za-z0-9._-]+$'),
     operator varchar(50) NOT NULL,
     value text,
     segment_id integer NOT NULL,
