@@ -1,14 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import Clients from "../models/sse-clients";
-
-// sequelize imports
 import {
   Flag,
   Segment,
   Attribute,
   Rule,
   sequelize,
-} from "../tmp_orm_files/sequelize";
+} from "../../models/sequelize";
 
 // sse related instances
 let clients = new Clients();
@@ -112,7 +110,10 @@ const updateFlagBody = async (req, res) => {
         throw new Error(`Flag with id ${flagKey} does not exist.`);
       }
 
-      flag.set({ ...req.body.payload });
+      flag.set({
+        title: req.body.title,
+        description: req.body.description,
+      });
 
       await flag.save({ fields: ["title", "description"], transaction: t });
       return flag;
@@ -143,7 +144,7 @@ const toggleFlag = async (req, res) => {
         throw new Error(`Flag with id ${flagKey} does not exist.`);
       }
 
-      flag.set({ ...req.body.payload, updatedAt: new Date() });
+      flag.set({ isActive: req.body.isActive, updatedAt: new Date() });
 
       await flag.save({ fields: ["isActive", "updatedAt"], transaction: t });
       return flag;
@@ -260,7 +261,7 @@ const removeSegmentFromFlag = async (req, res) => {
 
       await flag.removeSegment(segment, { transaction: t });
 
-      await flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
+      await flag.set({ updatedAt: new Date() }, { transaction: t });
 
       await flag.save({ fields: ["updatedAt"], transaction: t });
       return;
@@ -358,6 +359,11 @@ export const getAllSegments = async (req, res) => {
       });
 
       // can this be done better?
+      if (flag === null) {
+        return res
+          .status(404)
+          .json({ error: `Flag with key ${flagKey} does not exist.` });
+      }
       let plainSegments = flag.get({ plain: true }).Segments;
       plainSegments.forEach((s) => {
         delete s.FlagSegments;
@@ -412,6 +418,7 @@ export const getSegmentByKey = async (req, res) => {
 export const createSegment = async (req, res) => {
   let newSegment;
   try {
+    console.log({ ...req.body });
     newSegment = await Segment.create(
       { ...req.body },
       {
@@ -419,8 +426,8 @@ export const createSegment = async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes
+    console.log(error);
+    return res.status(500).json({ error: error.message });
   }
 
   return res.status(200).json({ payload: formatSegment(newSegment) });
@@ -430,25 +437,47 @@ export const deleteSegment = async (req, res) => {
   const segmentKey = req.params.sKey;
   let rowsImpacted;
   try {
-    // should not be able to remove a segment if it is attached to a flag (x)
-    // OR you shold be able to, but then you'll need to notify SDK about this change
-    rowsImpacted = await Segment.destroy({
-      where: {
-        sKey: segmentKey,
-      },
+    rowsImpacted = await sequelize.transaction(async (t) => {
+      let segment = await Segment.findOne(
+        {
+          where: { sKey: segmentKey },
+          include: "Flags",
+        },
+        { transaction: t }
+      );
+
+      if (segment === null) {
+        throw new Error(`Segment with id ${segmentKey} does not exist.`);
+      }
+
+      if (segment.Flags && segment.Flags.length > 0) {
+        return res.status(400).json({
+          error: `Segment is referenced by at least one Flag. Remove it from a flag and try again.`,
+        });
+      }
+      console.log(segment.Flag);
+
+      rowsImpacted = await Segment.destroy(
+        {
+          where: {
+            sKey: segmentKey,
+          },
+        },
+        { transaction: t }
+      );
+      return rowsImpacted;
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({
+    console.log(error);
+    return res.status(500).json({
       error: "Internal error occurred. Could not delete the segment.",
     });
   }
 
   if (rowsImpacted === 0) {
-    res
+    return res
       .status(404)
       .json({ error: `Segment with id ${segmentKey} does not exist.` });
-    return;
   }
 
   return res.status(200).json({ message: "Flag successfully deleted." });
@@ -471,7 +500,11 @@ const updateSegmentBody = async (req, res) => {
         throw new Error(`Segment with id ${segmentKey} does not exist.`);
       }
 
-      segment.set({ ...req.body.payload });
+      segment.set({
+        title: req.body.title,
+        description: req.body.description,
+        rulesOperator: req.body.rulesOperator,
+      });
       // we can allow change of sKey if we want
       await segment.save({
         fields: ["title", "description", "rulesOperator"],
@@ -600,7 +633,15 @@ const updateRule = async (req, res) => {
         throw new Error(`Rule with id ${ruleKey} does not exist.`);
       }
 
-      await rule.set({ ...req.body.payload }, { transaction: t });
+      await rule.set(
+        {
+          operator: req.body.operator,
+          value: req.body.value,
+          aKey: req.body.aKey,
+          rKey: req.body.rKey,
+        },
+        { transaction: t }
+      );
 
       await rule.save({
         fields: ["operator", "value", "aKey", "rKey"],
@@ -756,7 +797,6 @@ export const deleteAttribute = async (req, res) => {
 };
 
 export const updateAttribute = async (req, res) => {
-  // need to add check for attribute being in rules - if yes, then NO DELETION!
   const attrKey = req.params.aKey;
 
   let updatedAttr;
@@ -773,16 +813,16 @@ export const updateAttribute = async (req, res) => {
         throw new Error(`Attribute with id ${attrKey} does not exist.`);
       }
 
-      await attr.set({ ...req.body });
-
-      await attr.save({ fields: ["aKey", "name", "type"], transaction: t });
+      await attr.set({ aKey: req.body.aKey, name: req.body.name });
+      await attr.save();
       return attr;
     });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
   }
-  let plainAttr = updatedAttr.get({ plain: true }); // toJSON?
+
+  let plainAttr = updatedAttr.toJSON();
   delete plainAttr.id;
   return res.status(200).json({ payload: plainAttr });
 };

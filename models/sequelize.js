@@ -226,8 +226,6 @@ export const Attribute = sequelize.define(
   }
 );
 
-// rule needs checking with postman
-
 export const Rule = sequelize.define(
   "Rule",
   {
