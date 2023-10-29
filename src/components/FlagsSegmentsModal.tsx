@@ -25,7 +25,7 @@ function FlagsSegmentsModal({
     useUpdateFlagsSegmentMutation(f_key);
 
   return (
-    <tr>
+    <tr className="border-none">
       <td>
         <Transition.Root show={open} as={Fragment}>
           <Dialog as="div" className="relative z-50" onClose={setOpen}>

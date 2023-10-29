@@ -8,11 +8,11 @@ function DesktopSidebar() {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-20 lg:flex lg:w-72 lg:flex-col">
       {/* Sidebar component, swap this element with another sidebar if you like */}
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-[#23395b] px-6 pb-4">
-        <div className="flex h-16 shrink-0 items-center">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-[#23395b] to-[#365A8F] px-6 pb-4">
+        <div className="mt-4 flex h-16 shrink-0 items-center">
           <img
-            className="h-20 w-auto"
-            src="../../public/logo-palette-5.png"
+            className="h-28 w-auto"
+            src="/smooth-sail-transparent.png"
             alt="Your Company"
           />
         </div>
@@ -28,8 +28,8 @@ function DesktopSidebar() {
                         item.href === path ||
                           (path === "/" && item.name === "Dashboard")
                           ? "bg-[#2D4A75] text-white"
-                          : "text-gray-400 hover:text-white hover:bg-gray-800",
-                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                          : "text-gray-400 hover:text-white hover:bg-[#2D4A75]",
+                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold focus:outline-none focus:outline-[#2D4A75]",
                       )}
                     >
                       <item.icon

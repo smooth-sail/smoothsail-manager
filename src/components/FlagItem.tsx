@@ -41,7 +41,7 @@ function FlagItem(props: FlagItemProps) {
         <td className="px-3 py-4 text-sm text-gray-500">
           <span
             onClick={() => setOpenSegmentsModal(true)}
-            className="text-indigo-600 cursor-pointer hover:text-indigo-900"
+            className="cursor-pointer hover:text-[#239cba]"
           >
             Segments<span className="sr-only">, {props.title}</span>
           </span>
@@ -52,7 +52,7 @@ function FlagItem(props: FlagItemProps) {
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span
             onClick={() => setOpenEdit(true)}
-            className="cursor-pointer hover:text-indigo-900"
+            className="cursor-pointer hover:text-[#239cba]"
           >
             Edit<span className="sr-only">, {props.title}</span>
           </span>
