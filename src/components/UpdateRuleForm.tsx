@@ -1,6 +1,6 @@
 import { useAttributes } from "../hooks/attributes";
 import { useForm } from "react-hook-form";
-import { useAddSegmentRule } from "../hooks/segments";
+import { useUpdateSegmentRule } from "../hooks/segments";
 
 const operators = [
   "is",
@@ -40,17 +40,19 @@ function UpdateRuleForm({
     s_key: string;
   }>();
 
-  const { mutateAsync: addSegmentRuleMutate } = useAddSegmentRule();
+  const { mutateAsync: updateSegmentRuleMutate } = useUpdateSegmentRule();
 
   const onSubmit = handleSubmit(({ attribute, operator, value }) => {
     if (!attributes) return;
-    const attr = attributes.find((a) => a.name === attribute)!;
-    addSegmentRuleMutate({
-      a_key: attr.a_key,
+    const attr = attributes.find((a) => a.name === attribute)!.a_key;
+    const data = {
+      a_key: attr,
       operator,
       value,
       s_key,
-    });
+      r_key,
+    };
+    updateSegmentRuleMutate(data);
     setOpen(false);
   });
 

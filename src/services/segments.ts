@@ -123,3 +123,22 @@ export const deleteSegmentsRule = async ({ s_key, r_key }: RemoveRuleData) => {
   );
   return data.message;
 };
+
+export const updateSegmentsRule = async ({
+  a_key,
+  operator,
+  value,
+  s_key,
+  r_key,
+}: AddRuleData & { r_key: string }) => {
+  const { data } = await axios.patch<RuleResponse>(updateSegmentPath(s_key), {
+    action: "rule update",
+    payload: {
+      a_key,
+      r_key,
+      operator,
+      value,
+    },
+  });
+  return data.payload;
+};

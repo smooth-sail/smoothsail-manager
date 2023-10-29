@@ -8,6 +8,7 @@ import {
   getSegments,
   updateFlagsSegment,
   updateSegment,
+  updateSegmentsRule,
 } from "../services/segments";
 
 export const useSegments = () => {
@@ -85,6 +86,17 @@ export const useDeleteSegmentRule = () => {
 
   return useMutation({
     mutationFn: deleteSegmentsRule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["segments"] });
+    },
+  });
+};
+
+export const useUpdateSegmentRule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateSegmentsRule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
