@@ -118,8 +118,8 @@ export const createFlag = async (req, res) => {
     let flag = await pg.createFlag(newFlag);
     delete flag.id;
 
-    let sseMsg = { type: "new-flag", payload: flag };
-    jsm.publishString(JSON.stringify(sseMsg));
+    let msg = { type: "new-flag", payload: flag };
+    jsm.publishFlagUpdate(msg);
 
     return res.status(200).json({ payload: flag });
   } catch (error) {
@@ -143,8 +143,8 @@ export const deleteFlag = async (req, res) => {
     res.status(200).json({ message: "Flag successfully deleted." });
 
     delete flag.id;
-    let sseMsg = { type: "deleted-flag", payload: flagKey };
-    jsm.publishString(JSON.stringify(sseMsg));
+    let msg = { type: "deleted-flag", payload: flagKey };
+    jsm.publishFlagUpdate(msg);
   } catch (error) {
     res
       .status(500)
@@ -185,8 +185,8 @@ export const updateFlag = async (req, res) => {
 
       delete updatedFlag.id;
       res.status(200).json(updatedFlag);
-      let sseMsg = { type: "toggle", payload: updatedFlag };
-      return jsm.publishString(JSON.stringify(sseMsg));
+      let msg = { type: "toggle", payload: updatedFlag };
+      return jsm.publishFlagUpdate(msg);
     } else if (action === "segment add") {
       let { s_key } = req.body.payload;
 
@@ -209,12 +209,12 @@ export const updateFlag = async (req, res) => {
       }
 
       await pg.addSegment(newFlag.id, segmentId);
-      let sseMsg = {
+      let msg = {
         type: "segment add",
         payload: { f_key: newFlag.f_key, segment: segment },
       };
 
-      jsm.publishString(JSON.stringify(sseMsg));
+      jsm.publishFlagUpdate(msg);
       res.status(200).json({ payload: segment });
     } else if (action === "segment remove") {
       let { s_key } = req.body.payload;
@@ -236,11 +236,11 @@ export const updateFlag = async (req, res) => {
       }
       await pg.removeSegment(newFlag.id, segmentId);
 
-      let sseMsg = {
+      let msg = {
         type: "segment remove",
         payload: { f_key: newFlag.f_key, s_key },
       };
-      jsm.publishString(JSON.stringify(sseMsg));
+      jsm.publishFlagUpdate(msg);
       res.status(200).json({ message: "Segment was successfully removed." });
     }
   } catch (error) {
@@ -342,7 +342,7 @@ export const updateSegment = async (req, res) => {
       .json({ error: `Segment with key '${segmentKey}' does not exist.` });
   }
 
-  let sseMsg;
+  let msg;
 
   try {
     if (req.body.action === "body update") {
@@ -353,7 +353,7 @@ export const updateSegment = async (req, res) => {
       delete updatedSegment.rules;
       delete updatedSegment.id;
       res.status(200).json({ payload: updatedSegment });
-      sseMsg = {
+      msg = {
         type: "segment body update",
         payload: updatedSegment,
       };
@@ -377,7 +377,7 @@ export const updateSegment = async (req, res) => {
       newRule.a_key = req.body.payload.a_key;
       newRule.s_key = segmentKey;
 
-      sseMsg = {
+      msg = {
         type: "rule add",
         payload: newRule,
       };
@@ -392,7 +392,7 @@ export const updateSegment = async (req, res) => {
         return;
       }
 
-      sseMsg = {
+      msg = {
         type: "rule remove",
         payload: { r_key, s_key: segmentKey },
       };
@@ -417,7 +417,7 @@ export const updateSegment = async (req, res) => {
       newRule.a_key = attribute.a_key;
       newRule.s_key = segmentKey;
 
-      sseMsg = {
+      msg = {
         type: "rule update",
         payload: newRule,
       };
@@ -429,7 +429,7 @@ export const updateSegment = async (req, res) => {
       .json({ error: "Internal error occurred. Could not update segment." });
   }
 
-  jsm.publishString(JSON.stringify(sseMsg));
+  jsm.publishFlagUpdate(msg);
 };
 
 // =================== SSE / SDK

@@ -1,3 +1,5 @@
+import pg from "../db/flags";
+
 const segmentNotAdded = (flag, s_key) => {
   return !flag.segments.some((segment) => segment.s_key === s_key);
 };
@@ -32,4 +34,13 @@ export const transformFlagData = (flags) => {
   });
 
   return obj;
+};
+
+export const getSdkFlags = async () => {
+  const flags = await pg.getSdkFlags();
+  flags.forEach((f) => {
+    delete f.id;
+  });
+  const data = transformFlagData(flags);
+  return data;
 };
