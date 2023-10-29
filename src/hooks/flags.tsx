@@ -5,7 +5,7 @@ import {
   getFlags,
   toggleFlag,
   updateFlag,
-} from "../services/flagsService";
+} from "../services/flags";
 
 export const useFlags = () => {
   return useQuery({ queryKey: ["flags"], queryFn: getFlags });

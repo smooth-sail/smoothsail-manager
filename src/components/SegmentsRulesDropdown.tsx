@@ -2,7 +2,9 @@ import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Rule } from "../types";
-import RuleModal from "./RuleModal";
+import CreateRuleModal from "./CreateRuleModal";
+import UpdateRuleModal from "./UpdateRuleModal";
+import { useAttributes } from "../hooks/attributes";
 
 type SegmentsRulesDropdownProps = {
   rules: Rule[];
@@ -11,6 +13,14 @@ type SegmentsRulesDropdownProps = {
 
 function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
   const [openRuleModal, setOpenRuleModal] = useState(false);
+  const [openUpdateRuleModal, setOpenUpdateRuleModal] = useState(false);
+  const [currAKey, setCurrAKey] = useState("");
+  const [currRKey, setCurrRKey] = useState("");
+  const [currOperator, setCurrOperator] = useState("");
+  const [currValue, setCurrValue] = useState("");
+
+  const { data: attributes } = useAttributes();
+
   return (
     <>
       <Menu as="div" className="relative inline-block text-left">
@@ -35,10 +45,19 @@ function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
         >
           <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
-              {rules?.map(({ r_key }, idx) => (
+              {rules?.map(({ r_key, a_key, operator, value }) => (
                 <Menu.Item key={r_key}>
-                  <div className="text-gray-700 px-4 py-2 text-sm hover:bg-gray-100">
-                    Rule {idx + 1}
+                  <div
+                    onClick={() => {
+                      setCurrAKey(a_key);
+                      setCurrRKey(r_key);
+                      setCurrOperator(operator);
+                      setCurrValue(value);
+                      setOpenUpdateRuleModal(true);
+                    }}
+                    className="cursor-pointer text-gray-700 px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    {attributes?.find((a) => a.a_key === a_key)!.name}
                   </div>
                 </Menu.Item>
               ))}
@@ -54,10 +73,19 @@ function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
           </Menu.Items>
         </Transition>
       </Menu>
-      <RuleModal
+      <CreateRuleModal
         s_key={s_key}
         setOpen={setOpenRuleModal}
         open={openRuleModal}
+      />
+      <UpdateRuleModal
+        a_key={currAKey}
+        r_key={currRKey}
+        operator={currOperator}
+        value={currValue}
+        s_key={s_key}
+        setOpen={setOpenUpdateRuleModal}
+        open={openUpdateRuleModal}
       />
     </>
   );

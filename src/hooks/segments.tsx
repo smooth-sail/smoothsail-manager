@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  addSegmentsRule,
   createSegment,
   deleteSegment,
+  deleteSegmentsRule,
   getFlagsSegments,
   getSegments,
   updateFlagsSegment,
   updateSegment,
-} from "../services/segmentsService";
+} from "../services/segments";
 
 export const useSegments = () => {
   return useQuery({ queryKey: ["segments"], queryFn: getSegments });
@@ -63,6 +65,28 @@ export const useDeleteSegmentMutation = () => {
         queryKey: ["segments"],
         refetchType: "all",
       });
+    },
+  });
+};
+
+export const useAddSegmentRule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addSegmentsRule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["segments"] });
+    },
+  });
+};
+
+export const useDeleteSegmentRule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteSegmentsRule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
   });
 };

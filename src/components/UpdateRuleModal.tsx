@@ -1,14 +1,37 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import RuleForm from "./RuleForm";
+import Button from "./ui/Button";
+import UpdateRuleForm from "./UpdateRuleForm";
+import DeleteModal from "./DeleteModal";
+import { useDeleteSegmentRule } from "../hooks/segments";
 
-type RuleModalProps = {
+type UpdateRuleModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   s_key: string;
+  r_key: string;
+  a_key: string;
+  value: string;
+  operator: string;
 };
 
-function RuleModal({ open, setOpen, s_key }: RuleModalProps) {
+function UpdateRuleModal({
+  open,
+  setOpen,
+  s_key,
+  a_key,
+  r_key,
+  value,
+  operator,
+}: UpdateRuleModalProps) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { mutateAsync: deleteRuleMutate } = useDeleteSegmentRule();
+  const handleDeleteRule = () => {
+    deleteRuleMutate({ r_key, s_key });
+    setOpenDeleteModal(false);
+    setOpen(false);
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -40,19 +63,37 @@ function RuleModal({ open, setOpen, s_key }: RuleModalProps) {
                   <div className="mt-3 sm:mt-5">
                     <Dialog.Title
                       as="h3"
-                      className="text-base font-semibold leading-6 text-gray-900"
+                      className="flex justify-between text-base font-semibold leading-6 text-gray-900"
                     >
-                      Create a Rule
+                      <span className="self-end">Edit a Rule</span>
+                      <Button
+                        classNames="absolute right-6 top-6 bg-red-600 hover:bg-red-500"
+                        size="l"
+                        text="Delete"
+                        onClick={() => setOpenDeleteModal(true)}
+                      />
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Define your rule. If you don't have any attributes
+                        Update your rule. If you don't have any attributes
                         defined go add some in the attributes tab.
                       </p>
                     </div>
                   </div>
                 </div>
-                <RuleForm s_key={s_key} />
+                <UpdateRuleForm
+                  setOpen={setOpen}
+                  s_key={s_key}
+                  a_key={a_key}
+                  r_key={r_key}
+                  value={value}
+                  operator={operator}
+                />
+                <DeleteModal
+                  setOpen={setOpenDeleteModal}
+                  open={openDeleteModal}
+                  onDelete={handleDeleteRule}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -62,4 +103,4 @@ function RuleModal({ open, setOpen, s_key }: RuleModalProps) {
   );
 }
 
-export default RuleModal;
+export default UpdateRuleModal;
