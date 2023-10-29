@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import CreateFlagForm from "./CreateFlagForm";
+import CreateSegmentForm from "./CreateSegmentForm";
 
-type CreateFlagModalProps = {
+type CreateSegmentModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function CreateFlagModal({ open, setOpen }: CreateFlagModalProps) {
+function CreateSegmentModal({ open, setOpen }: CreateSegmentModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -41,18 +41,18 @@ function CreateFlagModal({ open, setOpen }: CreateFlagModalProps) {
                       as="h3"
                       className="text-base font-semibold leading-6 text-gray-900"
                     >
-                      Create a Flag
+                      Create a Segment
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Define your flag. Note, the flag key will be used to
-                        identify your flag in the database and can not be
+                        Define your segment. Note, the segment key will be used
+                        to identify your segment in the database and can not be
                         updated once it's created.
                       </p>
                     </div>
                   </div>
                 </div>
-                <CreateFlagForm setOpen={setOpen} />
+                <CreateSegmentForm setOpen={setOpen} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -62,4 +62,4 @@ function CreateFlagModal({ open, setOpen }: CreateFlagModalProps) {
   );
 }
 
-export default CreateFlagModal;
+export default CreateSegmentModal;

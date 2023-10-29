@@ -1,74 +1,41 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useCreateFlagMutation, useDeleteFlagMutation } from "../hooks/flags";
-import { Flag, NewFlag } from "../types";
-import Toggle from "./ui/Toggle";
-import Button from "./ui/Button";
-import DeleteModal from "./DeleteModal";
+import { useUpdateFlagMutation } from "../hooks/flags";
+import { Flag } from "../types";
+import { flagUpdatesSchema } from "../models/flags";
 
-export default function UpdateFlagForm({
-  setOpen,
-  ...props
-}: {
+type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Flag) {
-  const [isActive, setIsActive] = useState(props.is_active);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+} & Flag;
 
-  const schema = z.object({
-    title: z.string().trim().min(1, { message: "Flag name is required" }),
-    f_key: z.string().trim().min(1, { message: "Flag key is required" }),
-    description: z.string().optional(),
-  });
-
+function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<Flag>({
+    resolver: zodResolver(flagUpdatesSchema),
     defaultValues: {
       title: props.title,
       description: props.description,
     },
   });
 
-  const { mutateAsync: createFlagMutation } = useCreateFlagMutation();
-  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
+  const { mutateAsync: updateFlagMutation } = useUpdateFlagMutation();
 
-  const handleDeleteFlag = () => {
-    deleteFlagMutation(props.f_key);
-    setOpenDeleteModal(false);
-  };
+  const onSubmit = handleSubmit((bodyUpdates) => {
+    const flagUpdates = {
+      ...bodyUpdates,
+      f_key: props.f_key,
+    };
+    updateFlagMutation(flagUpdates);
+    setOpen(false);
+  });
 
   return (
     <>
-      <form
-        // onSubmit={handleSubmit((data) => {
-        //   const newFlag = data as NewFlag;
-        //   mutateAsync(newFlag);
-        //   setOpen(false);
-        // })}
-        className="flex flex-col gap-3"
-      >
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium leading-6 text-gray-900">
-              Currently Active:
-            </span>
-            <div className="mt-2">
-              <Toggle is_active={isActive} onIsActive={setIsActive} />
-            </div>
-          </div>
-          <Button
-            classNames="bg-red-600 hover:bg-red-500"
-            size="l"
-            text="Delete"
-            onClick={() => setOpenDeleteModal(true)}
-          />
-        </div>
+      <form onSubmit={onSubmit} className="flex flex-col gap-3">
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -158,11 +125,8 @@ export default function UpdateFlagForm({
           </button>
         </div>
       </form>
-      <DeleteModal
-        open={openDeleteModal}
-        setOpen={setOpenDeleteModal}
-        onDelete={handleDeleteFlag}
-      />
     </>
   );
 }
+
+export default UpdateFlagForm;

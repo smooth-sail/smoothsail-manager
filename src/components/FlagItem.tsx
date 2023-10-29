@@ -3,11 +3,13 @@ import { Flag } from "../types";
 import Toggle from "./ui/Toggle";
 import { useFlagToggleMutation } from "../hooks/flags";
 import UpdateFlagModal from "./UpdateFlagModal";
+import FlagsSegmentsModal from "./FlagsSegmentsModal";
 
 type FlagItemProps = Flag;
 
-export default function FlagItem(props: FlagItemProps) {
+function FlagItem(props: FlagItemProps) {
   const [isActive, setIsActive] = useState(props.is_active);
+  const [openSegmentsModal, setOpenSegmentsModal] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const { mutateAsync } = useFlagToggleMutation();
 
@@ -37,6 +39,14 @@ export default function FlagItem(props: FlagItemProps) {
           {props.updated_at}
         </td>
         <td className="px-3 py-4 text-sm text-gray-500">
+          <span
+            onClick={() => setOpenSegmentsModal(true)}
+            className="text-indigo-600 cursor-pointer hover:text-indigo-900"
+          >
+            Segments<span className="sr-only">, {props.title}</span>
+          </span>
+        </td>
+        <td className="px-3 py-4 text-sm text-gray-500">
           <Toggle is_active={isActive} onIsActive={handleIsActive} />
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
@@ -49,6 +59,14 @@ export default function FlagItem(props: FlagItemProps) {
         </td>
       </tr>
       <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
+      <FlagsSegmentsModal
+        title={props.title}
+        f_key={props.f_key}
+        open={openSegmentsModal}
+        setOpen={setOpenSegmentsModal}
+      />
     </>
   );
 }
+
+export default FlagItem;

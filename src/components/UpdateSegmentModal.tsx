@@ -1,25 +1,28 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Flag } from "../types";
-import UpdateFlagForm from "./UpdateFlagForm";
+import { Segment } from "../types";
+import UpdateSegmentForm from "./UpdateSegmentForm";
 import Button from "./ui/Button";
 import DeleteModal from "./DeleteModal";
-import { useDeleteFlagMutation } from "../hooks/flags";
+import { useDeleteSegmentMutation } from "../hooks/segments";
 
-type UpdateFlagModalProps = {
+type UpdateSegmentModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Flag;
+} & Segment;
 
-function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
+function UpdateSegmentModal({
+  open,
+  setOpen,
+  ...props
+}: UpdateSegmentModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
-  const handleDeleteFlag = () => {
-    deleteFlagMutation(props.f_key);
+  const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
+  const handleDeleteSegment = () => {
+    deleteSegmentMutate(props.s_key);
     setOpenDeleteModal(false);
     setOpen(false);
   };
-
   return (
     <tr>
       <td>
@@ -56,7 +59,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
                           className="flex justify-between text-base font-semibold leading-6 text-gray-900"
                         >
                           <span className="self-end">
-                            Edit flag: {props.title}
+                            Edit segment: {props.title}
                           </span>
                           <Button
                             classNames="absolute right-6 top-6 bg-red-600 hover:bg-red-500"
@@ -73,7 +76,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
                         </div>
                       </div>
                     </div>
-                    <UpdateFlagForm {...props} setOpen={setOpen} />
+                    <UpdateSegmentForm {...props} setOpen={setOpen} />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
@@ -81,7 +84,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
             <DeleteModal
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
-              onDelete={handleDeleteFlag}
+              onDelete={handleDeleteSegment}
             />
           </Dialog>
         </Transition.Root>
@@ -90,4 +93,4 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
   );
 }
 
-export default UpdateFlagModal;
+export default UpdateSegmentModal;
