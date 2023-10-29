@@ -61,10 +61,10 @@ class JetstreamManager {
     );
   }
 
-  async subscribeToStream(stream, subject, handler) {
+  async subscribeToStream(stream, subject, callbackFn) {
     await this.js.subscribe(
       `${stream}.${subject}`,
-      this.createConfig(subject, handler)
+      this.createConfig(subject, callbackFn)
     );
   }
 
@@ -77,12 +77,14 @@ class JetstreamManager {
     }
   }
 
-  createConfig(subject, handler) {
+  createConfig(subject, callbackFn) {
     const opts = consumerOpts();
-    opts.durable(subject);
-    opts.manualAck();
-    opts.callback(handler.bind(this));
+
     opts.deliverTo(createInbox());
+    opts.durable(subject);
+    callbackFn && opts.callback(callbackFn.bind(this));
+    opts.manualAck();
+
     return opts;
   }
 }
