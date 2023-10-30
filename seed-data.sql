@@ -22,13 +22,13 @@ VALUES
   ('no-rules-seg', 'Test seg 1', 'segment does not contain rules', 'all');
 
 INSERT INTO
-  flags_segments (flags_id, segments_id)
+  flags_segments (flag_id, segment_id)
 VALUES
   (1,1),
   (1, 2);
 
 INSERT INTO
-  rules (r_key, operator, value, segments_id, attributes_id)
+  rules (r_key, operator, value, segment_id, attribute_id)
 VALUES
   ('1abc', 'contains', '@gmail.com', 1, 1),
   ('bcd2', '=', true, 1, 3),
