@@ -5,7 +5,7 @@ import UpdateSegmentModal from "./UpdateSegmentModal";
 
 type SegmentItemProps = Segment;
 
-export default function SegmentItem(props: SegmentItemProps) {
+function SegmentItem(props: SegmentItemProps) {
   const [openEdit, setOpenEdit] = useState(false);
 
   return (
@@ -29,12 +29,12 @@ export default function SegmentItem(props: SegmentItemProps) {
           {props.rules_operator}
         </td>
         <td className="px-3 py-4 text-sm text-gray-500">
-          {<SegmentsRulesDropdown rules={props.rules} />}
+          {<SegmentsRulesDropdown s_key={props.s_key} rules={props.rules} />}
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span
             onClick={() => setOpenEdit(true)}
-            className="text-indigo-600 cursor-pointer hover:text-indigo-900"
+            className="cursor-pointer hover:text-ss-blgr"
           >
             Edit<span className="sr-only">, {props.title}</span>
           </span>
@@ -44,3 +44,5 @@ export default function SegmentItem(props: SegmentItemProps) {
     </>
   );
 }
+
+export default SegmentItem;

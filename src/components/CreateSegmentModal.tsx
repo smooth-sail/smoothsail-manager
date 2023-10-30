@@ -7,10 +7,7 @@ type CreateSegmentModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function CreateSegmentModal({
-  open,
-  setOpen,
-}: CreateSegmentModalProps) {
+function CreateSegmentModal({ open, setOpen }: CreateSegmentModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -64,3 +61,5 @@ export default function CreateSegmentModal({
     </Transition.Root>
   );
 }
+
+export default CreateSegmentModal;

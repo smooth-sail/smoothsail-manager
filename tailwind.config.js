@@ -9,6 +9,12 @@ export default {
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        "ss-blgr": "#239cba",
+        "ss-blgr-hover": "#28B1D4",
+        "ss-bl": "#23395b",
+        "ss-coral": "#eb9486",
+      },
     },
   },
   plugins: [require("@tailwindcss/forms")],

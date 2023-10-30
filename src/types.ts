@@ -42,7 +42,12 @@ export type SegmentOperator = z.infer<typeof segmentOperatorSchema>;
 export type Rule = {
   r_key: string;
   a_key: string;
-  type: "boolean" | "string" | "number";
   operator: string;
-  value: boolean | string | number;
+  value: string;
+};
+
+export type Attribute = {
+  name: string;
+  a_key: string;
+  type: "boolean" | "string" | "number";
 };

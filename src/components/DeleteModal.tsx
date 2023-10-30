@@ -3,25 +3,25 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useLocation } from "react-router-dom";
 
-export default function DeleteModal({
-  open,
-  setOpen,
-  onDelete,
-}: {
+type DeleteModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDelete: () => void;
-}) {
-  const path = useLocation().pathname;
+}
 
+function DeleteModal({
+  open,
+  setOpen,
+  onDelete,
+}: DeleteModalProps) {
+  const path = useLocation().pathname;
   const resource = (path: string) => {
-    switch (path) {
-      case "/flags":
-        return "flag";
-        break;
-      case "/segments":
-        return "segment";
-    }
+    const routes: { "/flags": string; "/segments": string } = {
+      "/flags": "flag",
+      "/segments": "segment",
+    };
+
+    return routes[path as keyof typeof routes];
   };
 
   return (
@@ -98,3 +98,5 @@ export default function DeleteModal({
     </Transition.Root>
   );
 }
+
+export default DeleteModal;
