@@ -17,17 +17,17 @@ const operators = [
 ];
 
 type RuleFormProps = {
-  s_key: string;
+  sKey: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function CreateRuleForm({ s_key, setOpen }: RuleFormProps) {
+function CreateRuleForm({ sKey, setOpen }: RuleFormProps) {
   const { data: attributes } = useAttributes();
   const { register, handleSubmit } = useForm<{
     attribute: string;
     operator: string;
     value: string;
-    s_key: string;
+    sKey: string;
   }>();
 
   const { mutateAsync: addSegmentRuleMutate } = useAddSegmentRule();
@@ -36,10 +36,10 @@ function CreateRuleForm({ s_key, setOpen }: RuleFormProps) {
     if (!attributes) return;
     const attr = attributes.find((a) => a.name === attribute)!;
     addSegmentRuleMutate({
-      a_key: attr.a_key,
+      aKey: attr.aKey,
       operator,
       value,
-      s_key,
+      sKey,
     });
     setOpen(false);
   });

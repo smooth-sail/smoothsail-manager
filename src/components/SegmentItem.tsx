@@ -15,21 +15,21 @@ function SegmentItem(props: SegmentItemProps) {
           {props.title}
           <dl className="font-normal lg:hidden">
             <dt className="sr-only">Segment Key</dt>
-            <dd className="mt-1 truncate text-gray-700">{props.s_key}</dd>
+            <dd className="mt-1 truncate text-gray-700">{props.sKey}</dd>
             <dt className="sr-only sm:hidden">Rules Operator</dt>
             <dd className="mt-1 truncate text-gray-500 sm:hidden">
-              {props.rules_operator}
+              {props.rulesOperator}
             </dd>
           </dl>
         </td>
         <td className="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-          {props.s_key}
+          {props.sKey}
         </td>
         <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
-          {props.rules_operator}
+          {props.rulesOperator}
         </td>
         <td className="px-3 py-4 text-sm text-gray-500">
-          {<SegmentsRulesDropdown s_key={props.s_key} rules={props.rules} />}
+          {<SegmentsRulesDropdown sKey={props.sKey} rules={props.rules} />}
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span

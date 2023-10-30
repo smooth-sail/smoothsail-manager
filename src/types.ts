@@ -28,10 +28,10 @@ export type NewFlag = z.infer<typeof newFlagSchema>;
 export type FlagUpdates = NewFlag;
 
 export type Segment = {
-  s_key: string;
+  sKey: string;
   title: string;
   description?: string;
-  rules_operator: string;
+  rulesOperator: string;
   rules: Rule[];
 };
 
@@ -40,14 +40,14 @@ export type SegmentUpdates = NewSegment;
 export type SegmentOperator = z.infer<typeof segmentOperatorSchema>;
 
 export type Rule = {
-  r_key: string;
-  a_key: string;
+  rKey: string;
+  aKey: string;
   operator: string;
   value: string;
 };
 
 export type Attribute = {
   name: string;
-  a_key: string;
+  aKey: string;
   type: "boolean" | "string" | "number";
 };

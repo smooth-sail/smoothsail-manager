@@ -19,7 +19,7 @@ function UpdateSegmentModal({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
   const handleDeleteSegment = () => {
-    deleteSegmentMutate(props.s_key);
+    deleteSegmentMutate(props.sKey);
     setOpenDeleteModal(false);
     setOpen(false);
   };

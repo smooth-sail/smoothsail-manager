@@ -5,10 +5,10 @@ import CreateRuleForm from "./CreateRuleForm.tsx";
 type CreateRuleModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  s_key: string;
+  sKey: string;
 };
 
-function CreateRuleModal({ open, setOpen, s_key }: CreateRuleModalProps) {
+function CreateRuleModal({ open, setOpen, sKey }: CreateRuleModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -52,7 +52,7 @@ function CreateRuleModal({ open, setOpen, s_key }: CreateRuleModalProps) {
                     </div>
                   </div>
                 </div>
-                <CreateRuleForm setOpen={setOpen} s_key={s_key} />
+                <CreateRuleForm setOpen={setOpen} sKey={sKey} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
