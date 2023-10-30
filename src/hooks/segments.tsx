@@ -22,7 +22,6 @@ export const useCreateSegmentMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
-    // need to add optimistic updates
   });
 };
 
@@ -52,7 +51,6 @@ export const useUpdateSegmentMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["segments"] });
     },
-    // need to add optimistic updates
   });
 };
 

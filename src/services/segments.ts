@@ -34,27 +34,27 @@ export const createSegment = async (newSegment: NewSegment) => {
   return data.payload;
 };
 
-export const getFlagsSegments = async (f_key: string): Promise<Segment[]> => {
+export const getFlagsSegments = async (fKey: string): Promise<Segment[]> => {
   const { data } = await axios.get<AllSegmentsResponse>(
-    flagsSegmentsPath(f_key),
+    flagsSegmentsPath(fKey),
   );
   return data.payload;
 };
 
 export const updateFlagsSegment = async ({
-  segmentKey,
-  flagKey,
+  sKey,
+  fKey,
   action,
 }: {
-  segmentKey: string;
-  flagKey: string;
+  sKey: string;
+  fKey: string;
   action: string;
 }) => {
   const { data } = await axios.patch<UpdateFlagsSegmentsResponse>(
-    updateFlagsSegmentsPath(flagKey),
+    updateFlagsSegmentsPath(fKey),
     {
       action,
-      payload: { s_key: segmentKey },
+      payload: { sKey },
     },
   );
   return data.s_key;
@@ -62,7 +62,7 @@ export const updateFlagsSegment = async ({
 
 export const updateSegment = async (segmentUpdates: SegmentUpdates) => {
   const { data } = await axios.patch<SegmentResponse>(
-    updateSegmentPath(segmentUpdates.s_key),
+    updateSegmentPath(segmentUpdates.sKey),
     {
       action: "body update",
       payload: segmentUpdates,
@@ -71,9 +71,9 @@ export const updateSegment = async (segmentUpdates: SegmentUpdates) => {
   return data.payload;
 };
 
-export const deleteSegment = async (segmentKey: string) => {
+export const deleteSegment = async (sKey: string) => {
   const { data } = await axios.delete<{ message: string }>(
-    deleteSegmentPath(segmentKey),
+    deleteSegmentPath(sKey),
   );
   return data.message;
 };
@@ -83,22 +83,22 @@ type RuleResponse = {
 };
 
 type AddRuleData = {
-  a_key: string;
+  aKey: string;
   operator: string;
   value: string;
-  s_key: string;
+  sKey: string;
 };
 
 export const addSegmentsRule = async ({
-  a_key,
+  aKey,
   operator,
   value,
-  s_key,
+  sKey,
 }: AddRuleData) => {
-  const { data } = await axios.patch<RuleResponse>(updateSegmentPath(s_key), {
+  const { data } = await axios.patch<RuleResponse>(updateSegmentPath(sKey), {
     action: "rule add",
     payload: {
-      a_key,
+      aKey,
       operator,
       value,
     },
@@ -107,17 +107,17 @@ export const addSegmentsRule = async ({
 };
 
 type RemoveRuleData = {
-  s_key: string;
-  r_key: string;
+  sKey: string;
+  rKey: string;
 };
 
-export const deleteSegmentsRule = async ({ s_key, r_key }: RemoveRuleData) => {
+export const deleteSegmentsRule = async ({ sKey, rKey }: RemoveRuleData) => {
   const { data } = await axios.patch<{ message: string }>(
-    updateSegmentPath(s_key),
+    updateSegmentPath(sKey),
     {
       action: "rule remove",
       payload: {
-        r_key,
+        rKey,
       },
     },
   );
@@ -125,17 +125,17 @@ export const deleteSegmentsRule = async ({ s_key, r_key }: RemoveRuleData) => {
 };
 
 export const updateSegmentsRule = async ({
-  a_key,
+  aKey,
   operator,
   value,
-  s_key,
-  r_key,
-}: AddRuleData & { r_key: string }) => {
-  const { data } = await axios.patch<RuleResponse>(updateSegmentPath(s_key), {
+  sKey,
+  rKey,
+}: AddRuleData & { rKey: string }) => {
+  const { data } = await axios.patch<RuleResponse>(updateSegmentPath(sKey), {
     action: "rule update",
     payload: {
-      a_key,
-      r_key,
+      aKey,
+      rKey,
       operator,
       value,
     },

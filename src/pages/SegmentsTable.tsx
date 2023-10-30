@@ -68,7 +68,7 @@ export default function SegmentsTable() {
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {segments?.map((segment) => (
-                <SegmentItem key={segment.s_key} {...segment} />
+                <SegmentItem key={segment.sKey} {...segment} />
               ))}
             </tbody>
           </table>

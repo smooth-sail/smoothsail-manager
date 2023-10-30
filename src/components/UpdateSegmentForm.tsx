@@ -29,7 +29,7 @@ function UpdateSegmentForm({
     return segmentRulesOperators[
       segmentRulesOperators
         .map(({ name }) => name.toLowerCase())
-        .indexOf(props.rules_operator)
+        .indexOf(props.rulesOperator)
     ];
   });
 
@@ -42,14 +42,14 @@ function UpdateSegmentForm({
     defaultValues: {
       title: props.title,
       description: props.description,
-      s_key: props.s_key,
+      sKey: props.sKey,
     },
   });
 
   const { mutateAsync: updateSegmentMutate } = useUpdateSegmentMutation();
 
   const onSubmit = handleSubmit((segmentUpdates) => {
-    segmentUpdates.rules_operator =
+    segmentUpdates.rulesOperator =
       selected.name.toLowerCase() as SegmentOperator;
     updateSegmentMutate(segmentUpdates);
     setOpen(false);
@@ -86,7 +86,7 @@ function UpdateSegmentForm({
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6">
-                {props.s_key}
+                {props.sKey}
               </span>
             </div>
           </div>

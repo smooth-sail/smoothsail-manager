@@ -36,7 +36,7 @@ function CreateSegmentForm({
   const { mutateAsync } = useCreateSegmentMutation();
 
   const onSubmit = handleSubmit((newSegment) => {
-    newSegment.rules_operator = selected.name.toLowerCase() as SegmentOperator;
+    newSegment.rulesOperator = selected.name.toLowerCase() as SegmentOperator;
     mutateAsync(newSegment);
     setOpen(false);
   });
@@ -74,16 +74,14 @@ function CreateSegmentForm({
           </label>
           <div className="mt-2">
             <input
-              {...register("s_key")}
+              {...register("sKey")}
               type="text"
-              name="s_key"
-              id="s_key"
+              name="sKey"
+              id="sKey"
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a segment key"
             />
-            {errors.s_key?.message && (
-              <p>{errors.s_key?.message as ReactNode}</p>
-            )}
+            {errors.sKey?.message && <p>{errors.sKey?.message as ReactNode}</p>}
           </div>
         </div>
       </div>

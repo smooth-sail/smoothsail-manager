@@ -28,7 +28,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
   const onSubmit = handleSubmit((bodyUpdates) => {
     const flagUpdates = {
       ...bodyUpdates,
-      f_key: props.f_key,
+      fKey: props.fKey,
     };
     updateFlagMutation(flagUpdates);
     setOpen(false);
@@ -65,7 +65,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.f_key}
+                {props.fKey}
               </span>
             </div>
           </div>
@@ -77,7 +77,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.created_at}
+                {props.createdAt}
               </span>
             </div>
           </div>
@@ -87,7 +87,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.updated_at}
+                {props.updatedAt}
               </span>
             </div>
           </div>

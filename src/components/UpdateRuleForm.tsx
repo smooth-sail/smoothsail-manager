@@ -17,18 +17,18 @@ const operators = [
 ];
 
 type UpdateRuleFormProps = {
-  s_key: string;
-  r_key: string;
-  a_key: string;
+  sKey: string;
+  rKey: string;
+  aKey: string;
   operator: string;
   value: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function UpdateRuleForm({
-  a_key,
-  r_key,
-  s_key,
+  aKey,
+  rKey,
+  sKey,
   operator,
   value,
   setOpen,
@@ -38,20 +38,20 @@ function UpdateRuleForm({
     attribute: string;
     operator: string;
     value: string;
-    s_key: string;
+    sKey: string;
   }>();
 
   const { mutateAsync: updateSegmentRuleMutate } = useUpdateSegmentRule();
 
   const onSubmit = handleSubmit(({ attribute, operator, value }) => {
     if (!attributes) return;
-    const attr = attributes.find((a) => a.name === attribute)!.a_key;
+    const attr = attributes.find((a) => a.name === attribute)!.aKey;
     const data = {
-      a_key: attr,
+      aKey: attr,
       operator,
       value,
-      s_key,
-      r_key,
+      sKey,
+      rKey,
     };
     updateSegmentRuleMutate(data);
     setOpen(false);
@@ -69,7 +69,7 @@ function UpdateRuleForm({
         <select
           id="attribute"
           className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
-          defaultValue={attributes?.find((a) => a.a_key === a_key)!.name}
+          defaultValue={attributes?.find((a) => a.aKey === aKey)!.name}
           {...register("attribute")}
         >
           {attributes?.length === 0 ? (
@@ -122,7 +122,7 @@ function UpdateRuleForm({
         text="Cancel"
         onClick={() => setOpen(false)}
       />
-      <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"></div>
+      {/* <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"></div> */}
     </form>
   );
 }

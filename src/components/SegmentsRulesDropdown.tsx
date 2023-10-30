@@ -8,10 +8,10 @@ import { useAttributes } from "../hooks/attributes";
 
 type SegmentsRulesDropdownProps = {
   rules: Rule[];
-  s_key: string;
+  sKey: string;
 };
 
-function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
+function SegmentsRulesDropdown({ rules, sKey }: SegmentsRulesDropdownProps) {
   const [openRuleModal, setOpenRuleModal] = useState(false);
   const [openUpdateRuleModal, setOpenUpdateRuleModal] = useState(false);
   const [currAKey, setCurrAKey] = useState("");
@@ -45,19 +45,19 @@ function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
         >
           <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
             <div className="py-1">
-              {rules?.map(({ r_key, a_key, operator, value }) => (
-                <Menu.Item key={r_key}>
+              {rules?.map(({ rKey, aKey, operator, value }) => (
+                <Menu.Item key={rKey}>
                   <div
                     onClick={() => {
-                      setCurrAKey(a_key);
-                      setCurrRKey(r_key);
+                      setCurrAKey(aKey);
+                      setCurrRKey(rKey);
                       setCurrOperator(operator);
                       setCurrValue(value);
                       setOpenUpdateRuleModal(true);
                     }}
                     className="cursor-pointer text-gray-700 px-4 py-2 text-sm hover:bg-gray-100"
                   >
-                    {attributes?.find((a) => a.a_key === a_key)!.name}
+                    {attributes?.find((a) => a.aKey === aKey)!.name}
                   </div>
                 </Menu.Item>
               ))}
@@ -74,16 +74,16 @@ function SegmentsRulesDropdown({ rules, s_key }: SegmentsRulesDropdownProps) {
         </Transition>
       </Menu>
       <CreateRuleModal
-        s_key={s_key}
+        sKey={sKey}
         setOpen={setOpenRuleModal}
         open={openRuleModal}
       />
       <UpdateRuleModal
-        a_key={currAKey}
-        r_key={currRKey}
+        aKey={currAKey}
+        rKey={currRKey}
         operator={currOperator}
         value={currValue}
-        s_key={s_key}
+        sKey={sKey}
         setOpen={setOpenUpdateRuleModal}
         open={openUpdateRuleModal}
       />

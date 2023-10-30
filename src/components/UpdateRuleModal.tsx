@@ -8,9 +8,9 @@ import { useDeleteSegmentRule } from "../hooks/segments";
 type UpdateRuleModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  s_key: string;
-  r_key: string;
-  a_key: string;
+  sKey: string;
+  rKey: string;
+  aKey: string;
   value: string;
   operator: string;
 };
@@ -18,16 +18,16 @@ type UpdateRuleModalProps = {
 function UpdateRuleModal({
   open,
   setOpen,
-  s_key,
-  a_key,
-  r_key,
+  sKey,
+  aKey,
+  rKey,
   value,
   operator,
 }: UpdateRuleModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteRuleMutate } = useDeleteSegmentRule();
   const handleDeleteRule = () => {
-    deleteRuleMutate({ r_key, s_key });
+    deleteRuleMutate({ rKey, sKey });
     setOpenDeleteModal(false);
     setOpen(false);
   };
@@ -83,9 +83,9 @@ function UpdateRuleModal({
                 </div>
                 <UpdateRuleForm
                   setOpen={setOpen}
-                  s_key={s_key}
-                  a_key={a_key}
-                  r_key={r_key}
+                  sKey={sKey}
+                  aKey={aKey}
+                  rKey={rKey}
                   value={value}
                   operator={operator}
                 />

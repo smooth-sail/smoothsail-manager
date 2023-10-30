@@ -73,7 +73,7 @@ export default function FlagsTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {flags?.map((flag) => <FlagItem key={flag.f_key} {...flag} />)}
+              {flags?.map((flag) => <FlagItem key={flag.fKey} {...flag} />)}
             </tbody>
           </table>
         </div>

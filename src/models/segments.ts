@@ -7,13 +7,13 @@ export const segmentOperatorSchema = z
 
 export const newSegmentSchema = z.object({
   title: z.string().trim().min(1, { message: "Segment name is required" }),
-  s_key: z.string().trim().min(1, { message: "Segment key is required" }),
+  sKey: z.string().trim().min(1, { message: "Segment key is required" }),
   description: z.string().optional(),
-  rules_operator: segmentOperatorSchema,
+  rulesOperator: segmentOperatorSchema,
 });
 
 export const updateSegmentSchema = z.object({
   title: z.string().trim().min(1, { message: "Segment name is required" }),
   description: z.string().optional(),
-  rules_operator: segmentOperatorSchema,
+  rulesOperator: segmentOperatorSchema,
 });
