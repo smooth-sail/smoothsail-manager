@@ -50,7 +50,6 @@ export const createFlag = async (req, res) => {
     );
     flag = newFlag.get({ plain: true });
     delete flag.id;
-    return res.status(200).json({ payload: flag });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: error.message }); // must support other res stats codes
