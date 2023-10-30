@@ -93,6 +93,7 @@ const updateFlagBody = async (req, res) => {
 
   let updatedFlag;
   try {
+    let { title, description } = req.body.payload;
     updatedFlag = await sequelize.transaction(async (t) => {
       let flag = await Flag.findOne(
         {
@@ -106,8 +107,8 @@ const updateFlagBody = async (req, res) => {
       }
 
       flag.set({
-        title: req.body.title,
-        description: req.body.description,
+        title,
+        description,
       });
 
       await flag.save({ fields: ["title", "description"], transaction: t });
@@ -139,7 +140,7 @@ const toggleFlag = async (req, res) => {
         throw new Error(`Flag with id ${flagKey} does not exist.`);
       }
 
-      flag.set({ isActive: req.body.isActive, updatedAt: new Date() });
+      flag.set({ isActive: req.body.payload.isActive, updatedAt: new Date() });
 
       await flag.save({ fields: ["isActive", "updatedAt"], transaction: t });
       return flag;
@@ -479,7 +480,7 @@ export const deleteSegment = async (req, res) => {
 
 const updateSegmentBody = async (req, res) => {
   const segmentKey = req.params.sKey;
-
+  const { title, description, rulesOperator } = req.body.payload;
   let updatedSegment;
   try {
     updatedSegment = await sequelize.transaction(async (t) => {
@@ -495,9 +496,9 @@ const updateSegmentBody = async (req, res) => {
       }
 
       segment.set({
-        title: req.body.payload.title,
-        description: req.body.payload.description,
-        rulesOperator: req.body.payload.rulesOperator,
+        title,
+        description,
+        rulesOperator,
       });
       // we can allow change of sKey if we want
       await segment.save({
@@ -514,7 +515,7 @@ const updateSegmentBody = async (req, res) => {
   let plainSegment = updatedSegment.get({ plain: true }); // DRY into sep method
   delete plainSegment.id;
 
-  if (req.body.payload.rulesOperator) {
+  if (rulesOperator) {
     let sseMsg = {
       type: "segment body update",
       payload: {
@@ -602,7 +603,7 @@ const updateRule = async (req, res) => {
       if (segment === null) {
         return res
           .status(404)
-          .jsn({ error: `Segment with id ${segmentKey} does not exist.` });
+          .json({ error: `Segment with id ${segmentKey} does not exist.` });
       }
 
       let attr = await Attribute.findOne(
@@ -614,7 +615,7 @@ const updateRule = async (req, res) => {
       if (attr === null) {
         return res
           .status(404)
-          .jsn({ error: `Attribute with id ${attrKey} does not exist.` });
+          .json({ error: `Attribute with id ${attrKey} does not exist.` });
       }
       let rule = await Rule.findOne(
         {
@@ -627,12 +628,13 @@ const updateRule = async (req, res) => {
         throw new Error(`Rule with id ${ruleKey} does not exist.`);
       }
 
+      const { operator, value, aKey, rKey } = req.body.payload;
       await rule.set(
         {
-          operator: req.body.payload.operator,
-          value: req.body.payload.value,
-          aKey: req.body.payload.aKey,
-          rKey: req.body.payload.rKey,
+          operator,
+          value,
+          aKey,
+          rKey,
         },
         { transaction: t }
       );
@@ -696,7 +698,7 @@ const removeRule = async (req, res) => {
   };
   clients.sendNotificationToAllClients(sseMsg);
 
-  return res.status(200).json({ message: "Flag successfully deleted." });
+  return res.status(200).json({ message: "Rule successfully deleted." });
 };
 export const updateSegment = async (req, res) => {
   let action = req.body.action;
@@ -807,7 +809,7 @@ export const updateAttribute = async (req, res) => {
         throw new Error(`Attribute with id ${attrKey} does not exist.`);
       }
 
-      await attr.set({ aKey: req.body.aKey, name: req.body.name });
+      attr.set({ aKey: req.body.aKey, name: req.body.name });
       await attr.save();
       return attr;
     });
