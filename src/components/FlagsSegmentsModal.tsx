@@ -11,19 +11,19 @@ type FlagsSegmentsModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
-  f_key: string;
+  fKey: string;
 };
 
 function FlagsSegmentsModal({
   open,
   setOpen,
   title,
-  f_key,
+  fKey,
 }: FlagsSegmentsModalProps) {
-  const { data: flagsSegments } = useFlagsSegments(f_key);
+  const { data: flagsSegments } = useFlagsSegments(fKey);
   const { data: segments } = useSegments();
   const { mutateAsync: updateFlagsSegmentMutate } =
-    useUpdateFlagsSegmentMutation(f_key);
+    useUpdateFlagsSegmentMutation(fKey);
 
   return (
     <tr className="border-none">
@@ -73,7 +73,7 @@ function FlagsSegmentsModal({
                       </div>
                       <div>
                         <ul role="list" className="divide-y divide-gray-100">
-                          {segments?.map(({ title, s_key }) => (
+                          {segments?.map(({ title, sKey }) => (
                             <li
                               key={title}
                               className="flex items-center justify-between gap-x-6 py-5"
@@ -91,8 +91,8 @@ function FlagsSegmentsModal({
                                 <button
                                   onClick={() => {
                                     updateFlagsSegmentMutate({
-                                      flagKey: f_key,
-                                      segmentKey: s_key,
+                                      fKey,
+                                      sKey,
                                       action: "segment remove",
                                     });
                                   }}
@@ -104,8 +104,8 @@ function FlagsSegmentsModal({
                                 <button
                                   onClick={() =>
                                     updateFlagsSegmentMutate({
-                                      flagKey: f_key,
-                                      segmentKey: s_key,
+                                      fKey,
+                                      sKey,
                                       action: "segment add",
                                     })
                                   }

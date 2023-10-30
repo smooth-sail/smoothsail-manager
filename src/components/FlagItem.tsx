@@ -61,7 +61,7 @@ function FlagItem(props: FlagItemProps) {
       <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
       <FlagsSegmentsModal
         title={props.title}
-        f_key={props.fKey}
+        fKey={props.fKey}
         open={openSegmentsModal}
         setOpen={setOpenSegmentsModal}
       />
