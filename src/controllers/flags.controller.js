@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import Clients from "../models/sse-clients";
 import { Flag, Segment, Attribute, Rule, sequelize } from "../models/sequelize";
+import jsm from "../nats/JetStreamManager";
 
 // sse related instances
 let clients = new Clients();
@@ -54,8 +55,8 @@ export const createFlag = async (req, res) => {
     return res.status(500).json({ error: error.message }); // must support other res stats codes
   }
 
-  let sseMsg = { type: "new-flag", payload: flag };
-  clients.sendNotificationToAllClients(sseMsg);
+  let msg = { type: "new-flag", payload: flag };
+  jsm.publishFlagUpdate(msg);
 
   return res.status(200).json({ payload: flag });
 };
@@ -81,8 +82,8 @@ export const deleteFlag = async (req, res) => {
     return;
   }
 
-  let sseMsg = { type: "deleted-flag", payload: flagKey };
-  clients.sendNotificationToAllClients(sseMsg);
+  let msg = { type: "deleted-flag", payload: flagKey };
+  jsm.publishFlagUpdate(msg);
 
   return res.status(200).json({ message: "Flag successfully deleted." });
 };
@@ -154,8 +155,8 @@ const toggleFlag = async (req, res) => {
 
   res.status(200).json({ isActive: planeFlag.isActive });
 
-  let sseMsg = { type: "toggle", payload: updatedFlag };
-  return clients.sendNotificationToAllClients(sseMsg);
+  let msg = { type: "toggle", payload: updatedFlag };
+  return jsm.publishFlagUpdate(msg);
 };
 
 const addSegmentToFlag = async (req, res) => {
@@ -209,7 +210,7 @@ const addSegmentToFlag = async (req, res) => {
   }
 
   let plainSegment = formatSegment(updatedSegment);
-  let sseMsg = {
+  let msg = {
     type: "segment add",
     payload: {
       fKey: updatedFlag.fKey,
@@ -217,7 +218,7 @@ const addSegmentToFlag = async (req, res) => {
       plainSegment,
     },
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
 
   res.status(200).json({ payload: plainSegment });
 };
@@ -265,14 +266,14 @@ const removeSegmentFromFlag = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
-  let sseMsg = {
+  let msg = {
     type: "segment remove",
     payload: {
       fKey: flagKey,
       sKey: segmentKey,
     },
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
 
   res.status(200).json({ message: "Segment was successfully removed." });
 };
@@ -324,7 +325,7 @@ const formatSegment = (s, forSDK) => {
 
   return s;
 };
-const formatSegments = (segments, forSDK) => {
+export const formatSegments = (segments, forSDK) => {
   return segments.map((s) => {
     return formatSegment(s, forSDK);
   });
