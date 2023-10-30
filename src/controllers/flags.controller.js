@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
-import Clients from "../models/sse-clients";
+// import Clients from "../models/sse-clients";
 import { Flag, Segment, Attribute, Rule, sequelize } from "../models/sequelize";
 import jsm from "../nats/JetStreamManager";
 
 // sse related instances
-let clients = new Clients();
+// let clients = new Clients();
 
 export const getAllFlags = async (req, res) => {
   let flags;
@@ -516,14 +516,14 @@ const updateSegmentBody = async (req, res) => {
   delete plainSegment.id;
 
   if (rulesOperator) {
-    let sseMsg = {
+    let msg = {
       type: "segment body update",
       payload: {
         sKey: plainSegment.sKey,
         rulesOperator: plainSegment.rulesOperator,
       },
     };
-    clients.sendNotificationToAllClients(sseMsg);
+    jsm.publishFlagUpdate(msg);
   }
   return res.status(200).json(plainSegment);
 };
@@ -579,11 +579,11 @@ const addRuleToSegment = async (req, res) => {
     });
   }
 
-  let sseMsg = {
+  let msg = {
     type: "rule add",
     payload,
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
   res.status(200).json({ payload });
 };
 
@@ -656,11 +656,11 @@ const updateRule = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
   }
-  let sseMsg = {
+  let msg = {
     type: "rule update",
     payload: payload,
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
   return res.status(200).json(payload);
 };
 
@@ -692,11 +692,11 @@ const removeRule = async (req, res) => {
       .json({ error: `Rule with id ${ruleKey} does not exist.` });
   }
 
-  let sseMsg = {
+  let msg = {
     type: "rule remove",
     payload: { rKey: ruleKey, sKey: segmentKey },
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
 
   return res.status(200).json({ message: "Rule successfully deleted." });
 };
@@ -823,29 +823,7 @@ export const updateAttribute = async (req, res) => {
   return res.status(200).json({ payload: plainAttr });
 };
 
-// =================== SSE / SDK
-
-export const sseNotifications = (req, res) => {
-  const headers = {
-    "Content-Type": "text/event-stream",
-    Connection: "keep-alive",
-    "Cache-Control": "no-cache",
-  };
-  res.writeHead(200, headers);
-
-  const clientId = clients.addNewClient(res);
-
-  const connectMsg = `SSE connection established with client id: ${clientId}`;
-  console.log(connectMsg);
-
-  let data = `data: ${JSON.stringify({ msg: connectMsg })}\n\n`;
-  res.write(data);
-
-  req.on("close", () => {
-    console.log(`${clientId} Connection closed`);
-    clients.closeClient(clientId);
-  });
-};
+// =================== SDK-service routes
 
 export const getSdkFlags = async (req, res) => {
   let data = {};
