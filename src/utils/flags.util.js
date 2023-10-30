@@ -1,4 +1,5 @@
-import pg from "../db/flags";
+import { Flag, Segment, Attribute, Rule } from "../models/sequelize";
+import { formatSegments } from "../controllers/flags.controller";
 
 const segmentNotAdded = (flag, s_key) => {
   return !flag.segments.some((segment) => segment.s_key === s_key);
@@ -37,10 +38,28 @@ export const transformFlagData = (flags) => {
 };
 
 export const getSdkFlags = async () => {
-  const flags = await pg.getSdkFlags();
-  flags.forEach((f) => {
-    delete f.id;
-  });
-  const data = transformFlagData(flags);
+  let data = {};
+  try {
+    let flags = await Flag.findAll({
+      attributes: { exclude: ["id", "title", "description", "createdAt"] },
+      include: {
+        model: Segment,
+        include: {
+          model: Rule,
+          include: {
+            model: Attribute,
+          },
+        },
+      },
+    });
+    flags.forEach((f) => {
+      f = f.toJSON();
+      f.segments = formatSegments(f.Segments, true);
+      delete f.Segments;
+      data[f.fKey] = f;
+    });
+  } catch (err) {
+    console.log(err);
+  }
   return data;
 };

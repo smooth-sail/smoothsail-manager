@@ -325,7 +325,7 @@ const formatSegment = (s, forSDK) => {
 
   return s;
 };
-const formatSegments = (segments, forSDK) => {
+export const formatSegments = (segments, forSDK) => {
   return segments.map((s) => {
     return formatSegment(s, forSDK);
   });
