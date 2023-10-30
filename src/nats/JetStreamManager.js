@@ -16,8 +16,12 @@ class JetstreamManager {
 
   async initialize() {
     await this.connectToJetStream();
-    await this.addStream(FLAG_STREAM_CONFIG);
-    await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
+
+    if (!(await this.streamsExist())) {
+      await this.addStream(FLAG_STREAM_CONFIG);
+      await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
+    }
+
     await this.subscribeToStream(
       "FLAG_DATA",
       "REQUEST_ALL_FLAGS",
@@ -27,7 +31,7 @@ class JetstreamManager {
 
   async connectToJetStream() {
     this.nc = await connect({ servers: process.env.NATS_SERVER });
-    this.js = await this.nc.jetstream();
+    this.js = this.nc.jetstream();
     this.jsm = await this.nc.jetstreamManager();
   }
 
@@ -55,10 +59,15 @@ class JetstreamManager {
 
   async publishFlagData() {
     const data = await getSdkFlags();
-    await this.js.publish(
-      "FLAG_DATA.GET_ALL_FLAGS",
-      this.sc.encode(JSON.stringify(data))
-    );
+    const json = JSON.stringify(data);
+    await this.js
+      .publish("FLAG_DATA.GET_ALL_FLAGS", this.sc.encode(json))
+      .catch((err) => {
+        throw Error(
+          err,
+          "NATS Jetstream: Publish message has failed. Check your connection."
+        );
+      });
   }
 
   async subscribeToStream(stream, subject, callbackFn) {
@@ -86,6 +95,15 @@ class JetstreamManager {
     opts.manualAck();
 
     return opts;
+  }
+
+  async streamsExist() {
+    try {
+      const flagData = await this.jsm.streams.info("FLAG_DATA");
+      return flagData.config.name === "FLAG_DATA";
+    } catch (err) {
+      return false;
+    }
   }
 }
 
