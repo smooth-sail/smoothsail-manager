@@ -8,14 +8,14 @@ import FlagsSegmentsModal from "./FlagsSegmentsModal";
 type FlagItemProps = Flag;
 
 function FlagItem(props: FlagItemProps) {
-  const [isActive, setIsActive] = useState(props.is_active);
+  const [isActive, setIsActive] = useState(props.isActive);
   const [openSegmentsModal, setOpenSegmentsModal] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const { mutateAsync } = useFlagToggleMutation();
 
   const handleIsActive = (checked: boolean) => {
     setIsActive(checked);
-    mutateAsync({ is_active: checked, flagKey: props.f_key });
+    mutateAsync({ isActive: checked, fKey: props.fKey });
   };
 
   return (
@@ -25,18 +25,18 @@ function FlagItem(props: FlagItemProps) {
           {props.title}
           <dl className="font-normal lg:hidden">
             <dt className="sr-only">Flag Key</dt>
-            <dd className="mt-1 truncate text-gray-700">{props.f_key}</dd>
+            <dd className="mt-1 truncate text-gray-700">{props.fKey}</dd>
             <dt className="sr-only sm:hidden">Updated At</dt>
             <dd className="mt-1 truncate text-gray-500 sm:hidden">
-              {props.updated_at}
+              {props.updatedAt}
             </dd>
           </dl>
         </td>
         <td className="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-          {props.f_key}
+          {props.fKey}
         </td>
         <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
-          {props.updated_at}
+          {props.updatedAt}
         </td>
         <td className="px-3 py-4 text-sm font-medium">
           <span
@@ -61,7 +61,7 @@ function FlagItem(props: FlagItemProps) {
       <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
       <FlagsSegmentsModal
         title={props.title}
-        f_key={props.f_key}
+        f_key={props.fKey}
         open={openSegmentsModal}
         setOpen={setOpenSegmentsModal}
       />

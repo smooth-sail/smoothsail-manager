@@ -15,7 +15,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
   const handleDeleteFlag = () => {
-    deleteFlagMutation(props.f_key);
+    deleteFlagMutation(props.fKey);
     setOpenDeleteModal(false);
     setOpen(false);
   };

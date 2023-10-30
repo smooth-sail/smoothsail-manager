@@ -15,12 +15,12 @@ export type NavLink = {
 };
 
 export type Flag = {
-  f_key: string;
+  fKey: string;
   title: string;
   description?: string;
-  created_at: string;
-  updated_at: string;
-  is_active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
 };
 
 export type NewFlag = z.infer<typeof newFlagSchema>;
