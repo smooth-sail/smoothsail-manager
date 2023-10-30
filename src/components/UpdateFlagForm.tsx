@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useUpdateFlagMutation } from "../hooks/flags";
 import { Flag } from "../types";
 import { flagUpdatesSchema } from "../models/flags";
+import FormButton from "./ui/FormButton";
 
 type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -50,7 +51,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
                 type="text"
                 name="title"
                 id="title"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
                 placeholder="Enter a flag name"
               />
               {errors.title?.message && (
@@ -104,25 +105,19 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
               rows={4}
               name="description"
               id="description"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Write an optional description about your flag"
             />
           </div>
         </div>
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <button
-            type="submit"
-            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-          >
-            Save
-          </button>
-          <button
+          <FormButton typeOfButton="confirm" type="submit" text="Save" />
+          <FormButton
+            typeOfButton="cancel"
             type="button"
-            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+            text="Cancel"
             onClick={() => setOpen(false)}
-          >
-            Cancel
-          </button>
+          />
         </div>
       </form>
     </>

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useCreateFlagMutation } from "../hooks/flags";
 import { NewFlag } from "../types";
 import { newFlagSchema } from "../models/flags";
+import FormButton from "./ui/FormButton";
 
 function CreateFlagForm({
   setOpen,
@@ -41,7 +42,7 @@ function CreateFlagForm({
               type="text"
               name="title"
               id="title"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#239cba] sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a flag name"
             />
             {errors.title?.message && (
@@ -62,7 +63,7 @@ function CreateFlagForm({
               type="text"
               name="f_key"
               id="f_key"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#239cba] sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a flag key"
             />
             {errors.f_key?.message && (
@@ -84,25 +85,19 @@ function CreateFlagForm({
             rows={4}
             name="description"
             id="description"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#239cba] sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
             placeholder="Write an optional description about your flag"
           />
         </div>
       </div>
       <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-        <button
-          type="submit"
-          className="inline-flex w-full justify-center rounded-md bg-[#239cba] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#28B1D4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#239cba] sm:col-start-2"
-        >
-          Save
-        </button>
-        <button
+        <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        <FormButton
+          typeOfButton="cancel"
           type="button"
-          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0 focus-visible:outline-[#239cba]"
+          text="Cancel"
           onClick={() => setOpen(false)}
-        >
-          Cancel
-        </button>
+        />
       </div>
     </form>
   );

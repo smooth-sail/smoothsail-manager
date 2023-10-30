@@ -8,12 +8,12 @@ function DesktopSidebar() {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-20 lg:flex lg:w-72 lg:flex-col">
       {/* Sidebar component, swap this element with another sidebar if you like */}
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-[#23395b] to-[#365A8F] px-6 pb-4">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-ss-bl from-30% via-[#365A8F] via-60% to-[#406AA8] to-90% px-6 pb-4">
         <div className="mt-4 flex h-16 shrink-0 items-center">
           <img
             className="h-28 w-auto"
             src="/smooth-sail-transparent.png"
-            alt="Your Company"
+            alt="Smooth Sail"
           />
         </div>
         <nav className="flex flex-1 flex-col">

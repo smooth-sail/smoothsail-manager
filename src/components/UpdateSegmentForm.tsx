@@ -6,6 +6,7 @@ import { newSegmentSchema } from "../models/segments";
 import { useUpdateSegmentMutation } from "../hooks/segments";
 import { RadioGroup } from "@headlessui/react";
 import { classNames } from "../utils/classNames";
+import FormButton from "./ui/FormButton";
 
 const segmentRulesOperators = [
   {
@@ -71,7 +72,7 @@ function UpdateSegmentForm({
                 type="text"
                 name="title"
                 id="title"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
                 placeholder="Enter a segment name"
               />
               {errors.title?.message && (
@@ -84,7 +85,7 @@ function UpdateSegmentForm({
               Segment Key
             </p>
             <div className="mt-2">
-              <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6">
                 {props.s_key}
               </span>
             </div>
@@ -103,7 +104,7 @@ function UpdateSegmentForm({
               rows={4}
               name="description"
               id="description"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Write an optional description about your segment"
             />
           </div>
@@ -124,7 +125,7 @@ function UpdateSegmentForm({
                       ? "rounded-bl-md rounded-br-md"
                       : "",
                     checked
-                      ? "z-10 border-indigo-200 bg-indigo-50"
+                      ? "z-10 border-ss-blgr bg-sky-50"
                       : "border-gray-200",
                     "relative flex cursor-pointer border p-4 focus:outline-none",
                   )
@@ -135,9 +136,9 @@ function UpdateSegmentForm({
                     <span
                       className={classNames(
                         checked
-                          ? "bg-indigo-600 border-transparent"
+                          ? "bg-ss-blgr border-transparent"
                           : "bg-white border-gray-300",
-                        active ? "ring-2 ring-offset-2 ring-indigo-600" : "",
+                        active ? "ring-2 ring-offset-2 ring-ss-blgr" : "",
                         "mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-full border flex items-center justify-center",
                       )}
                       aria-hidden="true"
@@ -148,7 +149,7 @@ function UpdateSegmentForm({
                       <RadioGroup.Label
                         as="span"
                         className={classNames(
-                          checked ? "text-indigo-900" : "text-gray-900",
+                          checked ? "text-ss-blgr" : "text-gray-900",
                           "block text-sm font-medium",
                         )}
                       >
@@ -157,7 +158,7 @@ function UpdateSegmentForm({
                       <RadioGroup.Description
                         as="span"
                         className={classNames(
-                          checked ? "text-indigo-700" : "text-gray-500",
+                          checked ? "text-ss-blgr" : "text-gray-500",
                           "block text-sm",
                         )}
                       >
@@ -170,21 +171,14 @@ function UpdateSegmentForm({
             ))}
           </div>
         </RadioGroup>
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <button
-            type="submit"
-            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-            onClick={() => setOpen(false)}
-          >
-            Cancel
-          </button>
-        </div>
+        <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        <FormButton
+          typeOfButton="cancel"
+          type="button"
+          text="Cancel"
+          onClick={() => setOpen(false)}
+        />
+        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"></div>
       </form>
     </>
   );

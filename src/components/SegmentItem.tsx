@@ -34,7 +34,7 @@ function SegmentItem(props: SegmentItemProps) {
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span
             onClick={() => setOpenEdit(true)}
-            className="text-indigo-600 cursor-pointer hover:text-indigo-900"
+            className="cursor-pointer hover:text-ss-blgr"
           >
             Edit<span className="sr-only">, {props.title}</span>
           </span>

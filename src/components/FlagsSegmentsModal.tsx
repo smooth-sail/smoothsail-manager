@@ -5,6 +5,7 @@ import {
   useSegments,
   useUpdateFlagsSegmentMutation,
 } from "../hooks/segments";
+import FormButton from "./ui/FormButton";
 
 type FlagsSegmentsModalProps = {
   open: boolean;
@@ -95,7 +96,7 @@ function FlagsSegmentsModal({
                                       action: "segment remove",
                                     });
                                   }}
-                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
                                 >
                                   Delete
                                 </button>
@@ -108,7 +109,7 @@ function FlagsSegmentsModal({
                                       action: "segment add",
                                     })
                                   }
-                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
                                 >
                                   Add
                                 </button>
@@ -118,13 +119,12 @@ function FlagsSegmentsModal({
                         </ul>
                       </div>
                     </div>
-                    <button
+                    <FormButton
+                      typeOfButton="cancel"
                       type="button"
-                      className="mt-3 w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                      text="Close"
                       onClick={() => setOpen(false)}
-                    >
-                      Close
-                    </button>
+                    />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
