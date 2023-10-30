@@ -60,7 +60,6 @@ export const Flag = sequelize.define(
       field: "is_active",
       validate: {
         isBool(val) {
-          console.log("helo");
           if (typeof val !== "boolean") {
             throw new Error("The type of isActive must be boolean.");
           }
@@ -73,6 +72,19 @@ export const Flag = sequelize.define(
       timezone: true,
       allowNull: false,
       field: "created_at",
+      get() {
+        const rawDate = this.getDataValue("createdAt");
+        const date = new Date(`${rawDate}`);
+        return date.toLocaleTimeString("default", {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        });
+      },
     },
     updatedAt: {
       type: DataTypes.DATE,
@@ -80,11 +92,23 @@ export const Flag = sequelize.define(
       timezone: true,
       allowNull: false,
       field: "updated_at",
+      get() {
+        const rawDate = this.getDataValue("updatedAt");
+        const date = new Date(`${rawDate}`);
+        return date.toLocaleTimeString("default", {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        });
+      },
     },
   },
   {
     sequelize,
-    // modelName: "Flag",
     tableName: "flags",
   }
 );
@@ -170,7 +194,6 @@ const FlagSegments = sequelize.define(
   },
   {
     sequelize,
-    // modelName: "FlagSegments",
     tableName: "flags_segments",
     timestamps: false,
   }

@@ -17,6 +17,7 @@ export const getAllFlags = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: "Internal error occurred." });
   }
+  console.log(flags);
   return res.status(200).json({ payload: flags });
 };
 
