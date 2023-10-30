@@ -412,7 +412,6 @@ export const getSegmentByKey = async (req, res) => {
 export const createSegment = async (req, res) => {
   let newSegment;
   try {
-    console.log({ ...req.body });
     newSegment = await Segment.create(
       { ...req.body },
       {
@@ -495,9 +494,9 @@ const updateSegmentBody = async (req, res) => {
       }
 
       segment.set({
-        title: req.body.title,
-        description: req.body.description,
-        rulesOperator: req.body.rulesOperator,
+        title: req.body.payload.title,
+        description: req.body.payload.description,
+        rulesOperator: req.body.payload.rulesOperator,
       });
       // we can allow change of sKey if we want
       await segment.save({
@@ -629,10 +628,10 @@ const updateRule = async (req, res) => {
 
       await rule.set(
         {
-          operator: req.body.operator,
-          value: req.body.value,
-          aKey: req.body.aKey,
-          rKey: req.body.rKey,
+          operator: req.body.payload.operator,
+          value: req.body.payload.value,
+          aKey: req.body.payload.aKey,
+          rKey: req.body.payload.rKey,
         },
         { transaction: t }
       );
