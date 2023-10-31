@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-import { useCreateFlagMutation } from "../hooks/flags";
-import { NewFlag } from "../types";
-import { newFlagSchema } from "../models/flags";
-import FormButton from "./ui/FormButton";
+import { useCreateFlagMutation } from "@/hooks/flags";
+import { NewFlag } from "@/types";
+import { newFlagSchema } from "@/models/flags";
+import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
 
 function CreateFlagForm({

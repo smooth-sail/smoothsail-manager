@@ -1,12 +1,13 @@
 import { useState } from "react";
-import DesktopSidebar from "./components/DesktopSidebar";
-import Header from "./components/Header";
-import MobileSidebar from "./components/MobileSidebar";
+import DesktopSidebar from "@/components/DesktopSidebar";
+import Header from "@/components/Header";
+import MobileSidebar from "@/components/MobileSidebar";
 import { Route, Routes } from "react-router-dom";
-import FlagsTable from "./pages/FlagsTable";
-import NotFound from "./pages/NotFound";
-import SegmentsTable from "./pages/SegmentsTable";
-import AttributesTable from "./pages/AttributesTable";
+import FlagsTable from "@/pages/FlagsTable";
+import NotFound from "@/pages/NotFound";
+import SegmentsTable from "@/pages/SegmentsTable";
+import AttributesTable from "@/pages/AttributesTable";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -30,6 +31,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
+          <Toaster position="top-right" />
         </main>
       </div>
     </div>
