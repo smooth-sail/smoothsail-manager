@@ -34,3 +34,11 @@ export const deleteSegmentPath = (sKey: string) =>
 // Attributes
 
 export const GET_ATTRIBUTES = `${BASE_URL}/api/attributes`;
+
+export const CREATE_ATTRIBUTE = `${BASE_URL}/api/attributes`;
+
+export const updateAttributePath = (aKey: string) =>
+  `${BASE_URL}/api/attributes/${aKey}`;
+
+export const deleteAttributePath = (aKey: string) =>
+  `${BASE_URL}/api/attributes/${aKey}`;

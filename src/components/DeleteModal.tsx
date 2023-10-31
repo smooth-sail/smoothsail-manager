@@ -7,18 +7,23 @@ type DeleteModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDelete: () => void;
-}
+};
 
-function DeleteModal({
-  open,
-  setOpen,
-  onDelete,
-}: DeleteModalProps) {
+type Routes = {
+  "/": "flag";
+  "/flags": "flag";
+  "/segments": "segment";
+  "/attributes": "attribute";
+};
+
+function DeleteModal({ open, setOpen, onDelete }: DeleteModalProps) {
   const path = useLocation().pathname;
   const resource = (path: string) => {
-    const routes: { "/flags": string; "/segments": string } = {
+    const routes: Routes = {
+      "/": "flag",
       "/flags": "flag",
       "/segments": "segment",
+      "/attributes": "attribute",
     };
 
     return routes[path as keyof typeof routes];
