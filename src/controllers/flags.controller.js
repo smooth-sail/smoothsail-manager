@@ -10,9 +10,6 @@ import {
   sequelize,
 } from "../models/flag.models";
 
-// sse related instances
-// let clients = new Clients();
-
 export const getAllFlags = async (req, res) => {
   let flags;
   try {
@@ -828,34 +825,4 @@ export const updateAttribute = async (req, res) => {
   let plainAttr = updatedAttr.toJSON();
   delete plainAttr.id;
   return res.status(200).json({ payload: plainAttr });
-};
-
-// =================== SDK-service routes
-
-export const getSdkFlags = async (req, res) => {
-  let data = {};
-  try {
-    let flags = await Flag.findAll({
-      attributes: { exclude: ["id", "title", "description", "createdAt"] },
-      include: {
-        model: Segment,
-        include: {
-          model: Rule,
-          include: {
-            model: Attribute,
-          },
-        },
-      },
-    });
-    flags.forEach((f) => {
-      f = f.toJSON();
-      f.segments = formatSegments(f.Segments, true);
-      delete f.Segments;
-      data[f.fKey] = f;
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Internal error occurred." });
-  }
-  res.status(200).json({ payload: data });
 };

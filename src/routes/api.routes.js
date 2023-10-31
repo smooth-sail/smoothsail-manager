@@ -24,7 +24,4 @@ router.post("/attributes", mainControllers.createAttribute);
 router.delete("/attributes/:aKey", mainControllers.deleteAttribute);
 router.put("/attributes/:aKey", mainControllers.updateAttribute);
 
-// SSE API routes
-router.get("/sdk/flags", mainControllers.getSdkFlags);
-
 export default router;
