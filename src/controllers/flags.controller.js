@@ -516,14 +516,14 @@ const updateSegmentBody = async (req, res) => {
   delete plainSegment.id;
 
   if (rulesOperator) {
-    let sseMsg = {
+    let msg = {
       type: "segment body update",
       payload: {
         sKey: plainSegment.sKey,
         rulesOperator: plainSegment.rulesOperator,
       },
     };
-    clients.sendNotificationToAllClients(sseMsg);
+    jsm.publishFlagUpdate(msg);
   }
   return res.status(200).json(plainSegment);
 };
@@ -579,11 +579,11 @@ const addRuleToSegment = async (req, res) => {
     });
   }
 
-  let sseMsg = {
+  let msg = {
     type: "rule add",
     payload,
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
   res.status(200).json({ payload });
 };
 
@@ -656,11 +656,11 @@ const updateRule = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
   }
-  let sseMsg = {
+  let msg = {
     type: "rule update",
     payload: payload,
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
   return res.status(200).json(payload);
 };
 
@@ -692,11 +692,11 @@ const removeRule = async (req, res) => {
       .json({ error: `Rule with id ${ruleKey} does not exist.` });
   }
 
-  let sseMsg = {
+  let msg = {
     type: "rule remove",
     payload: { rKey: ruleKey, sKey: segmentKey },
   };
-  clients.sendNotificationToAllClients(sseMsg);
+  jsm.publishFlagUpdate(msg);
 
   return res.status(200).json({ message: "Rule successfully deleted." });
 };
