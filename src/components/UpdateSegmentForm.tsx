@@ -70,7 +70,6 @@ function UpdateSegmentForm({
               <input
                 {...register("title")}
                 type="text"
-                name="title"
                 id="title"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
                 placeholder="Enter a segment name"
@@ -102,7 +101,6 @@ function UpdateSegmentForm({
             <textarea
               {...register("description")}
               rows={4}
-              name="description"
               id="description"
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Write an optional description about your segment"
