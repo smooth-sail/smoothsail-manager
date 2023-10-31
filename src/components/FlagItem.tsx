@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Flag } from "../types";
 import Toggle from "./ui/Toggle";
 import { useFlagToggleMutation } from "../hooks/flags";
+import { formatDateTime } from "../utils/format";
 import UpdateFlagModal from "./UpdateFlagModal";
 import FlagsSegmentsModal from "./FlagsSegmentsModal";
 
@@ -17,6 +18,8 @@ function FlagItem(props: FlagItemProps) {
     setIsActive(checked);
     mutateAsync({ isActive: checked, fKey: props.fKey });
   };
+
+  formatDateTime("10/30/2023, 18:16:48");
 
   return (
     <>
@@ -36,7 +39,7 @@ function FlagItem(props: FlagItemProps) {
           {props.fKey}
         </td>
         <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
-          {props.updatedAt}
+          {formatDateTime(props.updatedAt)}
         </td>
         <td className="px-3 py-4 text-sm font-medium">
           <span

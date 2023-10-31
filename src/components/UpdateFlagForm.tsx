@@ -5,6 +5,7 @@ import { useUpdateFlagMutation } from "../hooks/flags";
 import { Flag } from "../types";
 import { flagUpdatesSchema } from "../models/flags";
 import FormButton from "./ui/FormButton";
+import { formatDateTime } from "../utils/format";
 
 type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,7 +78,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.createdAt}
+                {formatDateTime(props.createdAt)}
               </span>
             </div>
           </div>
@@ -87,7 +88,7 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             </p>
             <div className="mt-2">
               <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.updatedAt}
+                {formatDateTime(props.updatedAt)}
               </span>
             </div>
           </div>
