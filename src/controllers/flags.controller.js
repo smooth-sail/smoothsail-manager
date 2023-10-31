@@ -24,7 +24,7 @@ export const getAllFlags = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: "Internal error occurred." });
   }
-  console.log(flags);
+
   return res.status(200).json({ payload: flags });
 };
 
@@ -816,7 +816,7 @@ export const updateAttribute = async (req, res) => {
         throw new Error(`Attribute with id ${attrKey} does not exist.`);
       }
 
-      attr.set({ aKey: req.body.aKey, name: req.body.name });
+      attr.set({ name: req.body.name });
       await attr.save();
       return attr;
     });
