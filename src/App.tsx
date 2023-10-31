@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import FlagsTable from "./pages/FlagsTable";
 import NotFound from "./pages/NotFound";
 import SegmentsTable from "./pages/SegmentsTable";
+import AttributesTable from "./pages/AttributesTable";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +25,7 @@ function App() {
             <Routes>
               <Route path="/flags" element={<FlagsTable />} />
               <Route path="/segments" element={<SegmentsTable />} />
+              <Route path="/attributes" element={<AttributesTable />} />
               <Route path="/" element={<FlagsTable />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
