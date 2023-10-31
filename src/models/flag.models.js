@@ -8,7 +8,7 @@ import sequelize from "./sequelize";
 const Flag = initFlag(sequelize);
 const Segment = initSegment(sequelize);
 const Attribute = initAttribute(sequelize);
-const FlagSegments = initFlagSegments(sequelize, Segment);
+const FlagSegments = initFlagSegments(sequelize, Segment, Flag);
 const Rule = initRule(sequelize, Attribute, Segment);
 
 Flag.belongsToMany(Segment, { through: FlagSegments });

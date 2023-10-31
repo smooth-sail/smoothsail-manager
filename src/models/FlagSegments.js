@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
-import Flag from "./Flag";
 
-export default (sequelize, Segment) => {
+export default (sequelize, Segment, Flag) => {
   const FlagSegments = sequelize.define(
     "FlagSegments",
     {
