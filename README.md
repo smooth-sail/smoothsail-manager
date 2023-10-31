@@ -5,7 +5,8 @@
 ```
 PGUSER=<username>
 PGHOST=localhost
-PGDATABASE=<databasename>
+PGDATABASE=<ffdatabasename>
+SDKKEYSDB=<sdkkeysdatabasename>
 PGPASSWORD=<yourpassword>
 PGPORT=5432
 NATS_SERVER="nats://localhost:<portnumber>"
