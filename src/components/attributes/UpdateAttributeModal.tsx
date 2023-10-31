@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import UpdateAttributeForm from "./UpdateAttributeForm.tsx";
-import { Attribute } from "../types.ts";
-import { useDeleteAttributeMutation } from "../hooks/attributes.tsx";
-import DeleteModal from "./DeleteModal.tsx";
+import { Attribute } from "@/types.ts";
+import { useDeleteAttributeMutation } from "@/hooks/attributes.tsx";
+import DeleteModal from "@/components/DeleteModal.tsx";
 
 type UpdateAttributeModalProps = {
   open: boolean;

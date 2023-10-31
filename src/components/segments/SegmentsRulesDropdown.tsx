@@ -1,10 +1,10 @@
 import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Rule } from "../types";
-import CreateRuleModal from "./CreateRuleModal";
-import UpdateRuleModal from "./UpdateRuleModal";
-import { useAttributes } from "../hooks/attributes";
+import { Rule } from "@/types";
+import CreateRuleModal from "@/components/rules/CreateRuleModal";
+import UpdateRuleModal from "@/components/rules/CreateRuleModal";
+import { useAttributes } from "@/hooks/attributes";
 
 type SegmentsRulesDropdownProps = {
   rules: Rule[];

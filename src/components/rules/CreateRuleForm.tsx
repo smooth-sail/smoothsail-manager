@@ -1,8 +1,8 @@
-import { useAttributes } from "../hooks/attributes";
+import { useAttributes } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
-import { useAddSegmentRule } from "../hooks/segments";
-import FormButton from "./ui/FormButton";
-import { operators } from "../utils/operators";
+import { useAddSegmentRule } from "@/hooks/segments";
+import FormButton from "@/components/ui/FormButton";
+import { operators } from "@/utils/operators";
 
 type RuleFormProps = {
   sKey: string;

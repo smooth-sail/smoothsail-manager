@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
-import FormButton from "./ui/FormButton";
-import { Attribute } from "../types";
-import { useUpdateAttributeMutation } from "../hooks/attributes";
+import FormButton from "@/components/ui/FormButton";
+import { Attribute } from "@/types";
+import { useUpdateAttributeMutation } from "@/hooks/attributes";
 
 type UpdateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Button from "../components/ui/Button";
-import { useSegments } from "../hooks/segments";
-import SegmentItem from "../components/SegmentItem";
-import CreateSegmentModal from "../components/CreateSegmentModal";
+import Button from "@/components/ui/Button";
+import { useSegments } from "@/hooks/segments";
+import SegmentItem from "@/components/segments/SegmentItem";
+import CreateSegmentModal from "@/components/segments/CreateSegmentModal";
 
 export default function SegmentsTable() {
   const [open, setOpen] = useState(false);

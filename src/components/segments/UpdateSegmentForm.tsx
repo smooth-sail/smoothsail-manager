@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { NewSegment, Segment, SegmentOperator } from "../types";
-import { newSegmentSchema } from "../models/segments";
-import { useUpdateSegmentMutation } from "../hooks/segments";
+import { NewSegment, Segment, SegmentOperator } from "@/types";
+import { newSegmentSchema } from "@/models/segments";
+import { useUpdateSegmentMutation } from "@/hooks/segments";
 import { RadioGroup } from "@headlessui/react";
-import { classNames } from "../utils/classNames";
-import FormButton from "./ui/FormButton";
+import { classNames } from "@/utils/classNames";
+import FormButton from "@/components/ui/FormButton";
 
 const segmentRulesOperators = [
   {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Attribute } from "../types";
+import { Attribute } from "@/types";
 import UpdateAttributeModal from "./UpdateAttributeModal";
 
 type AttributeItemProps = Attribute;

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Button from "../components/ui/Button";
-import { useAttributes } from "../hooks/attributes";
-import AttributeItem from "../components/AttributeItem";
-import CreateAttributeModal from "../components/CreateAttributeModal";
+import Button from "@/components/ui/Button";
+import { useAttributes } from "@/hooks/attributes";
+import AttributeItem from "@/components/attributes/AttributeItem";
+import CreateAttributeModal from "@/components/attributes/CreateAttributeModal";
 
 function AttributesTable() {
   const [openCreateAttributeModal, setOpenCreateAttributeModal] =

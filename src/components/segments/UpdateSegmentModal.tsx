@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Segment } from "../types";
+import { Segment } from "@/types";
 import UpdateSegmentForm from "./UpdateSegmentForm";
-import DeleteModal from "./DeleteModal";
-import { useDeleteSegmentMutation } from "../hooks/segments";
+import DeleteModal from "@/components/DeleteModal";
+import { useDeleteSegmentMutation } from "@/hooks/segments";
 
 type UpdateSegmentModalProps = {
   open: boolean;
