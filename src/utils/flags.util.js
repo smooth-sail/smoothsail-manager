@@ -1,4 +1,4 @@
-import { Flag, Segment, Attribute, Rule } from "../models/sequelize";
+import { Flag, Segment, Attribute, Rule } from "../models/flag.models";
 import { formatSegments } from "../controllers/flags.controller";
 
 const segmentNotAdded = (flag, s_key) => {

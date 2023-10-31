@@ -1,10 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
-import Clients from "../models/sse-clients";
-import { Flag, Segment, Attribute, Rule, sequelize } from "../models/sequelize";
+// import Clients from "../models/sse-clients";
 import jsm from "../nats/JetStreamManager";
 
+import {
+  Flag,
+  Segment,
+  Attribute,
+  Rule,
+  sequelize,
+} from "../models/flag.models";
+
 // sse related instances
-let clients = new Clients();
+// let clients = new Clients();
 
 export const getAllFlags = async (req, res) => {
   let flags;
@@ -17,6 +24,7 @@ export const getAllFlags = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: "Internal error occurred." });
   }
+
   return res.status(200).json({ payload: flags });
 };
 
@@ -52,7 +60,7 @@ export const createFlag = async (req, res) => {
     delete flag.id;
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes
+    return res.status(500).json({ error: error.message });
   }
 
   let msg = { type: "new-flag", payload: flag };
@@ -139,7 +147,6 @@ const toggleFlag = async (req, res) => {
       if (flag === null) {
         throw new Error(`Flag with id ${flagKey} does not exist.`);
       }
-
       flag.set({ isActive: req.body.payload.isActive, updatedAt: new Date() });
 
       await flag.save({ fields: ["isActive", "updatedAt"], transaction: t });
@@ -149,7 +156,7 @@ const toggleFlag = async (req, res) => {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
   }
-  let planeFlag = updatedFlag.get({ plain: true }); // repetition, can be extracted into method
+  let planeFlag = updatedFlag.get({ plain: true });
   delete planeFlag.id;
   delete planeFlag.title;
   delete planeFlag.description;
@@ -200,7 +207,7 @@ const addSegmentToFlag = async (req, res) => {
 
       await flag.addSegment(segment, { transaction: t });
 
-      await flag.set({ updatedAt: new Date() }, { transaction: t }); // updating updatedAt - need checking
+      await flag.set({ updatedAt: new Date() }, { transaction: t });
 
       await flag.save({ fields: ["updatedAt"], transaction: t });
       return [segment, flag];
@@ -509,10 +516,10 @@ const updateSegmentBody = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message }); // must support other res stats codes && send back correct messages
+    return res.status(500).json({ error: error.message });
   }
 
-  let plainSegment = updatedSegment.get({ plain: true }); // DRY into sep method
+  let plainSegment = updatedSegment.get({ plain: true });
   delete plainSegment.id;
 
   if (rulesOperator) {
@@ -809,7 +816,7 @@ export const updateAttribute = async (req, res) => {
         throw new Error(`Attribute with id ${attrKey} does not exist.`);
       }
 
-      attr.set({ aKey: req.body.aKey, name: req.body.name });
+      attr.set({ name: req.body.name });
       await attr.save();
       return attr;
     });
@@ -823,29 +830,7 @@ export const updateAttribute = async (req, res) => {
   return res.status(200).json({ payload: plainAttr });
 };
 
-// =================== SSE / SDK
-
-export const sseNotifications = (req, res) => {
-  const headers = {
-    "Content-Type": "text/event-stream",
-    Connection: "keep-alive",
-    "Cache-Control": "no-cache",
-  };
-  res.writeHead(200, headers);
-
-  const clientId = clients.addNewClient(res);
-
-  const connectMsg = `SSE connection established with client id: ${clientId}`;
-  console.log(connectMsg);
-
-  let data = `data: ${JSON.stringify({ msg: connectMsg })}\n\n`;
-  res.write(data);
-
-  req.on("close", () => {
-    console.log(`${clientId} Connection closed`);
-    clients.closeClient(clientId);
-  });
-};
+// =================== SDK-service routes
 
 export const getSdkFlags = async (req, res) => {
   let data = {};
