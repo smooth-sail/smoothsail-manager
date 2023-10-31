@@ -1,6 +1,5 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import Button from "./ui/Button";
 import UpdateRuleForm from "./UpdateRuleForm";
 import DeleteModal from "./DeleteModal";
 import { useDeleteSegmentRule } from "../hooks/segments";
@@ -66,12 +65,13 @@ function UpdateRuleModal({
                       className="flex justify-between text-base font-semibold leading-6 text-gray-900"
                     >
                       <span className="self-end">Edit a Rule</span>
-                      <Button
-                        classNames="absolute right-6 top-6 bg-red-600 hover:bg-red-500"
-                        size="l"
-                        text="Delete"
+                      <button
+                        type="button"
+                        className="absolute right-6 top-6 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto focus:outline-none"
                         onClick={() => setOpenDeleteModal(true)}
-                      />
+                      >
+                        Delete
+                      </button>
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">

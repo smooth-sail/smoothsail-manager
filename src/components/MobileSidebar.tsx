@@ -82,6 +82,7 @@ function MobileSidebar({ sidebarOpen, setSidebarOpen }: MobileSidebarProps) {
                         {navLinks.map((item) => (
                           <li key={item.name}>
                             <Link
+                              onClick={() => setSidebarOpen(false)}
                               to={item.href}
                               className={classNames(
                                 item.href === path ||

@@ -4,7 +4,6 @@ import UpdateAttributeForm from "./UpdateAttributeForm.tsx";
 import { Attribute } from "../types.ts";
 import { useDeleteAttributeMutation } from "../hooks/attributes.tsx";
 import DeleteModal from "./DeleteModal.tsx";
-import Button from "./ui/Button.tsx";
 
 type UpdateAttributeModalProps = {
   open: boolean;
@@ -62,12 +61,13 @@ function UpdateAttributeModal({
                           <span className="self-end">
                             Edit attribute: {props.name}
                           </span>
-                          <Button
-                            classNames="absolute right-6 top-6 bg-red-600 hover:bg-red-500"
-                            size="l"
-                            text="Delete"
+                          <button
+                            type="button"
+                            className="absolute right-6 top-6 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto focus:outline-none"
                             onClick={() => setOpenDeleteModal(true)}
-                          />
+                          >
+                            Delete
+                          </button>
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
