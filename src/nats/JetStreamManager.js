@@ -5,8 +5,8 @@ import { connect, StringCodec, consumerOpts, createInbox } from "nats";
 import {
   FLAG_STREAM_CONFIG,
   FLAG_STREAM_CONSUMER_CONFIG,
-  SDK_KEY_STREAM_CONFIG,
-  SDK_KEY_STREAM_CONSUMER_CONFIG,
+  // SDK_KEY_STREAM_CONFIG,
+  // SDK_KEY_STREAM_CONSUMER_CONFIG,
 } from "./constants";
 
 import { getSdkFlags } from "../utils/flags.util";
@@ -22,11 +22,6 @@ class JetstreamManager {
   async initialize() {
     await this.connectToJetStream();
 
-    if (!(await this.streamExists("FLAG_DATA"))) {
-      await this.addStream(FLAG_STREAM_CONFIG);
-      await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
-    }
-
     // if (!(await this.streamExists("SDK_KEY"))) {
     //   await this.addStream(SDK_KEY_STREAM_CONFIG);
     //   await this.addConsumers("SDK_KEY", SDK_KEY_STREAM_CONSUMER_CONFIG);
@@ -37,6 +32,11 @@ class JetstreamManager {
     //   "REQUEST_SDK_KEY",
     //   this.handleSdkKeyRequest
     // )
+
+    if (!(await this.streamExists("FLAG_DATA"))) {
+      await this.addStream(FLAG_STREAM_CONFIG);
+      await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
+    }
 
     await this.subscribeToStream(
       "FLAG_DATA",
