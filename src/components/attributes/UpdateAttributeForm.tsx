@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import FormButton from "@/components/ui/FormButton";
 import { Attribute } from "@/types";
 import { useUpdateAttributeMutation } from "@/hooks/attributes";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
 
 type UpdateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,8 +20,21 @@ function UpdateAttributeForm({
 
   const { mutateAsync: updateAttributeMutate } = useUpdateAttributeMutation();
 
-  const onSubmit = handleSubmit((attributeUpdates) => {
-    updateAttributeMutate(attributeUpdates);
+  const onSubmit = handleSubmit(async (attributeUpdates) => {
+    try {
+      await updateAttributeMutate(attributeUpdates);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Attribute with key ${aKey} updated.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 

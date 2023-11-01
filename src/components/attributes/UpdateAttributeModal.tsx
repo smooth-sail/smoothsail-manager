@@ -4,6 +4,9 @@ import UpdateAttributeForm from "./UpdateAttributeForm.tsx";
 import { Attribute } from "@/types.ts";
 import { useDeleteAttributeMutation } from "@/hooks/attributes.tsx";
 import DeleteModal from "@/components/DeleteModal.tsx";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI.tsx";
+import { AxiosError } from "axios";
 
 type UpdateAttributeModalProps = {
   open: boolean;
@@ -17,8 +20,21 @@ function UpdateAttributeModal({
 }: UpdateAttributeModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteAttributeMutate } = useDeleteAttributeMutation();
-  const handleDeleteAttribute = () => {
-    deleteAttributeMutate(props.aKey);
+  const handleDeleteAttribute = async () => {
+    try {
+      await deleteAttributeMutate(props.aKey);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message="Attribute deleted from the database."
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpenDeleteModal(false);
     setOpen(false);
   };

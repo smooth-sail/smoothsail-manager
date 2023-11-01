@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import FormButton from "@/components/ui/FormButton";
 import { Attribute } from "@/types";
 import { attributeTypes } from "@/utils/data";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+import ToastTUI from "../ToastTUI";
 
 type CreateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,11 +13,23 @@ type CreateAttributeFormProps = {
 
 function CreateAttributeForm({ setOpen }: CreateAttributeFormProps) {
   const { register, handleSubmit } = useForm<Attribute>();
-
   const { mutateAsync: createAttributeMutate } = useCreateAttributeMutation();
 
-  const onSubmit = handleSubmit((newAttribute) => {
-    createAttributeMutate(newAttribute);
+  const onSubmit = handleSubmit(async (newAttribute) => {
+    try {
+      await createAttributeMutate(newAttribute);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Attribute with key ${newAttribute.aKey} saved to database.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 
