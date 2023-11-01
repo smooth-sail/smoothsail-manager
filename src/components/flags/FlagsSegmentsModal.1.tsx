@@ -8,16 +8,9 @@ import {
 import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
-import { AxiosError } from "axios";
+import { FlagsSegmentsModalProps } from "./FlagsSegmentsModal";
 
-type FlagsSegmentsModalProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
-  fKey: string;
-};
-
-function FlagsSegmentsModal({
+export function FlagsSegmentsModal({
   open,
   setOpen,
   title,
@@ -28,20 +21,15 @@ function FlagsSegmentsModal({
   const { mutateAsync: updateFlagsSegmentMutate } =
     useUpdateFlagsSegmentMutation(fKey);
 
-  const handleUpdateFlagSegment = async (sKey: string, action: string) => {
+  const handleAddSegment = async (sKey: string) => {
     try {
       await updateFlagsSegmentMutate({
         fKey,
         sKey,
-        action,
+        action: "segment remove",
       });
       toast.custom(
-        <ToastTUI
-          type="success"
-          message={`Segment successfully ${
-            action === "segment add" ? "added" : "removed"
-          }.`}
-        />,
+        <ToastTUI type="success" message="Segment succesfully removed." />,
       );
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
@@ -50,9 +38,7 @@ function FlagsSegmentsModal({
       }
     }
   };
-
-  const isFlagsSegment = (title: string) =>
-    !flagsSegments?.some((segment) => segment.title === title);
+  const handleRemoveSegment = () => {};
 
   return (
     <tr className="border-none">
@@ -114,17 +100,35 @@ function FlagsSegmentsModal({
                                   </p>
                                 </div>
                               </div>
-                              <button
-                                onClick={() => {
-                                  const action = isFlagsSegment(title)
-                                    ? "segment add"
-                                    : "segment remove";
-                                  handleUpdateFlagSegment(sKey, action);
-                                }}
-                                className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
-                              >
-                                {isFlagsSegment(title) ? "Add" : "Delete"}
-                              </button>
+                              {flagsSegments?.some(
+                                (segment) => segment.title === title,
+                              ) ? (
+                                <button
+                                  onClick={() => {
+                                    updateFlagsSegmentMutate({
+                                      fKey,
+                                      sKey,
+                                      action: "segment remove",
+                                    });
+                                  }}
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
+                                >
+                                  Delete
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    updateFlagsSegmentMutate({
+                                      fKey,
+                                      sKey,
+                                      action: "segment add",
+                                    })
+                                  }
+                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
+                                >
+                                  Add
+                                </button>
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -146,5 +150,3 @@ function FlagsSegmentsModal({
     </tr>
   );
 }
-
-export default FlagsSegmentsModal;

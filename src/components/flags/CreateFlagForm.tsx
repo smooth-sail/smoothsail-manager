@@ -6,6 +6,8 @@ import { NewFlag } from "@/types";
 import { newFlagSchema } from "@/models/flags";
 import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 function CreateFlagForm({
   setOpen,
@@ -22,9 +24,21 @@ function CreateFlagForm({
 
   const { mutateAsync } = useCreateFlagMutation();
 
-  const onSubmit = handleSubmit((newFlag) => {
-    mutateAsync(newFlag);
-    // toast.custom(<div>Minimal Example</div>);
+  const onSubmit = handleSubmit(async (newFlag) => {
+    try {
+      await mutateAsync(newFlag);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Flag with key ${newFlag.fKey} saved to database.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+      }
+    }
     setOpen(false);
   });
 

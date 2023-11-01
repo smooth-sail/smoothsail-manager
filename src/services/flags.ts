@@ -12,8 +12,14 @@ type AllFlagsResponse = {
   payload: Flag[];
 };
 
-type FlagResponse = {
-  payload: Flag;
+type FlagResponse =
+  | {
+      payload: Flag;
+    }
+  | ErrorResponse;
+
+type ErrorResponse = {
+  error: string;
 };
 
 export const getFlags = async (): Promise<Flag[]> => {
@@ -37,7 +43,11 @@ export const toggleFlag = async ({
 
 export const createFlag = async (newFlag: NewFlag) => {
   const { data } = await axios.post<FlagResponse>(CREATE_FLAG, newFlag);
-  return data.payload;
+  if ("payload" in data) {
+    return data.payload;
+  }
+
+  return data.error;
 };
 
 export const updateFlag = async (flagUpdate: FlagUpdates) => {
