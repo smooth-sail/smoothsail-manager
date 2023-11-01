@@ -46,5 +46,5 @@ export const createEncryptedSdk = () => {
   const sdkKey = generateKey();
   const initVector = generateInitVector();
   const encryptedKey = encryptSdk(sdkKey, initVector);
-  return [encryptedKey, initVector];
+  return { sdkKey: encryptedKey, initVector };
 };

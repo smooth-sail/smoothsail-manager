@@ -8,11 +8,9 @@ export const getCurrentKey = async (req, res) => {
       attributes: { exclude: ["id", "updatedAt", "deletedAt"] },
     });
     if (keys.length === 0) {
-      const [encryptedKey, initVector] = createEncryptedSdk();
-      let newKey = await SdkKey.create(
-        { sdkKey: encryptedKey, initVector },
-        { fields: ["sdkKey", "initVector"] }
-      );
+      let newKey = await SdkKey.create(createEncryptedSdk(), {
+        fields: ["sdkKey", "initVector"],
+      });
       payload = decryptSdk(newKey.sdkKey, newKey.initVector);
     } else {
       payload = decryptSdk(keys[0].sdkKey, keys[0].initVector);
@@ -34,11 +32,10 @@ export const regenerateKey = async (req, res) => {
         truncate: true,
         transaction: t,
       });
-      const [encryptedKey, initVector] = createEncryptedSdk();
-      let newKey = await SdkKey.create(
-        { sdkKey: encryptedKey, initVector },
-        { fields: ["sdkKey", "initVector"], transaction: t }
-      );
+      let newKey = await SdkKey.create(createEncryptedSdk(), {
+        fields: ["sdkKey", "initVector"],
+        transaction: t,
+      });
       return decryptSdk(newKey.sdkKey, newKey.initVector);
     });
   } catch (error) {
