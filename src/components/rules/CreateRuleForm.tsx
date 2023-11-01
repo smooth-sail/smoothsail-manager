@@ -2,7 +2,7 @@ import { useAttributes } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
 import { useAddSegmentRule } from "@/hooks/segments";
 import FormButton from "@/components/ui/FormButton";
-import { operators } from "@/utils/operators";
+import { operators } from "@/utils/data";
 
 type RuleFormProps = {
   sKey: string;

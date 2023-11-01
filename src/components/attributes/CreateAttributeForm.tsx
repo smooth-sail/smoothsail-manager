@@ -2,7 +2,7 @@ import { useCreateAttributeMutation } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
 import FormButton from "@/components/ui/FormButton";
 import { Attribute } from "@/types";
-import { attributeTypes } from "@/utils/attributeTypes";
+import { attributeTypes } from "@/utils/data";
 
 type CreateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

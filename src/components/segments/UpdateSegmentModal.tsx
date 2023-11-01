@@ -4,6 +4,9 @@ import { Segment } from "@/types";
 import UpdateSegmentForm from "./UpdateSegmentForm";
 import DeleteModal from "@/components/DeleteModal";
 import { useDeleteSegmentMutation } from "@/hooks/segments";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 type UpdateSegmentModalProps = {
   open: boolean;
@@ -17,11 +20,25 @@ function UpdateSegmentModal({
 }: UpdateSegmentModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
-  const handleDeleteSegment = () => {
-    deleteSegmentMutate(props.sKey);
+  const handleDeleteSegment = async () => {
+    try {
+      await deleteSegmentMutate(props.sKey);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message="Segment deleted from the database."
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+      }
+    }
     setOpenDeleteModal(false);
     setOpen(false);
   };
+
   return (
     <tr className="border-none">
       <td>

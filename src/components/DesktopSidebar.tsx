@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { classNames } from "../utils/classNames";
-import { navigation as navLinks } from "../utils/navigation";
+import { classNames } from "@/utils/classNames";
+import { navigation as navLinks } from "@/utils/data";
 
 function DesktopSidebar() {
   const path = useLocation().pathname;
