@@ -1,8 +1,11 @@
-import { useAttributes } from "../hooks/attributes";
+import { useAttributes } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
-import { useUpdateSegmentRule } from "../hooks/segments";
-import FormButton from "./ui/FormButton";
-import { operators } from "../utils/operators";
+import { useUpdateSegmentRule } from "@/hooks/segments";
+import FormButton from "@/components/ui/FormButton";
+import { operators } from "@/utils/data";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 type UpdateRuleFormProps = {
   sKey: string;
@@ -31,7 +34,7 @@ function UpdateRuleForm({
 
   const { mutateAsync: updateSegmentRuleMutate } = useUpdateSegmentRule();
 
-  const onSubmit = handleSubmit(({ attribute, operator, value }) => {
+  const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     if (!attributes) return;
     const attr = attributes.find((a) => a.name === attribute)!.aKey;
     const data = {
@@ -41,7 +44,18 @@ function UpdateRuleForm({
       sKey,
       rKey,
     };
-    updateSegmentRuleMutate(data);
+
+    try {
+      await updateSegmentRuleMutate(data);
+      toast.custom(
+        <ToastTUI type="success" message="Rule successfully updated." />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 

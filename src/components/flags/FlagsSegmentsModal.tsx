@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
 
-type FlagsSegmentsModalProps = {
+export type FlagsSegmentsModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
@@ -46,7 +46,7 @@ function FlagsSegmentsModal({
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+        toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
   };

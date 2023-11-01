@@ -33,7 +33,7 @@ function FlagItem(props: FlagItemProps) {
       setIsActive(!checked);
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+        toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
   };

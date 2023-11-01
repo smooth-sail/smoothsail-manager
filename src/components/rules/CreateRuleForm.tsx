@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { useAddSegmentRule } from "@/hooks/segments";
 import FormButton from "@/components/ui/FormButton";
 import { operators } from "@/utils/data";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 type RuleFormProps = {
   sKey: string;
@@ -20,15 +23,28 @@ function CreateRuleForm({ sKey, setOpen }: RuleFormProps) {
 
   const { mutateAsync: addSegmentRuleMutate } = useAddSegmentRule();
 
-  const onSubmit = handleSubmit(({ attribute, operator, value }) => {
+  const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     if (!attributes) return;
     const attr = attributes.find((a) => a.name === attribute)!;
-    addSegmentRuleMutate({
-      aKey: attr.aKey,
-      operator,
-      value,
-      sKey,
-    });
+    try {
+      await addSegmentRuleMutate({
+        aKey: attr.aKey,
+        operator,
+        value,
+        sKey,
+      });
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Rule added to segment key: ${sKey}.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 

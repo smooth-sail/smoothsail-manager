@@ -36,7 +36,7 @@ function CreateFlagForm({
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+        toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
     setOpen(false);

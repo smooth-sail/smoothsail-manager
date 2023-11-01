@@ -83,6 +83,7 @@ function UpdateAttributeModal({
               </div>
             </div>
             <DeleteModal
+              resource="attribute"
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
               onDelete={handleDeleteAttribute}

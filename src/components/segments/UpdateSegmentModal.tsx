@@ -32,7 +32,7 @@ function UpdateSegmentModal({
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+        toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
     setOpenDeleteModal(false);
@@ -99,6 +99,7 @@ function UpdateSegmentModal({
               </div>
             </div>
             <DeleteModal
+              resource="segment"
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
               onDelete={handleDeleteSegment}

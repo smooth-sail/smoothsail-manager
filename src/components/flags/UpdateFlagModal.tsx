@@ -25,7 +25,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={`${responseError}`} />);
+        toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
     setOpenDeleteModal(false);
@@ -92,6 +92,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
               </div>
             </div>
             <DeleteModal
+              resource="flag"
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
               onDelete={handleDeleteFlag}

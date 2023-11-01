@@ -1,34 +1,15 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
 
 type DeleteModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDelete: () => void;
+  resource: "flag" | "segment" | "attribute" | "rule";
 };
 
-type Routes = {
-  "/": "flag";
-  "/flags": "flag";
-  "/segments": "segment";
-  "/attributes": "attribute";
-};
-
-function DeleteModal({ open, setOpen, onDelete }: DeleteModalProps) {
-  const path = useLocation().pathname;
-  const resource = (path: string) => {
-    const routes: Routes = {
-      "/": "flag",
-      "/flags": "flag",
-      "/segments": "segment",
-      "/attributes": "attribute",
-    };
-
-    return routes[path as keyof typeof routes];
-  };
-
+function DeleteModal({ open, setOpen, onDelete, resource }: DeleteModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -68,13 +49,13 @@ function DeleteModal({ open, setOpen, onDelete }: DeleteModalProps) {
                       as="h3"
                       className="text-base font-semibold leading-6 text-gray-900"
                     >
-                      Delete {resource(path)}
+                      Delete {resource}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to delete this {resource(path)}?
-                        All of the {resource(path)} data will be permanently
-                        removed from the database.
+                        Are you sure you want to delete this {resource}? All of
+                        the {resource} data will be permanently removed from the
+                        database.
                       </p>
                     </div>
                   </div>
