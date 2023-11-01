@@ -8,6 +8,7 @@ import {
   sequelize,
 } from "../models/flag.models";
 import { formatSegment } from "../utils/segments.util";
+import { updatedATFlagColManualSetQuery } from "../constants/db.manual.queries";
 
 export const getAllFlags = async (req, res) => {
   let flags;
@@ -143,9 +144,9 @@ const toggleFlag = async (req, res) => {
       if (flag === null) {
         throw new Error(`Flag with id ${flagKey} does not exist.`);
       }
-      flag.set({ isActive: req.body.payload.isActive, updatedAt: new Date() });
+      flag.set({ isActive: req.body.payload.isActive });
 
-      await flag.save({ fields: ["isActive", "updatedAt"], transaction: t });
+      await flag.save({ fields: ["isActive"], transaction: t });
       return flag;
     });
   } catch (error) {
@@ -203,9 +204,10 @@ const addSegmentToFlag = async (req, res) => {
 
       await flag.addSegment(segment, { transaction: t });
 
-      await flag.set({ updatedAt: new Date() }, { transaction: t });
+      await sequelize.query(updatedATFlagColManualSetQuery(flag.id), {
+        transaction: t,
+      });
 
-      await flag.save({ fields: ["updatedAt"], transaction: t });
       return [segment, flag];
     });
   } catch (error) {
@@ -218,7 +220,7 @@ const addSegmentToFlag = async (req, res) => {
     type: "segment add",
     payload: {
       fKey: updatedFlag.fKey,
-      flagUpdatedA: updatedFlag.updatedAt,
+      // flagUpdatedAt: updatedFlag.updatedAt,
       plainSegment,
     },
   };
@@ -260,9 +262,9 @@ const removeSegmentFromFlag = async (req, res) => {
 
       await flag.removeSegment(segment, { transaction: t });
 
-      await flag.set({ updatedAt: new Date() }, { transaction: t });
-
-      await flag.save({ fields: ["updatedAt"], transaction: t });
+      await sequelize.query(updatedATFlagColManualSetQuery(flag.id), {
+        transaction: t,
+      });
       return;
     });
   } catch (error) {
