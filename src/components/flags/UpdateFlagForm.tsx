@@ -1,11 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-import { useUpdateFlagMutation } from "../hooks/flags";
-import { Flag } from "../types";
-import { flagUpdatesSchema } from "../models/flags";
-import FormButton from "./ui/FormButton";
-import { formatDateTime } from "../utils/format";
+import { useUpdateFlagMutation } from "@/hooks/flags";
+import { Flag } from "@/types";
+import { flagUpdatesSchema } from "@/models/flags";
+import FormButton from "@/components/ui/FormButton";
+import { formatDateTime } from "@/utils/format";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,12 +29,26 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
 
   const { mutateAsync: updateFlagMutation } = useUpdateFlagMutation();
 
-  const onSubmit = handleSubmit((bodyUpdates) => {
+  const onSubmit = handleSubmit(async (bodyUpdates) => {
     const flagUpdates = {
       ...bodyUpdates,
       fKey: props.fKey,
     };
-    updateFlagMutation(flagUpdates);
+
+    try {
+      await updateFlagMutation(flagUpdates);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Flag with key ${props.fKey} updated in the database.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 

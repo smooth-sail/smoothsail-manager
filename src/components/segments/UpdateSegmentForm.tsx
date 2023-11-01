@@ -1,23 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { NewSegment, Segment, SegmentOperator } from "../types";
-import { newSegmentSchema } from "../models/segments";
-import { useUpdateSegmentMutation } from "../hooks/segments";
+import { NewSegment, Segment, SegmentOperator } from "@/types";
+import { newSegmentSchema } from "@/models/segments";
+import { useUpdateSegmentMutation } from "@/hooks/segments";
 import { RadioGroup } from "@headlessui/react";
-import { classNames } from "../utils/classNames";
-import FormButton from "./ui/FormButton";
-
-const segmentRulesOperators = [
-  {
-    name: "Any",
-    description: "Return true if any of the rules return true",
-  },
-  {
-    name: "All",
-    description: "Return true if all of the rules return true",
-  },
-];
+import { classNames } from "@/utils/classNames";
+import FormButton from "@/components/ui/FormButton";
+import { segmentRulesOperators } from "@/utils/data";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 function UpdateSegmentForm({
   setOpen,
@@ -48,10 +41,23 @@ function UpdateSegmentForm({
 
   const { mutateAsync: updateSegmentMutate } = useUpdateSegmentMutation();
 
-  const onSubmit = handleSubmit((segmentUpdates) => {
+  const onSubmit = handleSubmit(async (segmentUpdates) => {
     segmentUpdates.rulesOperator =
       selected.name.toLowerCase() as SegmentOperator;
-    updateSegmentMutate(segmentUpdates);
+    try {
+      await updateSegmentMutate(segmentUpdates);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Segment with key ${props.sKey} updated.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 

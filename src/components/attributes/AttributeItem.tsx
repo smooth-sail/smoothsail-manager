@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Attribute } from "../types";
+import { Attribute } from "@/types";
 import UpdateAttributeModal from "./UpdateAttributeModal";
 
 type AttributeItemProps = Attribute;
 
-function AttributeItem(props: Attribute) {
+function AttributeItem(props: AttributeItemProps) {
   const [openEdit, setOpenEdit] = useState(false);
   return (
     <>

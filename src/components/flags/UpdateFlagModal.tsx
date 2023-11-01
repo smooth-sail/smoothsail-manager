@@ -1,9 +1,12 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Flag } from "../types";
+import { Flag } from "@/types";
 import UpdateFlagForm from "./UpdateFlagForm";
-import DeleteModal from "./DeleteModal";
-import { useDeleteFlagMutation } from "../hooks/flags";
+import DeleteModal from "@/components/DeleteModal";
+import { useDeleteFlagMutation } from "@/hooks/flags";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
 
 type UpdateFlagModalProps = {
   open: boolean;
@@ -13,8 +16,18 @@ type UpdateFlagModalProps = {
 function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
-  const handleDeleteFlag = () => {
-    deleteFlagMutation(props.fKey);
+  const handleDeleteFlag = async () => {
+    try {
+      await deleteFlagMutation(props.fKey);
+      toast.custom(
+        <ToastTUI type="success" message="Flag deleted from the database." />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpenDeleteModal(false);
     setOpen(false);
   };
@@ -79,6 +92,7 @@ function UpdateFlagModal({ open, setOpen, ...props }: UpdateFlagModalProps) {
               </div>
             </div>
             <DeleteModal
+              resource="flag"
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
               onDelete={handleDeleteFlag}

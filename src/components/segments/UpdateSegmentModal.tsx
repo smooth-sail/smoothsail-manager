@@ -1,24 +1,40 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import UpdateAttributeForm from "./UpdateAttributeForm.tsx";
-import { Attribute } from "../types.ts";
-import { useDeleteAttributeMutation } from "../hooks/attributes.tsx";
-import DeleteModal from "./DeleteModal.tsx";
+import { Segment } from "@/types";
+import UpdateSegmentForm from "./UpdateSegmentForm";
+import DeleteModal from "@/components/DeleteModal";
+import { useDeleteSegmentMutation } from "@/hooks/segments";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
-type UpdateAttributeModalProps = {
+type UpdateSegmentModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Attribute;
+} & Segment;
 
-function UpdateAttributeModal({
+function UpdateSegmentModal({
   open,
   setOpen,
   ...props
-}: UpdateAttributeModalProps) {
+}: UpdateSegmentModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { mutateAsync: deleteAttributeMutate } = useDeleteAttributeMutation();
-  const handleDeleteAttribute = () => {
-    deleteAttributeMutate(props.aKey);
+  const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
+  const handleDeleteSegment = async () => {
+    try {
+      await deleteSegmentMutate(props.sKey);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message="Segment deleted from the database."
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpenDeleteModal(false);
     setOpen(false);
   };
@@ -51,15 +67,15 @@ function UpdateAttributeModal({
                   leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                   leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                  <Dialog.Panel className="relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all">
+                  <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                     <div className="mb-4">
                       <div className="mt-3 sm:mt-5">
                         <Dialog.Title
                           as="h3"
-                          className="text-base font-semibold leading-6 text-gray-900"
+                          className="flex justify-between text-base font-semibold leading-6 text-gray-900"
                         >
                           <span className="self-end">
-                            Edit attribute: {props.name}
+                            Edit segment: {props.title}
                           </span>
                           <button
                             type="button"
@@ -71,21 +87,22 @@ function UpdateAttributeModal({
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Define your rule. If you don't have any attributes
-                            defined go add some in the attributes tab.
+                            Update {props.title}. Note, the flag key, created
+                            at, and updated at can not be changed manually.
                           </p>
                         </div>
                       </div>
                     </div>
-                    <UpdateAttributeForm setOpen={setOpen} {...props} />
+                    <UpdateSegmentForm {...props} setOpen={setOpen} />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
             </div>
             <DeleteModal
+              resource="segment"
               open={openDeleteModal}
               setOpen={setOpenDeleteModal}
-              onDelete={handleDeleteAttribute}
+              onDelete={handleDeleteSegment}
             />
           </Dialog>
         </Transition.Root>
@@ -94,4 +111,4 @@ function UpdateAttributeModal({
   );
 }
 
-export default UpdateAttributeModal;
+export default UpdateSegmentModal;

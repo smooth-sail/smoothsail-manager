@@ -1,8 +1,11 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import UpdateRuleForm from "./UpdateRuleForm";
-import DeleteModal from "./DeleteModal";
-import { useDeleteSegmentRule } from "../hooks/segments";
+import DeleteModal from "@/components/DeleteModal";
+import { useDeleteSegmentRule } from "@/hooks/segments";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
 type UpdateRuleModalProps = {
   open: boolean;
@@ -25,8 +28,18 @@ function UpdateRuleModal({
 }: UpdateRuleModalProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteRuleMutate } = useDeleteSegmentRule();
-  const handleDeleteRule = () => {
-    deleteRuleMutate({ rKey, sKey });
+  const handleDeleteRule = async () => {
+    try {
+      await deleteRuleMutate({ rKey, sKey });
+      toast.custom(
+        <ToastTUI type="success" message="Rule deleted from database." />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpenDeleteModal(false);
     setOpen(false);
   };
@@ -90,6 +103,7 @@ function UpdateRuleModal({
                   operator={operator}
                 />
                 <DeleteModal
+                  resource="rule"
                   setOpen={setOpenDeleteModal}
                   open={openDeleteModal}
                   onDelete={handleDeleteRule}

@@ -2,8 +2,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { classNames } from "../utils/classNames";
-import { navigation as navLinks } from "../utils/navigation";
+import { classNames } from "@/utils/classNames";
+import { navigation as navLinks } from "@/utils/data";
 
 type MobileSidebarProps = {
   sidebarOpen: boolean;

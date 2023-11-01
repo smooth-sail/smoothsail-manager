@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Segment } from "../types";
+import { Segment } from "@/types";
 import SegmentsRulesDropdown from "./SegmentsRulesDropdown";
 import UpdateSegmentModal from "./UpdateSegmentModal";
 

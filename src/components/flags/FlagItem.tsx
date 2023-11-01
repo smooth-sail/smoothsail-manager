@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Flag } from "../types";
-import Toggle from "./ui/Toggle";
-import { useFlagToggleMutation } from "../hooks/flags";
-import { formatDateTime } from "../utils/format";
+import { Flag } from "@/types";
+import Toggle from "@/components/ui/Toggle";
+import { useFlagToggleMutation } from "@/hooks/flags";
+import { formatDateTime } from "@/utils/format";
 import UpdateFlagModal from "./UpdateFlagModal";
 import FlagsSegmentsModal from "./FlagsSegmentsModal";
+import { AxiosError } from "axios";
+import ToastTUI from "../ToastTUI";
+import toast from "react-hot-toast";
 
 type FlagItemProps = Flag;
 
@@ -14,12 +17,26 @@ function FlagItem(props: FlagItemProps) {
   const [openEdit, setOpenEdit] = useState(false);
   const { mutateAsync } = useFlagToggleMutation();
 
-  const handleIsActive = (checked: boolean) => {
-    setIsActive(checked);
-    mutateAsync({ isActive: checked, fKey: props.fKey });
+  const handleIsActive = async (checked: boolean) => {
+    try {
+      setIsActive(checked);
+      await mutateAsync({ isActive: checked, fKey: props.fKey });
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Flag with key ${props.fKey} toggled ${
+            checked ? "on" : "off"
+          }.`}
+        />,
+      );
+    } catch (err: unknown) {
+      setIsActive(!checked);
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
   };
-
-  formatDateTime("10/30/2023, 18:16:48");
 
   return (
     <>

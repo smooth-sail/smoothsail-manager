@@ -1,24 +1,35 @@
+import { useCreateAttributeMutation } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
-import FormButton from "./ui/FormButton";
-import { Attribute } from "../types";
-import { useUpdateAttributeMutation } from "../hooks/attributes";
+import FormButton from "@/components/ui/FormButton";
+import { Attribute } from "@/types";
+import { attributeTypes } from "@/utils/data";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+import ToastTUI from "../ToastTUI";
 
-type UpdateAttributeFormProps = {
+type CreateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} & Attribute;
+};
 
-function UpdateAttributeForm({
-  setOpen,
-  aKey,
-  type,
-  name,
-}: UpdateAttributeFormProps) {
-  const { register, handleSubmit } = useForm<Omit<Attribute, "type">>();
+function CreateAttributeForm({ setOpen }: CreateAttributeFormProps) {
+  const { register, handleSubmit } = useForm<Attribute>();
+  const { mutateAsync: createAttributeMutate } = useCreateAttributeMutation();
 
-  const { mutateAsync: updateAttributeMutate } = useUpdateAttributeMutation();
-
-  const onSubmit = handleSubmit((attributeUpdates) => {
-    updateAttributeMutate(attributeUpdates);
+  const onSubmit = handleSubmit(async (newAttribute) => {
+    try {
+      await createAttributeMutate(newAttribute);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Attribute with key ${newAttribute.aKey} saved to database.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
     setOpen(false);
   });
 
@@ -39,7 +50,6 @@ function UpdateAttributeForm({
               {...register("name")}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter an attribute name"
-              defaultValue={name}
             />
           </div>
         </div>
@@ -57,7 +67,6 @@ function UpdateAttributeForm({
               {...register("aKey")}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter an attribute name"
-              defaultValue={aKey}
             />
           </div>
         </div>
@@ -70,12 +79,12 @@ function UpdateAttributeForm({
           </label>
           <select
             id="type"
-            name="type"
-            className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-400 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
-            disabled
-            defaultValue={type}
+            className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
+            {...register("type")}
           >
-            <option>{type}</option>
+            {attributeTypes.map((aType) => (
+              <option key={aType}>{aType}</option>
+            ))}
           </select>
         </div>
       </div>
@@ -92,4 +101,4 @@ function UpdateAttributeForm({
   );
 }
 
-export default UpdateAttributeForm;
+export default CreateAttributeForm;

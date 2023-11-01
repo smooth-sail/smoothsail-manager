@@ -4,10 +4,13 @@ import {
   useFlagsSegments,
   useSegments,
   useUpdateFlagsSegmentMutation,
-} from "../hooks/segments";
-import FormButton from "./ui/FormButton";
+} from "@/hooks/segments";
+import FormButton from "@/components/ui/FormButton";
+import toast from "react-hot-toast";
+import ToastTUI from "../ToastTUI";
+import { AxiosError } from "axios";
 
-type FlagsSegmentsModalProps = {
+export type FlagsSegmentsModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
@@ -24,6 +27,32 @@ function FlagsSegmentsModal({
   const { data: segments } = useSegments();
   const { mutateAsync: updateFlagsSegmentMutate } =
     useUpdateFlagsSegmentMutation(fKey);
+
+  const handleUpdateFlagSegment = async (sKey: string, action: string) => {
+    try {
+      await updateFlagsSegmentMutate({
+        fKey,
+        sKey,
+        action,
+      });
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Segment successfully ${
+            action === "segment add" ? "added" : "removed"
+          }.`}
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
+  };
+
+  const isFlagsSegment = (title: string) =>
+    !flagsSegments?.some((segment) => segment.title === title);
 
   return (
     <tr className="border-none">
@@ -85,35 +114,17 @@ function FlagsSegmentsModal({
                                   </p>
                                 </div>
                               </div>
-                              {flagsSegments?.some(
-                                (segment) => segment.title === title,
-                              ) ? (
-                                <button
-                                  onClick={() => {
-                                    updateFlagsSegmentMutate({
-                                      fKey,
-                                      sKey,
-                                      action: "segment remove",
-                                    });
-                                  }}
-                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
-                                >
-                                  Delete
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() =>
-                                    updateFlagsSegmentMutate({
-                                      fKey,
-                                      sKey,
-                                      action: "segment add",
-                                    })
-                                  }
-                                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
-                                >
-                                  Add
-                                </button>
-                              )}
+                              <button
+                                onClick={() => {
+                                  const action = isFlagsSegment(title)
+                                    ? "segment add"
+                                    : "segment remove";
+                                  handleUpdateFlagSegment(sKey, action);
+                                }}
+                                className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
+                              >
+                                {isFlagsSegment(title) ? "Add" : "Delete"}
+                              </button>
                             </li>
                           ))}
                         </ul>
