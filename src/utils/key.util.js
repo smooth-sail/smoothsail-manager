@@ -28,7 +28,7 @@ const createDecipher = (iv) => {
   );
 };
 
-export const encryptSdk = (key, iv) => {
+const encryptSdk = (key, iv) => {
   const cipher = createCipher(iv);
   let encryptedString = cipher.update(key, "utf8", "hex");
   encryptedString += cipher.final("hex");
@@ -40,4 +40,11 @@ export const decryptSdk = (encryptedKey, iv) => {
   let decryptedString = decipher.update(encryptedKey, "hex", "utf8");
   decryptedString += decipher.final("utf-8");
   return decryptedString;
+};
+
+export const createEncryptedSdk = () => {
+  const sdkKey = generateKey();
+  const initVector = generateInitVector();
+  const encryptedKey = encryptSdk(sdkKey, initVector);
+  return [encryptedKey, initVector];
 };
