@@ -1,20 +1,32 @@
 import { SdkKey, sequelize } from "../models/SdkKey";
-import { generateKey } from "../utils/key.generator";
+import {
+  generateKey,
+  generateInitVector,
+  encryptSdk,
+  decryptSdk,
+} from "../utils/key.util";
 
 export const getCurrentKey = async (req, res) => {
   let payload;
   try {
     let keys = await SdkKey.findAll({
-      attributes: { exclude: ["id", "updated_at", "deleted_at"] },
+      attributes: { exclude: ["id", "updatedAt", "deletedAt"] },
     });
     if (keys.length === 0) {
+      const sdkKey = generateKey();
+      const initVector = generateInitVector();
+      const encryptedKey = encryptSdk(sdkKey, initVector);
+
       let newKey = await SdkKey.create(
-        { sdkKey: generateKey() },
-        { fieds: ["sdkKey"] }
+        { sdkKey: encryptedKey, initVector },
+        { fields: ["sdkKey", "initVector"] }
       );
-      payload = newKey.sdkKey;
+
+      const decryptedKey = decryptSdk(newKey.sdkKey, newKey.initVector);
+      payload = decryptedKey;
     } else {
-      payload = keys[0].sdkKey;
+      const decryptedKey = decryptSdk(keys[0].sdkKey, keys[0].initVector);
+      payload = decryptedKey;
     }
   } catch (error) {
     console.log(error.message);
@@ -33,12 +45,16 @@ export const regenerateKey = async (req, res) => {
         truncate: true,
         transaction: t,
       });
+      const sdkKey = generateKey();
+      const initVector = generateInitVector();
+      const encryptedKey = encryptSdk(sdkKey, initVector);
 
       let newKey = await SdkKey.create(
-        { sdkKey: generateKey() },
-        { fieds: ["sdkKey"], transaction: t }
+        { sdkKey: encryptedKey, initVector },
+        { fields: ["sdkKey", "initVector"], transaction: t }
       );
-      return newKey.sdkKey;
+      const decryptedKey = decryptSdk(newKey.sdkKey, newKey.initVector);
+      return decryptedKey;
     });
   } catch (error) {
     console.log(error.message);

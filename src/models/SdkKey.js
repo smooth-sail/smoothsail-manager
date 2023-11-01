@@ -21,21 +21,31 @@ export const SdkKey = sequelize.define(
       allowNull: false,
     },
     sdkKey: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
       field: "sdk_key",
       validate: {
         is: /^[a-z0-9-]+$/i,
+        len: [1, 100],
+      },
+      // set() {
+      //   let rawData = this.getDataValue("sdkKey");
+      //   // return rawData;
+      // },
+      // get() {
+      //   let rawData = this.getDataValue("sdkKey");
+      //   return rawData;
+      // },
+    },
+    initVector: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
+      field: "init_vector",
+      validate: {
+        is: /^[a-z0-9-]+$/i,
         len: [1, 50],
-      },
-      set() {
-        let rawData = this.getDataValue("sdkKey");
-        return rawData;
-      },
-      get() {
-        let rawData = this.getDataValue("sdkKey");
-        return rawData;
       },
     },
     createdAt: {

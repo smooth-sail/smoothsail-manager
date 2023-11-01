@@ -9,6 +9,7 @@ PGDATABASE=<ffdatabasename>
 SDKKEYSDB=<sdkkeysdatabasename>
 PGPASSWORD=<yourpassword>
 PGPORT=5432
+SECRET_KEY=<yoursecret> (32 chars)
 NATS_SERVER="nats://localhost:<portnumber>"
 ```
 
