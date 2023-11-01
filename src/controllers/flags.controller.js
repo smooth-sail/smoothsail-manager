@@ -7,6 +7,7 @@ import {
   Rule,
   sequelize,
 } from "../models/flag.models";
+import { formatSegment } from "../utils/segments.util";
 
 export const getAllFlags = async (req, res) => {
   let flags;
@@ -49,7 +50,7 @@ export const createFlag = async (req, res) => {
   try {
     let newFlag = await Flag.create(
       { ...req.body },
-      { fields: ["fKey", "title", "description"] }
+      { fields: ["fKey", "title", "description"] },
     );
     flag = newFlag.get({ plain: true });
     delete flag.id;
@@ -102,7 +103,7 @@ const updateFlagBody = async (req, res) => {
         {
           where: { fKey: flagKey },
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (flag === null) {
@@ -136,7 +137,7 @@ const toggleFlag = async (req, res) => {
         {
           where: { fKey: flagKey },
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (flag === null) {
@@ -174,7 +175,7 @@ const addSegmentToFlag = async (req, res) => {
           where: { fKey: flagKey },
           include: Segment,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (flag === null) {
@@ -191,7 +192,7 @@ const addSegmentToFlag = async (req, res) => {
             },
           },
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (segment === null) {
@@ -237,7 +238,7 @@ const removeSegmentFromFlag = async (req, res) => {
           where: { fKey: flagKey },
           include: Segment,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (flag === null) {
@@ -248,7 +249,7 @@ const removeSegmentFromFlag = async (req, res) => {
         {
           where: { sKey: segmentKey },
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       if (segment === null) {
