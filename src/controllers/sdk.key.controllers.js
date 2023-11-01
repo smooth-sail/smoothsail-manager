@@ -1,5 +1,6 @@
 import { SdkKey, sequelize } from "../models/SdkKey";
 import { createEncryptedSdk, decryptSdk } from "../utils/key.util";
+import jsm from "../nats/JetStreamManager";
 
 export const getCurrentKey = async (req, res) => {
   let payload;
@@ -43,5 +44,6 @@ export const regenerateKey = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
+  jsm.publishSdkUpdate();
   res.status(200).json({ payload });
 };
