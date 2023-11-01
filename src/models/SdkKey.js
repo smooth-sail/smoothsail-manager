@@ -29,10 +29,10 @@ export const SdkKey = sequelize.define(
         is: /^[a-z0-9-]+$/i,
         len: [1, 50],
       },
-      set() {
-        let rawData = this.getDataValue("sdkKey");
-        return rawData;
-      },
+      // set() {
+      //   let rawData = this.getDataValue("sdkKey");
+      //   return rawData;
+      // },
       get() {
         let rawData = this.getDataValue("sdkKey");
         return rawData;

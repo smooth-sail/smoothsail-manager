@@ -34,6 +34,7 @@ export const regenerateKey = async (req, res) => {
         transaction: t,
       });
 
+      console.log(generateKey());
       let newKey = await SdkKey.create(
         { sdkKey: generateKey() },
         { fieds: ["sdkKey"], transaction: t }

@@ -3,7 +3,7 @@ import initSegment from "./Segment";
 import initAttribute from "./Attribute";
 import initFlagSegments from "./FlagSegments";
 import initRule from "./Rule";
-import sequelize from "./sequelize";
+import sequelize from "./sequelize.ff.instance";
 
 const Flag = initFlag(sequelize);
 const Segment = initSegment(sequelize);

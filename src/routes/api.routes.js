@@ -1,27 +1,29 @@
 import express from "express";
-import * as mainControllers from "../controllers/flags.controller";
+import * as flagControllers from "../controllers/flags.controller";
+import * as segmControllers from "../controllers/segments.controllers";
+import * as attrControllers from "../controllers/attributes.controllers";
 
 const router = express.Router();
 
 // Flag API routes
-router.get("/flags", mainControllers.getAllFlags);
-router.get("/flags/:fKey", mainControllers.getFlagById);
-router.post("/flags", mainControllers.createFlag);
-router.delete("/flags/:fKey", mainControllers.deleteFlag);
-router.patch("/flags/:fKey", mainControllers.updateFlag);
+router.get("/flags", flagControllers.getAllFlags);
+router.get("/flags/:fKey", flagControllers.getFlagById);
+router.post("/flags", flagControllers.createFlag);
+router.delete("/flags/:fKey", flagControllers.deleteFlag);
+router.patch("/flags/:fKey", flagControllers.updateFlag);
 
 // Segment API routes
-router.get("/segments", mainControllers.getAllSegments);
-router.get("/segments/:sKey", mainControllers.getSegmentByKey);
-router.post("/segments", mainControllers.createSegment);
-router.delete("/segments/:sKey", mainControllers.deleteSegment);
-router.patch("/segments/:sKey", mainControllers.updateSegment);
+router.get("/segments", segmControllers.getAllSegments);
+router.get("/segments/:sKey", segmControllers.getSegmentByKey);
+router.post("/segments", segmControllers.createSegment);
+router.delete("/segments/:sKey", segmControllers.deleteSegment);
+router.patch("/segments/:sKey", segmControllers.updateSegment);
 
 // Attributes API routes
-router.get("/attributes", mainControllers.getAllAttributes);
-router.get("/attributes/:aKey", mainControllers.getAttributeByKey);
-router.post("/attributes", mainControllers.createAttribute);
-router.delete("/attributes/:aKey", mainControllers.deleteAttribute);
-router.put("/attributes/:aKey", mainControllers.updateAttribute);
+router.get("/attributes", attrControllers.getAllAttributes);
+router.get("/attributes/:aKey", attrControllers.getAttributeByKey);
+router.post("/attributes", attrControllers.createAttribute);
+router.delete("/attributes/:aKey", attrControllers.deleteAttribute);
+router.put("/attributes/:aKey", attrControllers.updateAttribute);
 
 export default router;

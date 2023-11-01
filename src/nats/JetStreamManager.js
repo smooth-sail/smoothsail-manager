@@ -2,7 +2,10 @@ import "dotenv/config";
 
 import { connect, StringCodec, consumerOpts, createInbox } from "nats";
 
-import { FLAG_STREAM_CONFIG, FLAG_STREAM_CONSUMER_CONFIG } from "./constants";
+import {
+  FLAG_STREAM_CONFIG,
+  FLAG_STREAM_CONSUMER_CONFIG,
+} from "../constants/index";
 
 import { getSdkFlags } from "../utils/flags.util";
 
