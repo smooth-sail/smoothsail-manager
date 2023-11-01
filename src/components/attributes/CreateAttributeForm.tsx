@@ -6,13 +6,23 @@ import { attributeTypes } from "@/utils/data";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import ToastTUI from "../ToastTUI";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { newAttributeSchema } from "@/models/attributes";
+import FormInput from "../ui/FormInput";
 
 type CreateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function CreateAttributeForm({ setOpen }: CreateAttributeFormProps) {
-  const { register, handleSubmit } = useForm<Attribute>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Attribute>({
+    resolver: zodResolver(newAttributeSchema),
+  });
+
   const { mutateAsync: createAttributeMutate } = useCreateAttributeMutation();
 
   const onSubmit = handleSubmit(async (newAttribute) => {
@@ -44,12 +54,12 @@ function CreateAttributeForm({ setOpen }: CreateAttributeFormProps) {
             Title
           </label>
           <div className="mt-2">
-            <input
-              type="text"
+            <FormInput
               id="name"
-              {...register("name")}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter an attribute name"
+              register={register("name")}
+              isError={!!errors.name}
+              errorMessage={errors.name?.message}
             />
           </div>
         </div>
@@ -61,12 +71,12 @@ function CreateAttributeForm({ setOpen }: CreateAttributeFormProps) {
             Attribute Key
           </label>
           <div className="mt-2">
-            <input
-              type="text"
+            <FormInput
               id="aKey"
-              {...register("aKey")}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              placeholder="Enter an attribute name"
+              placeholder="Enter an attribute key"
+              register={register("aKey")}
+              isError={!!errors.aKey}
+              errorMessage={errors.aKey?.message}
             />
           </div>
         </div>

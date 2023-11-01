@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { useCreateFlagMutation } from "@/hooks/flags";
 import { NewFlag } from "@/types";
@@ -8,6 +7,7 @@ import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
+import FormInput from "../ui/FormInput";
 
 function CreateFlagForm({
   setOpen,
@@ -53,17 +53,13 @@ function CreateFlagForm({
             Flag Name
           </label>
           <div className="mt-2">
-            <input
-              {...register("title")}
-              type="text"
-              name="title"
+            <FormInput
               id="title"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a flag name"
+              register={register("title")}
+              isError={!!errors.title}
+              errorMessage={errors.title?.message}
             />
-            {errors.title?.message && (
-              <p>{errors.title?.message as ReactNode}</p>
-            )}
           </div>
         </div>
         <div className="w-full">
@@ -74,15 +70,13 @@ function CreateFlagForm({
             Flag Key
           </label>
           <div className="mt-2">
-            <input
-              {...register("fKey")}
-              type="text"
-              name="fKey"
+            <FormInput
               id="fKey"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a flag key"
+              register={register("fKey")}
+              isError={!!errors.fKey}
+              errorMessage={errors.fKey?.message}
             />
-            {errors.fKey?.message && <p>{errors.fKey?.message as ReactNode}</p>}
           </div>
         </div>
       </div>

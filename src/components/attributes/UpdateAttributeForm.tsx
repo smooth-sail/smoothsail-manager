@@ -5,6 +5,9 @@ import { useUpdateAttributeMutation } from "@/hooks/attributes";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { attributeUpdateSchema } from "@/models/attributes";
+import FormInput from "../ui/FormInput";
 
 type UpdateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,7 +19,17 @@ function UpdateAttributeForm({
   type,
   name,
 }: UpdateAttributeFormProps) {
-  const { register, handleSubmit } = useForm<Omit<Attribute, "type">>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Omit<Attribute, "type">>({
+    resolver: zodResolver(attributeUpdateSchema),
+    defaultValues: {
+      aKey,
+      name,
+    },
+  });
 
   const { mutateAsync: updateAttributeMutate } = useUpdateAttributeMutation();
 
@@ -49,13 +62,12 @@ function UpdateAttributeForm({
             Title
           </label>
           <div className="mt-2">
-            <input
-              type="text"
+            <FormInput
               id="name"
-              {...register("name")}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter an attribute name"
-              defaultValue={name}
+              register={register("name")}
+              isError={!!errors.name}
+              errorMessage={errors.name?.message}
             />
           </div>
         </div>
@@ -67,14 +79,9 @@ function UpdateAttributeForm({
             Attribute Key
           </label>
           <div className="mt-2">
-            <input
-              type="text"
-              id="aKey"
-              {...register("aKey")}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              placeholder="Enter an attribute name"
-              defaultValue={aKey}
-            />
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {aKey}
+            </span>
           </div>
         </div>
         <div>
