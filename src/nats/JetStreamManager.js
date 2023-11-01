@@ -5,9 +5,12 @@ import { connect, StringCodec, consumerOpts, createInbox } from "nats";
 import {
   FLAG_STREAM_CONFIG,
   FLAG_STREAM_CONSUMER_CONFIG,
+  SDK_KEY_STREAM_CONFIG,
+  SDK_KEY_STREAM_CONSUMER_CONFIG,
 } from "../constants/index";
 
 import { getSdkFlags } from "../utils/flags.util";
+import { isValidSdk } from "../utils/key.util";
 
 class JetstreamManager {
   constructor() {
@@ -20,7 +23,14 @@ class JetstreamManager {
   async initialize() {
     await this.connectToJetStream();
 
-    if (!(await this.streamsExist())) {
+    if (!(await this.streamExists("SDK_KEY"))) {
+      await this.addStream(SDK_KEY_STREAM_CONFIG);
+      await this.addConsumers("SDK_KEY", SDK_KEY_STREAM_CONSUMER_CONFIG);
+    }
+
+    this.replyToSdkValidation();
+
+    if (!(await this.streamExists("FLAG_DATA"))) {
       await this.addStream(FLAG_STREAM_CONFIG);
       await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
     }
@@ -44,6 +54,44 @@ class JetstreamManager {
 
   async addConsumers(stream, config) {
     await this.jsm.consumers.add(stream, config);
+  }
+
+  async subscribeToStream(stream, subject, callbackFn) {
+    await this.js.subscribe(
+      `${stream}.${subject}`,
+      this.createConfig(subject, callbackFn)
+    );
+  }
+
+  async replyToSdkValidation() {
+    const subscription = this.nc.subscribe("SDK_KEY");
+
+    (async (sub) => {
+      for await (const m of sub) {
+        this.handleSdkKeyRequest(m);
+      }
+    })(subscription);
+  }
+
+  createConfig(subject, callbackFn) {
+    const opts = consumerOpts();
+
+    opts.deliverNew();
+    opts.deliverTo(createInbox());
+    opts.durable(subject);
+    callbackFn && opts.callback(callbackFn.bind(this));
+    opts.manualAck();
+
+    return opts;
+  }
+
+  async streamExists(streamName) {
+    try {
+      const stream = await this.jsm.streams.info(streamName);
+      return stream.config.name === streamName;
+    } catch (err) {
+      return false;
+    }
   }
 
   async publishFlagUpdate(msg) {
@@ -73,11 +121,17 @@ class JetstreamManager {
       });
   }
 
-  async subscribeToStream(stream, subject, callbackFn) {
-    await this.js.subscribe(
-      `${stream}.${subject}`,
-      this.createConfig(subject, callbackFn)
-    );
+  async publishSdkUpdate() {
+    const data = { type: "reset-sdk" };
+    const json = JSON.stringify(data);
+    await this.js
+      .publish("SDK_KEY.KEY_UPDATE", this.sc.encode(json))
+      .catch((err) => {
+        throw Error(
+          err,
+          "NATS Jetstream: Publish message has failed. Check your connection."
+        );
+      });
   }
 
   async handleFlagsRequest(err, msg) {
@@ -89,24 +143,11 @@ class JetstreamManager {
     }
   }
 
-  createConfig(subject, callbackFn) {
-    const opts = consumerOpts();
-
-    opts.deliverTo(createInbox());
-    opts.durable(subject);
-    callbackFn && opts.callback(callbackFn.bind(this));
-    opts.manualAck();
-
-    return opts;
-  }
-
-  async streamsExist() {
-    try {
-      const flagData = await this.jsm.streams.info("FLAG_DATA");
-      return flagData.config.name === "FLAG_DATA";
-    } catch (err) {
-      return false;
-    }
+  async handleSdkKeyRequest(msg) {
+    const key = this.sc.decode(msg.data);
+    const isValid = await isValidSdk(key);
+    const json = JSON.stringify({ isValid });
+    msg.respond(this.sc.encode(json));
   }
 }
 
