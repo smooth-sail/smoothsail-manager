@@ -2,7 +2,12 @@ import "dotenv/config";
 
 import { connect, StringCodec, consumerOpts, createInbox } from "nats";
 
-import { FLAG_STREAM_CONFIG, FLAG_STREAM_CONSUMER_CONFIG } from "./constants";
+import {
+  FLAG_STREAM_CONFIG,
+  FLAG_STREAM_CONSUMER_CONFIG,
+  SDK_KEY_STREAM_CONFIG,
+  SDK_KEY_STREAM_CONSUMER_CONFIG,
+} from "./constants";
 
 import { getSdkFlags } from "../utils/flags.util";
 
@@ -17,10 +22,21 @@ class JetstreamManager {
   async initialize() {
     await this.connectToJetStream();
 
-    if (!(await this.streamsExist())) {
+    if (!(await this.streamExists("FLAG_DATA"))) {
       await this.addStream(FLAG_STREAM_CONFIG);
       await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
     }
+
+    // if (!(await this.streamExists("SDK_KEY"))) {
+    //   await this.addStream(SDK_KEY_STREAM_CONFIG);
+    //   await this.addConsumers("SDK_KEY", SDK_KEY_STREAM_CONSUMER_CONFIG);
+    // }
+
+    // await this.subscribeToStream(
+    //   "SDK_KEY",
+    //   "REQUEST_SDK_KEY",
+    //   this.handleSdkKeyRequest
+    // )
 
     await this.subscribeToStream(
       "FLAG_DATA",
@@ -70,6 +86,19 @@ class JetstreamManager {
       });
   }
 
+  // async publishSdkKey() {
+  //   // const data = await getSdkKey();
+  //   // const json = JSON.stringify(data);
+  //   await this.js
+  //     .publish("SDK_KEY.GET_SDK_KEY", this.sc.encode(json))
+  //     .catch((err) => {
+  //       throw Error(
+  //         err,
+  //         "NATS Jetstream: Publish message has failed. Check your connection."
+  //       );
+  //     });
+  // }
+
   async subscribeToStream(stream, subject, callbackFn) {
     await this.js.subscribe(
       `${stream}.${subject}`,
@@ -86,6 +115,15 @@ class JetstreamManager {
     }
   }
 
+  // async handleSdkKeyRequest(err, msg) {
+  //   if (err) {
+  //     console.error("Error:", err);
+  //   } else {
+  //     this.publishSdkKey();
+  //     msg.ack();
+  //   }
+  // }
+
   createConfig(subject, callbackFn) {
     const opts = consumerOpts();
 
@@ -97,10 +135,10 @@ class JetstreamManager {
     return opts;
   }
 
-  async streamsExist() {
+  async streamExists(streamName) {
     try {
-      const flagData = await this.jsm.streams.info("FLAG_DATA");
-      return flagData.config.name === "FLAG_DATA";
+      const stream = await this.jsm.streams.info(streamName);
+      return stream.config.name === streamName;
     } catch (err) {
       return false;
     }
