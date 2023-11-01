@@ -24,5 +24,5 @@ export const SDK_KEY_STREAM_CONSUMER_CONFIG = {
   ack_policy: AckPolicy.Explicit,
 };
 
-export const KEY_BITE_LEN = 20;
+export const KEY_BYTE_LEN = 20;
 export const IV_BYTE_LEN = 16;
