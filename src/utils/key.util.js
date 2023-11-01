@@ -1,6 +1,7 @@
 import "dotenv/config";
 import crypto from "crypto";
 import { KEY_BYTE_LEN, IV_BYTE_LEN } from "../constants";
+import { SdkKey } from "../models/SdkKey";
 
 export const generateKey = () => {
   return crypto.randomBytes(KEY_BYTE_LEN).toString("hex");
@@ -47,4 +48,12 @@ export const createEncryptedSdk = () => {
   const initVector = generateInitVector();
   const encryptedKey = encryptSdk(sdkKey, initVector);
   return { sdkKey: encryptedKey, initVector };
+};
+
+export const isValidSdk = async (sdkKey) => {
+  let keys = await SdkKey.findAll({
+    attributes: { exclude: ["id", "updatedAt", "deletedAt"] },
+  });
+  let decrypted = decryptSdk(keys[0].sdkKey, keys[0].initVector);
+  return sdkKey === decrypted;
 };
