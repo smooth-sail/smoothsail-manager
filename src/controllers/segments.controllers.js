@@ -21,6 +21,7 @@ export const getAllSegments = async (req, res) => {
           {
             model: Segment,
             attributes: { exclude: ["id"] },
+            order: [["title", "DESC"]],
             include: {
               model: Rule,
               include: {
@@ -45,6 +46,7 @@ export const getAllSegments = async (req, res) => {
     } else {
       segments = await Segment.findAll({
         attributes: { exclude: ["id"] },
+        order: [["title", "ASC"]],
         include: {
           model: Rule,
           include: {
