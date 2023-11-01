@@ -121,6 +121,19 @@ class JetstreamManager {
       });
   }
 
+  async publishSdkUpdate() {
+    const data = { type: "reset-sdk" };
+    const json = JSON.stringify(data);
+    await this.js
+      .publish("SDK_KEY.KEY_UPDATE", this.sc.encode(json))
+      .catch((err) => {
+        throw Error(
+          err,
+          "NATS Jetstream: Publish message has failed. Check your connection."
+        );
+      });
+  }
+
   async handleFlagsRequest(err, msg) {
     if (err) {
       console.error("Error:", err);
