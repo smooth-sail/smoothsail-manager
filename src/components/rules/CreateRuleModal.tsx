@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import CreateRuleForm from "./CreateRuleForm.tsx";
+import { useAttributes } from "@/hooks/attributes.tsx";
 
 type CreateRuleModalProps = {
   open: boolean;
@@ -9,6 +10,7 @@ type CreateRuleModalProps = {
 };
 
 function CreateRuleModal({ open, setOpen, sKey }: CreateRuleModalProps) {
+  const { data: attributes } = useAttributes();
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -52,7 +54,13 @@ function CreateRuleModal({ open, setOpen, sKey }: CreateRuleModalProps) {
                     </div>
                   </div>
                 </div>
-                <CreateRuleForm setOpen={setOpen} sKey={sKey} />
+                {attributes && (
+                  <CreateRuleForm
+                    setOpen={setOpen}
+                    sKey={sKey}
+                    attributes={attributes}
+                  />
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
