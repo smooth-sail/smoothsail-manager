@@ -1,8 +1,9 @@
 import { SdkKey, sequelize } from "../models/SdkKey";
+import { parseError } from "../utils/error.util";
 import { createEncryptedSdk, decryptSdk } from "../utils/key.util";
 import jsm from "../nats/JetStreamManager";
 
-export const getCurrentKey = async (req, res) => {
+export const getCurrentKey = async (req, res, next) => {
   let payload;
   try {
     let keys = await SdkKey.findAll({
@@ -17,14 +18,13 @@ export const getCurrentKey = async (req, res) => {
       payload = decryptSdk(keys[0].sdkKey, keys[0].initVector);
     }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload });
 };
 
-export const regenerateKey = async (req, res) => {
+export const regenerateKey = async (req, res, next) => {
   let payload;
 
   try {
@@ -40,8 +40,7 @@ export const regenerateKey = async (req, res) => {
       return decryptSdk(newKey.sdkKey, newKey.initVector);
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
   jsm.publishSdkUpdate();
