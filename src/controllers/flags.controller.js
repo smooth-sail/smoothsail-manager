@@ -11,7 +11,7 @@ import { formatSegment } from "../utils/segments.util";
 import { updatedATFlagColManualSetQuery } from "../constants/db.manual.queries";
 import * as errorMsg from "../constants/error.messages";
 import HttpError from "../models/http-error";
-import { properError } from "../utils/error.util";
+import { parseError } from "../utils/error.util";
 
 export const getAllFlags = async (req, res, next) => {
   let flags;
@@ -21,7 +21,7 @@ export const getAllFlags = async (req, res, next) => {
       order: [["updatedAt", "DESC"]],
     });
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload: flags });
@@ -35,13 +35,13 @@ export const getFlagById = async (req, res, next) => {
       where: { fKey: flagKey },
       attributes: { exclude: ["id"] },
     });
+    if (flag === null) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
-  if (flag === null) {
-    return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
-  }
   return res.status(200).json({ payload: flag });
 };
 
@@ -55,7 +55,7 @@ export const createFlag = async (req, res, next) => {
     flag = newFlag.get({ plain: true });
     delete flag.id;
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
   let msg = { type: "new-flag", payload: flag };
@@ -73,12 +73,11 @@ export const deleteFlag = async (req, res, next) => {
         fKey: flagKey,
       },
     });
+    if (rowsImpacted === 0) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
   } catch (error) {
-    return next(properError(error));
-  }
-
-  if (rowsImpacted === 0) {
-    return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
+    return next(parseError(error));
   }
 
   let msg = { type: "deleted-flag", payload: flagKey };
@@ -97,14 +96,14 @@ const updateFlagBody = async (req, res, next) => {
     });
 
     if (flag === null) {
-      return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
     }
 
     flag.set({ title, description });
 
     await flag.save({ fields: ["title", "description"] });
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
   let planeFlag = flag.get({ plain: true });
@@ -120,13 +119,13 @@ const toggleFlag = async (req, res, next) => {
     let flag = await Flag.findOne({ where: { fKey: flagKey } });
 
     if (flag === null) {
-      return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
     }
     flag.set({ isActive: req.body.payload.isActive });
 
     await flag.save({ fields: ["isActive"] });
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
   let planeFlag = updatedFlag.get({ plain: true });
   delete planeFlag.id;
@@ -152,7 +151,7 @@ const addSegmentToFlag = async (req, res, next) => {
       });
 
       if (flag === null) {
-        return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
+        throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
       }
 
       let segment = await Segment.findOne({
@@ -166,7 +165,7 @@ const addSegmentToFlag = async (req, res, next) => {
       });
 
       if (segment === null) {
-        return next(new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404));
+        throw new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404);
       }
 
       await flag.addSegment(segment, { transaction: t });
@@ -178,7 +177,7 @@ const addSegmentToFlag = async (req, res, next) => {
       return [segment, flag];
     });
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
   let plainSegment = formatSegment(updatedSegment);
@@ -207,7 +206,7 @@ const removeSegmentFromFlag = async (req, res, next) => {
       });
 
       if (flag === null) {
-        return next(new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404));
+        throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
       }
 
       let segment = await Segment.findOne({
@@ -215,7 +214,7 @@ const removeSegmentFromFlag = async (req, res, next) => {
       });
 
       if (segment === null) {
-        return next(new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404));
+        throw new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404);
       }
 
       await flag.removeSegment(segment, { transaction: t });
@@ -226,7 +225,7 @@ const removeSegmentFromFlag = async (req, res, next) => {
       return;
     });
   } catch (error) {
-    return next(properError(error));
+    return next(parseError(error));
   }
 
   let msg = {
