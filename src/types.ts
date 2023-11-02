@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { newFlagSchema } from "./models/flags";
 import { newSegmentSchema, segmentOperatorSchema } from "./models/segments";
+import { newAttributeSchema } from "./models/attributes";
 
 export type NavLink = {
   name: string;
@@ -46,8 +47,4 @@ export type Rule = {
   value: string;
 };
 
-export type Attribute = {
-  name: string;
-  aKey: string;
-  type: "boolean" | "string" | "number";
-};
+export type Attribute = z.infer<typeof newAttributeSchema>;

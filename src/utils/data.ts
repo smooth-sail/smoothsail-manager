@@ -43,3 +43,16 @@ export const operators = [
   ">=",
   "<=",
 ];
+
+export const stringOperators = [
+  "is",
+  "is not",
+  "contains",
+  "does not contain",
+  "=",
+  "!=",
+] as const;
+
+export const numberOperators = ["=", "!=", ">=", "<="] as const;
+
+export const booleanOperators = ["is", "is not", "=", "!="] as const;

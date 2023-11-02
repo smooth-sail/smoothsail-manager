@@ -11,6 +11,7 @@ import { segmentRulesOperators } from "@/utils/data";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
+import FormInput from "../ui/FormInput";
 
 function UpdateSegmentForm({
   setOpen,
@@ -73,16 +74,13 @@ function UpdateSegmentForm({
               Segment Name
             </label>
             <div className="mt-2">
-              <input
-                {...register("title")}
-                type="text"
+              <FormInput
                 id="title"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
                 placeholder="Enter a segment name"
+                register={register("title")}
+                isError={!!errors.title}
+                errorMessage={errors.title?.message}
               />
-              {errors.title?.message && (
-                <p>{errors.title?.message as ReactNode}</p>
-              )}
             </div>
           </div>
           <div className="w-full">

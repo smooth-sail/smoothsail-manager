@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { NewSegment, SegmentOperator } from "@/types";
 import { newSegmentSchema } from "@/models/segments";
@@ -11,6 +11,7 @@ import { segmentRulesOperators } from "@/utils/data";
 import ToastTUI from "../ToastTUI";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import FormInput from "../ui/FormInput";
 
 function CreateSegmentForm({
   setOpen,
@@ -58,16 +59,13 @@ function CreateSegmentForm({
             Segment Name
           </label>
           <div className="mt-2">
-            <input
-              {...register("title")}
-              type="text"
+            <FormInput
               id="title"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a segment name"
+              register={register("title")}
+              isError={!!errors.title}
+              errorMessage={errors.title?.message}
             />
-            {errors.title?.message && (
-              <p>{errors.title?.message as ReactNode}</p>
-            )}
           </div>
         </div>
         <div className="w-full">
@@ -78,14 +76,13 @@ function CreateSegmentForm({
             Segment Key
           </label>
           <div className="mt-2">
-            <input
-              {...register("sKey")}
-              type="text"
+            <FormInput
               id="sKey"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
               placeholder="Enter a segment key"
+              register={register("sKey")}
+              isError={!!errors.sKey}
+              errorMessage={errors.sKey?.message}
             />
-            {errors.sKey?.message && <p>{errors.sKey?.message as ReactNode}</p>}
           </div>
         </div>
       </div>
