@@ -10,6 +10,7 @@ import {
 import { formatSegment } from "../utils/segments.util";
 import { updatedATFlagColManualSetQuery } from "../constants/db.manual.queries";
 import * as errorMsg from "../constants/error.messages";
+import * as successMsg from "../constants/success.messages";
 import HttpError from "../models/http-error";
 import { parseError } from "../utils/error.util";
 
@@ -83,7 +84,7 @@ export const deleteFlag = async (req, res, next) => {
   let msg = { type: "deleted-flag", payload: flagKey };
   jsm.publishFlagUpdate(msg);
 
-  return res.status(200).json({ message: "Flag successfully deleted." });
+  return res.status(200).json({ message: successMsg.succDeletedItem("flag") });
 };
 
 const updateFlagBody = async (req, res, next) => {
@@ -114,9 +115,9 @@ const updateFlagBody = async (req, res, next) => {
 const toggleFlag = async (req, res, next) => {
   const flagKey = req.params.fKey;
 
-  let updatedFlag;
+  let flag;
   try {
-    let flag = await Flag.findOne({ where: { fKey: flagKey } });
+    flag = await Flag.findOne({ where: { fKey: flagKey } });
 
     if (flag === null) {
       throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
@@ -127,12 +128,12 @@ const toggleFlag = async (req, res, next) => {
   } catch (error) {
     return next(parseError(error));
   }
-  let planeFlag = updatedFlag.get({ plain: true });
+  let planeFlag = flag.get({ plain: true });
   delete planeFlag.id;
   delete planeFlag.title;
   delete planeFlag.description;
 
-  let msg = { type: "toggle", payload: updatedFlag };
+  let msg = { type: "toggle", payload: planeFlag };
   jsm.publishFlagUpdate(msg);
 
   res.status(200).json({ isActive: planeFlag.isActive });
@@ -165,7 +166,7 @@ const addSegmentToFlag = async (req, res, next) => {
       });
 
       if (segment === null) {
-        throw new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404);
+        throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
       }
 
       await flag.addSegment(segment, { transaction: t });
@@ -185,7 +186,6 @@ const addSegmentToFlag = async (req, res, next) => {
     type: "segment add",
     payload: {
       fKey: updatedFlag.fKey,
-      // flagUpdatedAt: updatedFlag.updatedAt,
       plainSegment,
     },
   };
@@ -214,7 +214,7 @@ const removeSegmentFromFlag = async (req, res, next) => {
       });
 
       if (segment === null) {
-        throw new HttpError(errorMsg.noSegmErrorMsg(flagKey), 404);
+        throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
       }
 
       await flag.removeSegment(segment, { transaction: t });
@@ -237,7 +237,7 @@ const removeSegmentFromFlag = async (req, res, next) => {
   };
   jsm.publishFlagUpdate(msg);
 
-  res.status(200).json({ message: "Segment was successfully removed." });
+  res.status(200).json({ message: successMsg.succDeletedItem("segment") });
 };
 
 export const updateFlag = async (req, res, next) => {
