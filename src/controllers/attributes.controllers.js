@@ -1,6 +1,10 @@
-import { Attribute, sequelize } from "../models/flag.models";
+import { Attribute } from "../models/flag.models";
+import * as errorMsg from "../constants/error.messages";
+import * as successMsg from "../constants/success.messages";
+import HttpError from "../models/http-error";
+import { parseError } from "../utils/error.util";
 
-export const getAllAttributes = async (req, res) => {
+export const getAllAttributes = async (req, res, next) => {
   let attr;
   try {
     attr = await Attribute.findAll({
@@ -8,13 +12,12 @@ export const getAllAttributes = async (req, res) => {
       order: [["aKey", "ASC"]],
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
   return res.status(200).json({ payload: attr });
 };
 
-export const getAttributeByKey = async (req, res) => {
+export const getAttributeByKey = async (req, res, next) => {
   const attrKey = req.params.aKey;
   let attr;
   try {
@@ -22,20 +25,17 @@ export const getAttributeByKey = async (req, res) => {
       where: { aKey: attrKey },
       attributes: { exclude: ["id"] },
     });
+    if (attr === null) {
+      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
-  if (attr === null) {
-    return res
-      .status(404)
-      .json({ error: `Attribute with id ${attrKey} does not exist.` });
-  }
   return res.status(200).json({ payload: attr });
 };
 
-export const createAttribute = async (req, res) => {
+export const createAttribute = async (req, res, next) => {
   let attr;
   try {
     let newAttr = await Attribute.create(
@@ -45,66 +45,51 @@ export const createAttribute = async (req, res) => {
     attr = newAttr.get({ plain: true });
     delete attr.id;
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload: attr });
 };
 
-export const deleteAttribute = async (req, res) => {
+export const deleteAttribute = async (req, res, next) => {
   const attrKey = req.params.aKey;
-  let rowsImpacted;
+
   try {
-    rowsImpacted = await Attribute.destroy({
+    let rowsImpacted = await Attribute.destroy({
       where: {
         aKey: attrKey,
       },
     });
+    if (rowsImpacted === 0) {
+      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({
-      error: "Internal error occurred. Could not delete the attribute.",
-    });
+    return next(parseError(error));
   }
 
-  if (rowsImpacted === 0) {
-    res
-      .status(404)
-      .json({ error: `Attribute with id ${attrKey} does not exist.` });
-    return;
-  }
-
-  return res.status(200).json({ message: "Attribute successfully deleted." });
+  return res
+    .status(200)
+    .json({ message: successMsg.succDeletedItem("attribute") });
 };
 
-export const updateAttribute = async (req, res) => {
+export const updateAttribute = async (req, res, next) => {
   const attrKey = req.params.aKey;
 
   let updatedAttr;
   try {
-    updatedAttr = await sequelize.transaction(async (t) => {
-      let attr = await Attribute.findOne(
-        {
-          where: { aKey: attrKey },
-        },
-        { transaction: t }
-      );
+    let attr = await Attribute.findOne({ where: { aKey: attrKey } });
 
-      if (attr === null) {
-        throw new Error(`Attribute with id ${attrKey} does not exist.`);
-      }
+    if (attr === null) {
+      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
+    }
 
-      attr.set({ name: req.body.name });
-      await attr.save();
-      return attr;
-    });
+    attr.set({ name: req.body.name });
+    await attr.save();
+
+    updatedAttr = attr.toJSON();
+    delete updatedAttr.id;
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
-
-  let plainAttr = updatedAttr.toJSON();
-  delete plainAttr.id;
-  return res.status(200).json({ payload: plainAttr });
+  return res.status(200).json({ payload: updatedAttr });
 };

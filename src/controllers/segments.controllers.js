@@ -1,15 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 import jsm from "../nats/JetStreamManager";
 import { formatSegments, formatSegment } from "../utils/segments.util";
-import {
-  Flag,
-  Segment,
-  Attribute,
-  Rule,
-  sequelize,
-} from "../models/flag.models";
+import { Flag, Segment, Attribute, Rule } from "../models/flag.models";
 
-export const getAllSegments = async (req, res) => {
+import * as errorMsg from "../constants/error.messages";
+import * as successMsg from "../constants/success.messages";
+import HttpError from "../models/http-error";
+import { parseError } from "../utils/error.util";
+
+export const getAllSegments = async (req, res, next) => {
   let flagKey = req.query.fKey;
   let segments;
   try {
@@ -32,11 +31,8 @@ export const getAllSegments = async (req, res) => {
         ],
       });
 
-      // can this be done better?
       if (flag === null) {
-        return res
-          .status(404)
-          .json({ error: `Flag with key ${flagKey} does not exist.` });
+        throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
       }
       let plainSegments = flag.get({ plain: true }).Segments;
       plainSegments.forEach((s) => {
@@ -56,14 +52,13 @@ export const getAllSegments = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload: formatSegments(segments) });
 };
 
-export const getSegmentByKey = async (req, res) => {
+export const getSegmentByKey = async (req, res, next) => {
   const segmentKey = req.params.sKey;
   let segment;
   try {
@@ -77,20 +72,17 @@ export const getSegmentByKey = async (req, res) => {
         },
       },
     });
+    if (segment === null) {
+      throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
-  if (segment === null) {
-    return res
-      .status(404)
-      .json({ error: `Segment with id ${segmentKey} does not exist.` });
-  }
   return res.status(200).json({ payload: formatSegment(segment) });
 };
 
-export const createSegment = async (req, res) => {
+export const createSegment = async (req, res, next) => {
   let newSegment;
   try {
     newSegment = await Segment.create(
@@ -100,98 +92,76 @@ export const createSegment = async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload: formatSegment(newSegment) });
 };
 
-export const deleteSegment = async (req, res) => {
+export const deleteSegment = async (req, res, next) => {
   const segmentKey = req.params.sKey;
-  let rowsImpacted;
+
   try {
-    rowsImpacted = await sequelize.transaction(async (t) => {
-      let segment = await Segment.findOne(
-        {
-          where: { sKey: segmentKey },
-          include: "Flags",
-        },
-        { transaction: t }
+    let segment = await Segment.findOne({
+      where: { sKey: segmentKey },
+      include: "Flags",
+    });
+
+    if (segment === null) {
+      throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
+    }
+
+    if (segment.Flags && segment.Flags.length > 0) {
+      throw new HttpError(
+        errorMsg.segmRefFlagErr(
+          segmentKey,
+          segment.Flags.map((f) => f.fKey)
+        ),
+        409
       );
+    }
 
-      if (segment === null) {
-        throw new Error(`Segment with id ${segmentKey} does not exist.`);
-      }
-
-      if (segment.Flags && segment.Flags.length > 0) {
-        return res.status(400).json({
-          error: `Segment is referenced by at least one Flag. Remove it from a flag and try again.`,
-        });
-      }
-      console.log(segment.Flag);
-
-      rowsImpacted = await Segment.destroy(
-        {
-          where: {
-            sKey: segmentKey,
-          },
-        },
-        { transaction: t }
-      );
-      return rowsImpacted;
+    await Segment.destroy({
+      where: {
+        sKey: segmentKey,
+      },
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      error: "Internal error occurred. Could not delete the segment.",
-    });
+    return next(parseError(error));
   }
 
-  if (rowsImpacted === 0) {
-    return res
-      .status(404)
-      .json({ error: `Segment with id ${segmentKey} does not exist.` });
-  }
-
-  return res.status(200).json({ message: "Flag successfully deleted." });
+  return res
+    .status(200)
+    .json({ message: successMsg.succDeletedItem("segment") });
 };
 
-const updateSegmentBody = async (req, res) => {
+const updateSegmentBody = async (req, res, next) => {
   const segmentKey = req.params.sKey;
   const { title, description, rulesOperator } = req.body.payload;
-  let updatedSegment;
+  let segment;
   try {
-    updatedSegment = await sequelize.transaction(async (t) => {
-      let segment = await Segment.findOne(
-        {
-          where: { sKey: segmentKey },
-        },
-        { transaction: t }
-      );
+    segment = await Segment.findOne({
+      where: { sKey: segmentKey },
+    });
 
-      if (segment === null) {
-        throw new Error(`Segment with id ${segmentKey} does not exist.`);
-      }
+    if (segment === null) {
+      throw new Error(`Segment with id ${segmentKey} does not exist.`);
+    }
 
-      segment.set({
-        title,
-        description,
-        rulesOperator,
-      });
-      // we can allow change of sKey if we want
-      await segment.save({
-        fields: ["title", "description", "rulesOperator"],
-        transaction: t,
-      });
-      return segment;
+    segment.set({
+      title,
+      description,
+      rulesOperator,
+    });
+
+    await segment.save({
+      fields: ["title", "description", "rulesOperator"],
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
-  let plainSegment = updatedSegment.get({ plain: true });
+  let plainSegment = segment.get({ plain: true });
   delete plainSegment.id;
 
   if (rulesOperator) {
@@ -207,28 +177,24 @@ const updateSegmentBody = async (req, res) => {
   return res.status(200).json(plainSegment);
 };
 
-const addRuleToSegment = async (req, res) => {
+const addRuleToSegment = async (req, res, next) => {
   const segmentKey = req.params.sKey;
   const attrKey = req.body.payload.aKey;
 
-  let payload;
+  let ruleInfo;
   try {
     let segment = await Segment.findOne({
       where: { sKey: segmentKey },
     });
     if (segment === null) {
-      return res
-        .status(404)
-        .jsn({ error: `Segment with id ${segmentKey} does not exist.` });
+      throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
     }
 
     let attr = await Attribute.findOne({
       where: { aKey: attrKey },
     });
     if (attr === null) {
-      return res
-        .status(404)
-        .jsn({ error: `Attribute with id ${attrKey} does not exist.` });
+      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
     }
 
     let rule = await Rule.create(
@@ -243,7 +209,7 @@ const addRuleToSegment = async (req, res) => {
       }
     );
 
-    payload = {
+    ruleInfo = {
       aKey: attr.aKey,
       rKey: rule.rKey,
       sKey: segment.sKey,
@@ -252,123 +218,99 @@ const addRuleToSegment = async (req, res) => {
       value: rule.value,
     };
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({
-      error: "Internal error occurred. Could not delete the segment.",
-    });
+    return next(parseError(error));
   }
 
   let msg = {
     type: "rule add",
-    payload,
+    ruleInfo,
   };
   jsm.publishFlagUpdate(msg);
-  res.status(200).json({ payload });
+  res.status(200).json({ ruleInfo });
 };
 
-const updateRule = async (req, res) => {
+const updateRule = async (req, res, next) => {
   const segmentKey = req.params.sKey;
   const attrKey = req.body.payload.aKey;
   const ruleKey = req.body.payload.rKey;
-  let payload;
-  try {
-    payload = await sequelize.transaction(async (t) => {
-      let segment = await Segment.findOne(
-        {
-          where: { sKey: segmentKey },
-        },
-        { transaction: t }
-      );
-      if (segment === null) {
-        return res
-          .status(404)
-          .json({ error: `Segment with id ${segmentKey} does not exist.` });
-      }
 
-      let attr = await Attribute.findOne(
-        {
-          where: { aKey: attrKey },
-        },
-        { transaction: t }
-      );
-      if (attr === null) {
-        return res
-          .status(404)
-          .json({ error: `Attribute with id ${attrKey} does not exist.` });
-      }
-      let rule = await Rule.findOne(
-        {
-          where: { rKey: ruleKey },
-        },
-        { transaction: t }
-      );
-
-      if (rule === null) {
-        throw new Error(`Rule with id ${ruleKey} does not exist.`);
-      }
-
-      const { operator, value, aKey, rKey } = req.body.payload;
-      await rule.set(
-        {
-          operator,
-          value,
-          aKey,
-          rKey,
-        },
-        { transaction: t }
-      );
-
-      await rule.save({
-        fields: ["operator", "value", "aKey", "rKey"],
-        transaction: t,
-      });
-      return (payload = {
-        rKey: rule.rKey,
-        aKey: attr.aKey,
-        operator: rule.operator,
-        value: rule.value,
-        type: attr.type,
-        sKey: segment.sKey,
-      });
-    });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
-  }
-  let msg = {
-    type: "rule update",
-    payload: payload,
-  };
-  jsm.publishFlagUpdate(msg);
-  return res.status(200).json(payload);
-};
-
-const removeRule = async (req, res) => {
-  let ruleKey = req.body.payload.rKey;
-  const segmentKey = req.params.sKey;
-
-  let rowsImpacted;
+  let ruleInfo;
   try {
     let segment = await Segment.findOne({
       where: { sKey: segmentKey },
     });
-    rowsImpacted = await Rule.destroy({
+    if (segment === null) {
+      throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
+    }
+
+    let attr = await Attribute.findOne({
+      where: { aKey: attrKey },
+    });
+
+    if (attr === null) {
+      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
+    }
+
+    let rule = await Rule.findOne({
+      where: { rKey: ruleKey },
+    });
+    if (rule === null) {
+      throw new Error(`Rule with id ${ruleKey} does not exist.`);
+    }
+
+    const { operator, value, aKey, rKey } = req.body.payload;
+    await rule.set({
+      operator,
+      value,
+      aKey,
+      rKey,
+    });
+
+    await rule.save({
+      fields: ["operator", "value", "aKey", "rKey"],
+    });
+    ruleInfo = {
+      rKey: rule.rKey,
+      aKey: attr.aKey,
+      operator: rule.operator,
+      value: rule.value,
+      type: attr.type,
+      sKey: segment.sKey,
+    };
+  } catch (error) {
+    console.log(error);
+    return next(parseError(error));
+  }
+  let msg = {
+    type: "rule update",
+    payload: ruleInfo,
+  };
+  jsm.publishFlagUpdate(msg);
+  return res.status(200).json({ payload: ruleInfo });
+};
+
+const removeRule = async (req, res, next) => {
+  let ruleKey = req.body.payload.rKey;
+  const segmentKey = req.params.sKey;
+
+  try {
+    let segment = await Segment.findOne({
+      where: { sKey: segmentKey },
+    });
+    if (segment === null) {
+      throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
+    }
+    let rowsImpacted = await Rule.destroy({
       where: {
         rKey: ruleKey,
         SegmentId: segment.id,
       },
     });
+    if (rowsImpacted === 0) {
+      throw new HttpError(errorMsg.noRuleErrorMsg(ruleKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    return res
-      .status(500)
-      .json({ error: "Internal error occurred. Could not delete the rule." });
-  }
-
-  if (rowsImpacted === 0) {
-    return res
-      .status(404)
-      .json({ error: `Rule with id ${ruleKey} does not exist.` });
+    return next(parseError(error));
   }
 
   let msg = {
@@ -377,17 +319,17 @@ const removeRule = async (req, res) => {
   };
   jsm.publishFlagUpdate(msg);
 
-  return res.status(200).json({ message: "Rule successfully deleted." });
+  return res.status(200).json({ message: successMsg.succDeletedItem("rule") });
 };
-export const updateSegment = async (req, res) => {
+export const updateSegment = async (req, res, next) => {
   let action = req.body.action;
   if (action === "body update") {
-    updateSegmentBody(req, res);
+    updateSegmentBody(req, res, next);
   } else if (action === "rule add") {
-    addRuleToSegment(req, res);
+    addRuleToSegment(req, res, next);
   } else if (action === "rule remove") {
-    removeRule(req, res);
+    removeRule(req, res, next);
   } else if (action === "rule update") {
-    updateRule(req, res);
+    updateRule(req, res, next);
   }
 };

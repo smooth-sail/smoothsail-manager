@@ -22,7 +22,7 @@ export default (sequelize, Attribute, Segment) => {
         allowNull: false,
         field: "operator",
         set(val) {
-          this.setDataValue("operator", val.toLowerCase());
+          this.setDataValue("operator", val.toString().toLowerCase());
         },
       },
       value: {

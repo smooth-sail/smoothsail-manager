@@ -9,8 +9,12 @@ import {
 } from "../models/flag.models";
 import { formatSegment } from "../utils/segments.util";
 import { updatedATFlagColManualSetQuery } from "../constants/db.manual.queries";
+import * as errorMsg from "../constants/error.messages";
+import * as successMsg from "../constants/success.messages";
+import HttpError from "../models/http-error";
+import { parseError } from "../utils/error.util";
 
-export const getAllFlags = async (req, res) => {
+export const getAllFlags = async (req, res, next) => {
   let flags;
   try {
     flags = await Flag.findAll({
@@ -18,14 +22,13 @@ export const getAllFlags = async (req, res) => {
       order: [["updatedAt", "DESC"]],
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
   return res.status(200).json({ payload: flags });
 };
 
-export const getFlagById = async (req, res) => {
+export const getFlagById = async (req, res, next) => {
   const flagKey = req.params.fKey;
   let flag;
   try {
@@ -33,20 +36,17 @@ export const getFlagById = async (req, res) => {
       where: { fKey: flagKey },
       attributes: { exclude: ["id"] },
     });
+    if (flag === null) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: "Internal error occurred." });
+    return next(parseError(error));
   }
 
-  if (flag === null) {
-    return res
-      .status(404)
-      .json({ error: `Flag with id ${flagKey} does not exist.` });
-  }
   return res.status(200).json({ payload: flag });
 };
 
-export const createFlag = async (req, res) => {
+export const createFlag = async (req, res, next) => {
   let flag;
   try {
     let newFlag = await Flag.create(
@@ -56,17 +56,16 @@ export const createFlag = async (req, res) => {
     flag = newFlag.get({ plain: true });
     delete flag.id;
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
   let msg = { type: "new-flag", payload: flag };
   jsm.publishFlagUpdate(msg);
 
-  return res.status(200).json({ payload: flag });
+  return res.status(201).json({ payload: flag });
 };
 
-export const deleteFlag = async (req, res) => {
+export const deleteFlag = async (req, res, next) => {
   const flagKey = req.params.fKey;
   let rowsImpacted;
   try {
@@ -75,131 +74,99 @@ export const deleteFlag = async (req, res) => {
         fKey: flagKey,
       },
     });
+    if (rowsImpacted === 0) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
   } catch (error) {
-    console.log(error.message);
-    res
-      .status(500)
-      .json({ error: "Internal error occurred. Could not delete flag." });
-  }
-
-  if (rowsImpacted === 0) {
-    res.status(404).json({ error: `Flag with id ${flagKey} does not exist.` });
-    return;
+    return next(parseError(error));
   }
 
   let msg = { type: "deleted-flag", payload: flagKey };
   jsm.publishFlagUpdate(msg);
 
-  return res.status(200).json({ message: "Flag successfully deleted." });
+  return res.status(200).json({ message: successMsg.succDeletedItem("flag") });
 };
 
-const updateFlagBody = async (req, res) => {
+const updateFlagBody = async (req, res, next) => {
   const flagKey = req.params.fKey;
-
-  let updatedFlag;
+  let { title, description } = req.body.payload;
+  let flag;
   try {
-    let { title, description } = req.body.payload;
-    updatedFlag = await sequelize.transaction(async (t) => {
-      let flag = await Flag.findOne(
-        {
-          where: { fKey: flagKey },
-        },
-        { transaction: t }
-      );
-
-      if (flag === null) {
-        throw new Error(`Flag with id ${flagKey} does not exist.`);
-      }
-
-      flag.set({
-        title,
-        description,
-      });
-
-      await flag.save({ fields: ["title", "description"], transaction: t });
-      return flag;
+    flag = await Flag.findOne({
+      where: { fKey: flagKey },
     });
+
+    if (flag === null) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
+
+    flag.set({ title, description });
+
+    await flag.save({ fields: ["title", "description"] });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
-  let planeFlag = updatedFlag.get({ plain: true });
+
+  let planeFlag = flag.get({ plain: true });
   delete planeFlag.id;
   return res.status(200).json(planeFlag);
 };
 
-const toggleFlag = async (req, res) => {
+const toggleFlag = async (req, res, next) => {
   const flagKey = req.params.fKey;
 
-  let updatedFlag;
+  let flag;
   try {
-    updatedFlag = await sequelize.transaction(async (t) => {
-      let flag = await Flag.findOne(
-        {
-          where: { fKey: flagKey },
-        },
-        { transaction: t }
-      );
+    flag = await Flag.findOne({ where: { fKey: flagKey } });
 
-      if (flag === null) {
-        throw new Error(`Flag with id ${flagKey} does not exist.`);
-      }
-      flag.set({ isActive: req.body.payload.isActive });
+    if (flag === null) {
+      throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
+    }
+    flag.set({ isActive: req.body.payload.isActive });
 
-      await flag.save({ fields: ["isActive"], transaction: t });
-      return flag;
-    });
+    await flag.save({ fields: ["isActive"] });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
-  let planeFlag = updatedFlag.get({ plain: true });
+  let planeFlag = flag.get({ plain: true });
   delete planeFlag.id;
   delete planeFlag.title;
   delete planeFlag.description;
 
-  res.status(200).json({ isActive: planeFlag.isActive });
+  let msg = { type: "toggle", payload: planeFlag };
+  jsm.publishFlagUpdate(msg);
 
-  let msg = { type: "toggle", payload: updatedFlag };
-  return jsm.publishFlagUpdate(msg);
+  res.status(200).json({ isActive: planeFlag.isActive });
 };
 
-const addSegmentToFlag = async (req, res) => {
+const addSegmentToFlag = async (req, res, next) => {
   const flagKey = req.params.fKey;
   const segmentKey = req.body.payload.sKey;
 
   let updatedSegment, updatedFlag;
   try {
     [updatedSegment, updatedFlag] = await sequelize.transaction(async (t) => {
-      let flag = await Flag.findOne(
-        {
-          where: { fKey: flagKey },
-          include: Segment,
-        },
-        { transaction: t }
-      );
+      let flag = await Flag.findOne({
+        where: { fKey: flagKey },
+        include: Segment,
+      });
 
       if (flag === null) {
-        throw new Error(`Flag with id ${flagKey} does not exist.`);
+        throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
       }
 
-      let segment = await Segment.findOne(
-        {
-          where: { sKey: segmentKey },
+      let segment = await Segment.findOne({
+        where: { sKey: segmentKey },
+        include: {
+          model: Rule,
           include: {
-            model: Rule,
-            include: {
-              model: Attribute,
-            },
+            model: Attribute,
           },
         },
-        { transaction: t }
-      );
+      });
 
       if (segment === null) {
-        return res
-          .status(404)
-          .json({ error: `Segment with id ${segmentKey} does not exist.` });
+        throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
       }
 
       await flag.addSegment(segment, { transaction: t });
@@ -211,8 +178,7 @@ const addSegmentToFlag = async (req, res) => {
       return [segment, flag];
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
   let plainSegment = formatSegment(updatedSegment);
@@ -220,7 +186,6 @@ const addSegmentToFlag = async (req, res) => {
     type: "segment add",
     payload: {
       fKey: updatedFlag.fKey,
-      // flagUpdatedAt: updatedFlag.updatedAt,
       plainSegment,
     },
   };
@@ -229,35 +194,27 @@ const addSegmentToFlag = async (req, res) => {
   res.status(200).json({ payload: plainSegment });
 };
 
-const removeSegmentFromFlag = async (req, res) => {
+const removeSegmentFromFlag = async (req, res, next) => {
   const flagKey = req.params.fKey;
   const segmentKey = req.body.payload.sKey;
 
   try {
     await sequelize.transaction(async (t) => {
-      let flag = await Flag.findOne(
-        {
-          where: { fKey: flagKey },
-          include: Segment,
-        },
-        { transaction: t }
-      );
+      let flag = await Flag.findOne({
+        where: { fKey: flagKey },
+        include: Segment,
+      });
 
       if (flag === null) {
-        throw new Error(`Flag with id ${flagKey} does not exist.`);
+        throw new HttpError(errorMsg.noFlagErrorMsg(flagKey), 404);
       }
 
-      let segment = await Segment.findOne(
-        {
-          where: { sKey: segmentKey },
-        },
-        { transaction: t }
-      );
+      let segment = await Segment.findOne({
+        where: { sKey: segmentKey },
+      });
 
       if (segment === null) {
-        return res
-          .status(404)
-          .json({ error: `Segment with id ${segmentKey} does not exist.` });
+        throw new HttpError(errorMsg.noSegmErrorMsg(segmentKey), 404);
       }
 
       await flag.removeSegment(segment, { transaction: t });
@@ -268,8 +225,7 @@ const removeSegmentFromFlag = async (req, res) => {
       return;
     });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return next(parseError(error));
   }
 
   let msg = {
@@ -281,18 +237,18 @@ const removeSegmentFromFlag = async (req, res) => {
   };
   jsm.publishFlagUpdate(msg);
 
-  res.status(200).json({ message: "Segment was successfully removed." });
+  res.status(200).json({ message: successMsg.succDeletedItem("segment") });
 };
 
-export const updateFlag = async (req, res) => {
+export const updateFlag = async (req, res, next) => {
   let action = req.body.action;
   if (action === "body update") {
-    updateFlagBody(req, res);
+    updateFlagBody(req, res, next);
   } else if (action === "toggle") {
-    toggleFlag(req, res);
+    toggleFlag(req, res, next);
   } else if (action === "segment add") {
-    addSegmentToFlag(req, res);
+    addSegmentToFlag(req, res, next);
   } else if (action === "segment remove") {
-    removeSegmentFromFlag(req, res);
+    removeSegmentFromFlag(req, res, next);
   }
 };
