@@ -54,8 +54,17 @@ export const isValidSdk = async (sdkKey) => {
   let keys = await SdkKey.findAll({
     attributes: { exclude: ["id", "updatedAt", "deletedAt"] },
   });
-  const [key, iv] = sdkKey.split(":");
 
-  let decrypted = decryptSdk(key, keys[0].initVector);
-  return sdkKey === decrypted;
+  return sdkKey === keys[0].sdkKey;
 };
+
+console.log(
+  "2a593abe9d4604bfaaba6a2b258816dfc818d1851462e84d36694b450d5e4b4abe917766ebc54bb9aa4930af12ec5907"
+);
+(async () => {
+  console.log(
+    await isValidSdk(
+      "2a593abe9d4604bfaaba6a2b258816dfc818d1851462e84d36694b450d5e4b4abe917766ebc54bb9aa4930af12ec5907"
+    )
+  );
+})();
