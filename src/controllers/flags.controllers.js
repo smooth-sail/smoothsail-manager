@@ -55,49 +55,44 @@ export const deleteFlag = async (req, res, next) => {
 
 export const updateFlag = async (req, res, next) => {
   let action = req.body.action;
+  let fKey = req.params.fKey;
 
   let payload;
   let msg;
   try {
     if (action === "body update") {
       const { title, description } = req.body.payload;
-      payload = await flagServices.updateFlagBody(
-        req.params.fKey,
-        title,
-        description
-      );
+      payload = await flagServices.updateFlagBody(fKey, title, description);
     } else if (action === "toggle") {
-      let flag = await flagServices.toggle(
-        req.params.fKey,
-        req.body.payload.isActive
-      );
+      let flag = await flagServices.toggle(fKey, req.body.payload.isActive);
+
       payload = { isActive: flag.isActive };
       msg = { type: "toggle", payload: flag };
     } else if (action === "segment add") {
       payload = await flagServices.addSegmentToFlag(
-        req.params.fKey,
+        fKey,
         req.body.payload.sKey
       );
 
       msg = {
         type: "segment add",
         payload: {
-          fKey: req.params.fKey,
+          fKey,
           plainSegment: payload,
         },
       };
     } else if (action === "segment remove") {
-      const flagKey = req.params.fKey;
       const segmentKey = req.body.payload.sKey;
-      await flagServices.removeSegmentFromFlag(flagKey, segmentKey);
+      await flagServices.removeSegmentFromFlag(fKey, segmentKey);
+
+      payload = successMsg.succDeletedItem("segment");
       msg = {
         type: "segment remove",
         payload: {
-          fKey: flagKey,
+          fKey,
           sKey: segmentKey,
         },
       };
-      payload = successMsg.succDeletedItem("segment");
     }
   } catch (error) {
     return next(parseError(error));
