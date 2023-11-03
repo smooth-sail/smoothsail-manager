@@ -40,7 +40,7 @@ export const decryptSdk = (encryptedKey, iv) => {
   const decipher = createDecipher(iv);
   let decryptedString = decipher.update(encryptedKey, "hex", "utf8");
   decryptedString += decipher.final("utf-8");
-  return decryptedString;
+  return `${iv}:${decryptedString}`;
 };
 
 export const createEncryptedSdk = () => {
@@ -54,6 +54,8 @@ export const isValidSdk = async (sdkKey) => {
   let keys = await SdkKey.findAll({
     attributes: { exclude: ["id", "updatedAt", "deletedAt"] },
   });
-  let decrypted = decryptSdk(keys[0].sdkKey, keys[0].initVector);
+  const [key, iv] = sdkKey.split(":");
+
+  let decrypted = decryptSdk(key, keys[0].initVector);
   return sdkKey === decrypted;
 };
