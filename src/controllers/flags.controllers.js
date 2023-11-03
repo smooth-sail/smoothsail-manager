@@ -2,6 +2,8 @@ import jsm from "../nats/JetStreamManager";
 import * as flagServices from "../services/flags.services";
 import * as successMsg from "../constants/success.messages";
 import { parseError } from "../utils/error.util";
+import HttpError from "../models/http-error";
+import { UNSUPPORTED_ACTION } from "../constants/error.messages";
 
 export const getAllFlags = async (req, res, next) => {
   let flags;
@@ -14,10 +16,10 @@ export const getAllFlags = async (req, res, next) => {
   return res.status(200).json({ payload: flags });
 };
 
-export const getFlagById = async (req, res, next) => {
+export const getFlagByKey = async (req, res, next) => {
   let flag;
   try {
-    flag = await flagServices.getFlagById(req.params.fKey, true);
+    flag = await flagServices.getFlagByKey(req.params.fKey, true);
   } catch (error) {
     return next(parseError(error));
   }
@@ -93,6 +95,8 @@ export const updateFlag = async (req, res, next) => {
           sKey: segmentKey,
         },
       };
+    } else {
+      throw new HttpError(UNSUPPORTED_ACTION, 400);
     }
   } catch (error) {
     return next(parseError(error));

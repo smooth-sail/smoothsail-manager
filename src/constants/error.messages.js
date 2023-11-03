@@ -9,3 +9,5 @@ export const segmRefFlagErr = (id, flagKeys) =>
   `Segment ${id} is referenced by flag(s) with following fKeys: ${flagKeys.join(
     ", "
   )}. Remove it from a flag and try again.`;
+export const UNSUPPORTED_ACTION =
+  "Validation error occurred. This action is not supported.";
