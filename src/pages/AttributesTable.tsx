@@ -2,7 +2,8 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import { useAttributes } from "@/hooks/attributes";
 import AttributeItem from "@/components/attributes/AttributeItem";
-import CreateAttributeModal from "@/components/attributes/CreateAttributeModal";
+import Modal from "@/components/Modal";
+import CreateAttributeForm from "@/components/attributes/CreateAttributeForm";
 
 function AttributesTable() {
   const [openCreateAttributeModal, setOpenCreateAttributeModal] =
@@ -69,10 +70,12 @@ function AttributesTable() {
           </table>
         </div>
       </div>
-      <CreateAttributeModal
+      <Modal
         open={openCreateAttributeModal}
         setOpen={setOpenCreateAttributeModal}
-      />
+      >
+        <CreateAttributeForm setOpen={setOpenCreateAttributeModal} />
+      </Modal>
     </>
   );
 }

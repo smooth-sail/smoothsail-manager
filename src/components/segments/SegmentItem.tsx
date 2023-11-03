@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Segment } from "@/types";
+import { Attribute, Segment } from "@/types";
 import SegmentsRules from "./SegmentsRules";
 import Modal from "../Modal";
 import UpdateSegmentForm from "./UpdateSegmentForm";
 
-type SegmentItemProps = Segment;
+type SegmentItemProps = Segment & {
+  attributes: Attribute[];
+};
 
 function SegmentItem(props: SegmentItemProps) {
   const [openEdit, setOpenEdit] = useState(false);

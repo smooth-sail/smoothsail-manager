@@ -1,22 +1,14 @@
-import { Fragment, ReactNode, useState } from "react";
+import { Fragment, ReactNode } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { classNames } from "@/utils/classNames";
-import DeleteModal from "./DeleteModal";
 import { createPortal } from "react-dom";
 
 type ModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: ReactNode;
-  // resource?: "segment" | "rule" | "attribute" | "flag";
-  // isDelete?: boolean;
-  // onDelete?: () => void;
-  // action: string;
-  // directions: string;
 };
 
 function Modal({ open, setOpen, children }: ModalProps) {
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   return createPortal(
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -49,14 +41,6 @@ function Modal({ open, setOpen, children }: ModalProps) {
             </Transition.Child>
           </div>
         </div>
-        {/* {isDelete && resource && ( */}
-        {/*   <DeleteModal */}
-        {/*     resource={resource} */}
-        {/*     setOpen={setOpenDeleteModal} */}
-        {/*     open={openDeleteModal} */}
-        {/*     onDelete={onDelete} */}
-        {/*   /> */}
-        {/* )} */}
       </Dialog>
     </Transition.Root>,
     document.getElementById("portal")!,

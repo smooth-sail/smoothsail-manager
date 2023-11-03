@@ -19,7 +19,7 @@ type RuleFormProps = {
   attributes: Attribute[];
 };
 
-type RuleFormInputs = {
+export type RuleFormInputs = {
   attribute: string;
   operator: string;
   value: string;

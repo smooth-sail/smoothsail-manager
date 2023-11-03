@@ -87,14 +87,17 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
         )}
       </Modal>
       <Modal open={openUpdateRuleModal} setOpen={setOpenUpdateRuleModal}>
-        <UpdateRuleForm
-          setOpen={setOpenUpdateRuleModal}
-          aKey={currAKey}
-          rKey={currRKey}
-          operator={currOperator}
-          value={currValue}
-          sKey={sKey}
-        />
+        {attributes && (
+          <UpdateRuleForm
+            attributes={attributes}
+            setOpen={setOpenUpdateRuleModal}
+            aKey={currAKey}
+            rKey={currRKey}
+            operator={currOperator}
+            value={currValue}
+            sKey={sKey}
+          />
+        )}
       </Modal>
     </>
   );

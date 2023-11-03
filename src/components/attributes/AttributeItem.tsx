@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Attribute } from "@/types";
-import UpdateAttributeModal from "./UpdateAttributeModal";
+import Modal from "../Modal";
+import UpdateAttributeForm from "./UpdateAttributeForm";
 
 type AttributeItemProps = Attribute;
 
@@ -35,7 +36,9 @@ function AttributeItem(props: AttributeItemProps) {
           </span>
         </td>
       </tr>
-      <UpdateAttributeModal setOpen={setOpenEdit} open={openEdit} {...props} />
+      <Modal open={openEdit} setOpen={setOpenEdit}>
+        <UpdateAttributeForm {...props} setOpen={setOpenEdit} />
+      </Modal>
     </>
   );
 }
