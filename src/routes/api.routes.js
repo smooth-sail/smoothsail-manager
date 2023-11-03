@@ -1,5 +1,5 @@
 import express from "express";
-import * as flagControllers from "../controllers/flags.controller";
+import * as flagControllers from "../controllers/flags.controllers";
 import * as segmControllers from "../controllers/segments.controllers";
 import * as attrControllers from "../controllers/attributes.controllers";
 
