@@ -173,14 +173,15 @@ function UpdateSegmentForm({
             ))}
           </div>
         </RadioGroup>
-        <FormButton typeOfButton="confirm" type="submit" text="Save" />
-        <FormButton
-          typeOfButton="cancel"
-          type="button"
-          text="Cancel"
-          onClick={() => setOpen(false)}
-        />
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"></div>
+        <div className="flex gap-4">
+          <FormButton
+            typeOfButton="cancel"
+            type="button"
+            text="Cancel"
+            onClick={() => setOpen(false)}
+          />
+          <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        </div>
       </form>
     </>
   );

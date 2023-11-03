@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { createPortal } from "react-dom";
 
 type DeleteModalProps = {
   open: boolean;
@@ -10,7 +11,7 @@ type DeleteModalProps = {
 };
 
 function DeleteModal({ open, setOpen, onDelete, resource }: DeleteModalProps) {
-  return (
+  return createPortal(
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <Transition.Child
@@ -81,7 +82,8 @@ function DeleteModal({ open, setOpen, onDelete, resource }: DeleteModalProps) {
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition.Root>,
+    document.getElementById("portal")!,
   );
 }
 

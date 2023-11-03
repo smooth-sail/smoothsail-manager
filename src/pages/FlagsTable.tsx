@@ -87,10 +87,6 @@ export default function FlagsTable() {
         />
         <CreateFlagForm setOpen={setOpenCreateFlagModal} />
       </Modal>
-      {/* <CreateFlagModal */}
-      {/*   open={openCreateFlagModal} */}
-      {/*   setOpen={setOpenCreateFlagModal} */}
-      {/* /> */}
     </>
   );
 }

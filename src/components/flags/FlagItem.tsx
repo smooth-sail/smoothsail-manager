@@ -113,12 +113,6 @@ function FlagItem(props: FlagItemProps) {
           title={props.title}
         />
       </Modal>
-      {/* <FlagsSegmentsModal */}
-      {/*   title={props.title} */}
-      {/*   fKey={props.fKey} */}
-      {/*   open={openSegmentsModal} */}
-      {/*   setOpen={setOpenSegmentsModal} */}
-      {/* /> */}
     </>
   );
 }
