@@ -28,8 +28,14 @@ function SegmentItem(props: SegmentItemProps) {
         <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
           {props.rulesOperator}
         </td>
-        <td className="px-3 py-4 text-sm text-gray-500">
-          {<SegmentsRulesDropdown sKey={props.sKey} rules={props.rules} />}
+        <td className="px-3 py-4 text-sm font-medium">
+          <span
+            // onClick={() => setOpenSegmentsModal(true)}
+            className="cursor-pointer hover:text-ss-blgr"
+          >
+            Rules<span className="sr-only">, {props.title}</span>
+          </span>
+          {/* {<SegmentsRulesDropdown sKey={props.sKey} rules={props.rules} />} */}
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span

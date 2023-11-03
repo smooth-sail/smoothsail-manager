@@ -2,7 +2,9 @@ import { useState } from "react";
 import FlagItem from "@/components/flags/FlagItem";
 import Button from "@/components/ui/Button";
 import { useFlags } from "@/hooks/flags";
-import CreateFlagModal from "@/components/flags/CreateFlagModal";
+import Modal from "@/components/Modal";
+import CreateFlagForm from "@/components/flags/CreateFlagForm";
+import FormHeader from "@/components/FormHeader";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
@@ -78,10 +80,17 @@ export default function FlagsTable() {
           </table>
         </div>
       </div>
-      <CreateFlagModal
-        open={openCreateFlagModal}
-        setOpen={setOpenCreateFlagModal}
-      />
+      <Modal open={openCreateFlagModal} setOpen={setOpenCreateFlagModal}>
+        <FormHeader
+          directions="Define your flag. Note, the flag key will be used to identify your flag in the database and can not be updated once it's created."
+          action="Create a Flag"
+        />
+        <CreateFlagForm setOpen={setOpenCreateFlagModal} />
+      </Modal>
+      {/* <CreateFlagModal */}
+      {/*   open={openCreateFlagModal} */}
+      {/*   setOpen={setOpenCreateFlagModal} */}
+      {/* /> */}
     </>
   );
 }

@@ -5,7 +5,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 type DeleteModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onDelete: () => void;
+  onDelete?: () => void;
   resource: "flag" | "segment" | "attribute" | "rule";
 };
 

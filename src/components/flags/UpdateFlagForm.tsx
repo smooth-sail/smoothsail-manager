@@ -53,88 +53,86 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
   });
 
   return (
-    <>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <div className="flex-col flex sm:flex-row gap-3">
-          <div className="w-full">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Flag Name
-            </label>
-            <div className="mt-2">
-              <FormInput
-                id="title"
-                placeholder="Enter a flag name"
-                register={register("title")}
-                isError={!!errors.title}
-                errorMessage={errors.title?.message}
-              />
-            </div>
-          </div>
-          <div className="w-full">
-            <p className="block text-sm font-medium leading-6 text-gray-900">
-              Flag Key
-            </p>
-            <div className="mt-2">
-              <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {props.fKey}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="flex-col flex sm:flex-row gap-3">
-          <div className="w-full">
-            <p className="block text-sm font-medium leading-6 text-gray-900">
-              Created At
-            </p>
-            <div className="mt-2">
-              <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {formatDateTime(props.createdAt)}
-              </span>
-            </div>
-          </div>
-          <div className="w-full">
-            <p className="block text-sm font-medium leading-6 text-gray-900">
-              Updated At
-            </p>
-            <div className="mt-2">
-              <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                {formatDateTime(props.updatedAt)}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div>
+    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <div className="flex-col flex sm:flex-row gap-3">
+        <div className="w-full">
           <label
-            htmlFor="description"
+            htmlFor="title"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Description
+            Flag Name
           </label>
           <div className="mt-2">
-            <textarea
-              {...register("description")}
-              rows={4}
-              name="description"
-              id="description"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              placeholder="Write an optional description about your flag"
+            <FormInput
+              id="title"
+              placeholder="Enter a flag name"
+              register={register("title")}
+              isError={!!errors.title}
+              errorMessage={errors.title?.message}
             />
           </div>
         </div>
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <FormButton typeOfButton="confirm" type="submit" text="Save" />
-          <FormButton
-            typeOfButton="cancel"
-            type="button"
-            text="Cancel"
-            onClick={() => setOpen(false)}
+        <div className="w-full">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Flag Key
+          </p>
+          <div className="mt-2">
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {props.fKey}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex-col flex sm:flex-row gap-3">
+        <div className="w-full">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Created At
+          </p>
+          <div className="mt-2">
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {formatDateTime(props.createdAt)}
+            </span>
+          </div>
+        </div>
+        <div className="w-full">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
+            Updated At
+          </p>
+          <div className="mt-2">
+            <span className="block w-full rounded-md border-0 p-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              {formatDateTime(props.updatedAt)}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Description
+        </label>
+        <div className="mt-2">
+          <textarea
+            {...register("description")}
+            rows={4}
+            name="description"
+            id="description"
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-ss-blgr sm:text-sm sm:leading-6"
+            placeholder="Write an optional description about your flag"
           />
         </div>
-      </form>
-    </>
+      </div>
+      <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+        <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        <FormButton
+          typeOfButton="cancel"
+          type="button"
+          text="Cancel"
+          onClick={() => setOpen(false)}
+        />
+      </div>
+    </form>
   );
 }
 
