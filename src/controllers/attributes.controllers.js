@@ -1,16 +1,11 @@
-import { Attribute } from "../models/flag.models";
-import * as errorMsg from "../constants/error.messages";
 import * as successMsg from "../constants/success.messages";
-import HttpError from "../models/http-error";
 import { parseError } from "../utils/error.util";
+import * as attrServices from "../services/attributes.services";
 
 export const getAllAttributes = async (req, res, next) => {
   let attr;
   try {
-    attr = await Attribute.findAll({
-      attributes: { exclude: ["id"] },
-      order: [["aKey", "ASC"]],
-    });
+    attr = await attrServices.getAllAttributes();
   } catch (error) {
     return next(parseError(error));
   }
@@ -18,16 +13,9 @@ export const getAllAttributes = async (req, res, next) => {
 };
 
 export const getAttributeByKey = async (req, res, next) => {
-  const attrKey = req.params.aKey;
   let attr;
   try {
-    attr = await Attribute.findOne({
-      where: { aKey: attrKey },
-      attributes: { exclude: ["id"] },
-    });
-    if (attr === null) {
-      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
-    }
+    attr = await attrServices.getAttributeByKey(req.params.aKey, true);
   } catch (error) {
     return next(parseError(error));
   }
@@ -38,12 +26,7 @@ export const getAttributeByKey = async (req, res, next) => {
 export const createAttribute = async (req, res, next) => {
   let attr;
   try {
-    let newAttr = await Attribute.create(
-      { ...req.body },
-      { fields: ["aKey", "name", "type"] }
-    );
-    attr = newAttr.get({ plain: true });
-    delete attr.id;
+    attr = await attrServices.createAttribute(req.body);
   } catch (error) {
     return next(parseError(error));
   }
@@ -52,17 +35,8 @@ export const createAttribute = async (req, res, next) => {
 };
 
 export const deleteAttribute = async (req, res, next) => {
-  const attrKey = req.params.aKey;
-
   try {
-    let rowsImpacted = await Attribute.destroy({
-      where: {
-        aKey: attrKey,
-      },
-    });
-    if (rowsImpacted === 0) {
-      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
-    }
+    await attrServices.deleteAttribute(req.params.aKey);
   } catch (error) {
     return next(parseError(error));
   }
@@ -73,21 +47,12 @@ export const deleteAttribute = async (req, res, next) => {
 };
 
 export const updateAttribute = async (req, res, next) => {
-  const attrKey = req.params.aKey;
-
   let updatedAttr;
   try {
-    let attr = await Attribute.findOne({ where: { aKey: attrKey } });
-
-    if (attr === null) {
-      throw new HttpError(errorMsg.noAttrErrorMsg(attrKey), 404);
-    }
-
-    attr.set({ name: req.body.name });
-    await attr.save();
-
-    updatedAttr = attr.toJSON();
-    delete updatedAttr.id;
+    updatedAttr = await attrServices.updateAttribute({
+      ...req.body,
+      aKey: req.params.aKey,
+    });
   } catch (error) {
     return next(parseError(error));
   }

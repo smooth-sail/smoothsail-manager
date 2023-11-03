@@ -90,7 +90,7 @@ export const updateSegment = async (req, res, next) => {
         type: "rule add",
         payload: ruleInfo,
       };
-      console.log(msg);
+
       payload = { ruleInfo };
     } else if (action === "rule remove") {
       const sKey = req.params.sKey;
