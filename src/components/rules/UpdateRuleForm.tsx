@@ -6,7 +6,7 @@ import { operators } from "@/utils/data";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
-import FormHeader from "../FormHeader";
+import FormHeader from "../ui/FormHeader";
 import { useState } from "react";
 import DeleteModal from "../DeleteModal";
 

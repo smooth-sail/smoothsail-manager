@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Flag } from "@/types";
 import Toggle from "@/components/ui/Toggle";
-import { useDeleteFlagMutation, useFlagToggleMutation } from "@/hooks/flags";
+import { useFlagToggleMutation } from "@/hooks/flags";
 import { formatDateTime } from "@/utils/format";
 import { AxiosError } from "axios";
 import ToastTUI from "../ToastTUI";
 import toast from "react-hot-toast";
 import Modal from "../Modal";
 import UpdateFlagForm from "./UpdateFlagForm";
-import FormHeader from "../FormHeader";
 import FlagsSegments from "./FlagsSegments";
 
 type FlagItemProps = Flag;
@@ -38,22 +37,6 @@ function FlagItem(props: FlagItemProps) {
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-  };
-
-  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
-  const handleDelete = async () => {
-    try {
-      await deleteFlagMutation(props.fKey);
-      toast.custom(
-        <ToastTUI type="success" message="Flag deleted from the database." />,
-      );
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        const responseError = err.response?.data.error;
-        toast.custom(<ToastTUI type="error" message={responseError} />);
-      }
-    }
-    setOpenEdit(false);
   };
 
   return (
@@ -97,13 +80,6 @@ function FlagItem(props: FlagItemProps) {
         </td>
       </tr>
       <Modal open={openEdit} setOpen={setOpenEdit}>
-        <FormHeader
-          resource="flag"
-          onDelete={handleDelete}
-          isDelete={true}
-          directions={`Update ${props.title}. Note, the flag key, created at, and updated at can not be changed manually.`}
-          action={`Edit flag: ${props.title}`}
-        />
         <UpdateFlagForm {...props} setOpen={setOpenEdit} />
       </Modal>
       <Modal open={openSegmentsModal} setOpen={setOpenSegmentsModal}>

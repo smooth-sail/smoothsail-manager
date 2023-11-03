@@ -11,7 +11,7 @@ import {
   stringOperators,
 } from "@/utils/data";
 import FormInput from "../ui/FormInput";
-import FormHeader from "../FormHeader";
+import FormHeader from "../ui/FormHeader";
 
 type RuleFormProps = {
   sKey: string;

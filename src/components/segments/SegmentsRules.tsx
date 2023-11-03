@@ -5,14 +5,16 @@ import FormButton from "../ui/FormButton";
 import Modal from "../Modal";
 import UpdateRuleForm from "../rules/UpdateRuleForm";
 import CreateRuleForm from "../rules/CreateRuleForm";
+import FormHeader from "../ui/FormHeader";
 
 type SegmentsRulesProps = {
   rules: Rule[];
   sKey: string;
+  title: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function SegmentsRules({ rules, sKey, setOpen }: SegmentsRulesProps) {
+function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
   const [openCreateRuleModal, setOpenCreateRuleModal] = useState(false);
   const [openUpdateRuleModal, setOpenUpdateRuleModal] = useState(false);
   const [currAKey, setCurrAKey] = useState("");
@@ -24,6 +26,10 @@ function SegmentsRules({ rules, sKey, setOpen }: SegmentsRulesProps) {
 
   return (
     <>
+      <FormHeader
+        action={`Edit rules for ${title}`}
+        directions={`Click edit to modify a rule or create a new rule.`}
+      />
       <div>
         <ul role="list" className="divide-y divide-gray-100">
           {rules.map(({ aKey, rKey, value, operator }) => (

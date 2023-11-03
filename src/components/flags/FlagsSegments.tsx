@@ -6,7 +6,7 @@ import {
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
-import FormHeader from "../FormHeader";
+import FormHeader from "@/components/ui/FormHeader";
 import FormButton from "../ui/FormButton";
 
 export type FlagsSegmentsProps = {

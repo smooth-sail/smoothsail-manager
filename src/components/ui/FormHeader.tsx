@@ -1,9 +1,9 @@
 import { classNames } from "@/utils/classNames";
 import { Dialog } from "@headlessui/react";
-import { ReactNode, useState } from "react";
-import DeleteModal from "./DeleteModal";
+import { useState } from "react";
+import DeleteModal from "@/components/DeleteModal";
 
-type FormWrapperProps = {
+type FormHeaderProps = {
   action: string;
   directions: string;
   isDelete?: boolean;
@@ -17,7 +17,7 @@ function FormHeader({
   directions,
   resource,
   onDelete,
-}: FormWrapperProps) {
+}: FormHeaderProps) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   return (
     <>

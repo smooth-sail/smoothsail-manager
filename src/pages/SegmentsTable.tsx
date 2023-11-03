@@ -3,7 +3,6 @@ import Button from "@/components/ui/Button";
 import { useSegments } from "@/hooks/segments";
 import SegmentItem from "@/components/segments/SegmentItem";
 import Modal from "@/components/Modal";
-import FormHeader from "@/components/FormHeader";
 import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
 
 export default function SegmentsTable() {
@@ -77,10 +76,6 @@ export default function SegmentsTable() {
         </div>
       </div>
       <Modal open={openCreateSegmentModal} setOpen={setOpenCreateSegmentModal}>
-        <FormHeader
-          directions="Define your segment. Note, the segment key will be used to identify your segment in the database and can not be updated once it's created."
-          action="Create a Segment"
-        />
         <CreateSegmentForm setOpen={setOpenCreateSegmentModal} />
       </Modal>
     </>
