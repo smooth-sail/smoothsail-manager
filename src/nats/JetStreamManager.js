@@ -14,28 +14,14 @@ import { isValidSdk } from "../utils/key.util";
 
 class JetstreamManager {
   constructor() {
-    this.nc = null;
-    this.js = null;
-    this.jsm = null;
     this.sc = StringCodec();
   }
 
   async initialize() {
     await this.connectToJetStream();
-
-    if (!(await this.streamExists("SDK_KEY"))) {
-      await this.addStream(SDK_KEY_STREAM_CONFIG);
-      await this.addConsumers("SDK_KEY", SDK_KEY_STREAM_CONSUMER_CONFIG);
-    }
-
+    await this.createStreams();
     this.replyToSdkValidation();
-
-    if (!(await this.streamExists("FLAG_DATA"))) {
-      await this.addStream(FLAG_STREAM_CONFIG);
-      await this.addConsumers("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
-    }
-
-    await this.subscribeToStream(
+    this.subscribeToStream(
       "FLAG_DATA",
       "REQUEST_ALL_FLAGS",
       this.handleFlagsRequest
@@ -48,29 +34,25 @@ class JetstreamManager {
     this.jsm = await this.nc.jetstreamManager();
   }
 
-  addStream(config) {
-    this.jsm.streams.add(config);
+  async streamExists(streamName) {
+    try {
+      const stream = await this.jsm.streams.info(streamName);
+      return stream.config.name === streamName;
+    } catch (err) {
+      return false;
+    }
   }
 
-  async addConsumers(stream, config) {
-    await this.jsm.consumers.add(stream, config);
-  }
+  async createStreams() {
+    if (!(await this.streamExists("SDK_KEY"))) {
+      await this.jsm.streams.add(SDK_KEY_STREAM_CONFIG);
+      await this.jsm.consumers.add("SDK_KEY", SDK_KEY_STREAM_CONSUMER_CONFIG);
+    }
 
-  async subscribeToStream(stream, subject, callbackFn) {
-    await this.js.subscribe(
-      `${stream}.${subject}`,
-      this.createConfig(subject, callbackFn)
-    );
-  }
-
-  async replyToSdkValidation() {
-    const subscription = this.nc.subscribe("SDK_KEY");
-
-    (async (sub) => {
-      for await (const m of sub) {
-        this.handleSdkKeyRequest(m);
-      }
-    })(subscription);
+    if (!(await this.streamExists("FLAG_DATA"))) {
+      await this.jsm.streams.add(FLAG_STREAM_CONFIG);
+      await this.jsm.consumers.add("FLAG_DATA", FLAG_STREAM_CONSUMER_CONFIG);
+    }
   }
 
   createConfig(subject, callbackFn) {
@@ -85,53 +67,48 @@ class JetstreamManager {
     return opts;
   }
 
-  async streamExists(streamName) {
+  async subscribeToStream(stream, subject, callbackFn) {
+    await this.js.subscribe(
+      `${stream}.${subject}`,
+      this.createConfig(subject, callbackFn)
+    );
+  }
+
+  async _publish(fullSubject, message) {
     try {
-      const stream = await this.jsm.streams.info(streamName);
-      return stream.config.name === streamName;
+      await this.createStreams();
+      await this.js.publish(fullSubject, message);
     } catch (err) {
-      return false;
+      console.error(err);
     }
   }
 
   async publishFlagUpdate(msg) {
     const json = JSON.stringify(msg);
     const encodedMessage = this.sc.encode(json);
-
-    await this.js
-      .publish("FLAG_DATA.FLAG_UPDATE", encodedMessage)
-      .catch((err) => {
-        throw Error(
-          err,
-          "NATS Jetstream: Publish message has failed. Check your connection."
-        );
-      });
+    await this._publish("FLAG_DATA.FLAG_UPDATE", encodedMessage);
   }
 
   async publishFlagData() {
     const data = await getSdkFlags();
     const json = JSON.stringify(data);
-    await this.js
-      .publish("FLAG_DATA.GET_ALL_FLAGS", this.sc.encode(json))
-      .catch((err) => {
-        throw Error(
-          err,
-          "NATS Jetstream: Publish message has failed. Check your connection."
-        );
-      });
+    await this._publish("FLAG_DATA.GET_ALL_FLAGS", this.sc.encode(json));
   }
 
   async publishSdkUpdate() {
     const data = { type: "reset-sdk" };
     const json = JSON.stringify(data);
-    await this.js
-      .publish("SDK_KEY.KEY_UPDATE", this.sc.encode(json))
-      .catch((err) => {
-        throw Error(
-          err,
-          "NATS Jetstream: Publish message has failed. Check your connection."
-        );
-      });
+    await this._publish("SDK_KEY.KEY_UPDATE", this.sc.encode(json));
+  }
+
+  async replyToSdkValidation() {
+    const subscription = this.nc.subscribe("SDK_KEY");
+
+    (async (sub) => {
+      for await (const m of sub) {
+        this.handleSdkKeyRequest(m);
+      }
+    })(subscription);
   }
 
   async handleFlagsRequest(err, msg) {
@@ -151,10 +128,8 @@ class JetstreamManager {
   }
 }
 
-// Create an instance of the JetstreamManager class
 const jsm = new JetstreamManager();
 
-// Call the `initialize` method to start the initialization process
 (async () => {
   await jsm.initialize();
 })();
