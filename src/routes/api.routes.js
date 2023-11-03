@@ -1,5 +1,5 @@
 import express from "express";
-import * as flagControllers from "../controllers/flags.controller";
+import * as flagControllers from "../controllers/flags.controllers";
 import * as segmControllers from "../controllers/segments.controllers";
 import * as attrControllers from "../controllers/attributes.controllers";
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Flag API routes
 router.get("/flags", flagControllers.getAllFlags);
-router.get("/flags/:fKey", flagControllers.getFlagById);
+router.get("/flags/:fKey", flagControllers.getFlagByKey);
 router.post("/flags", flagControllers.createFlag);
 router.delete("/flags/:fKey", flagControllers.deleteFlag);
 router.patch("/flags/:fKey", flagControllers.updateFlag);

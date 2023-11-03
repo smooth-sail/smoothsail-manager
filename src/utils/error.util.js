@@ -3,7 +3,7 @@ import { ValidationError } from "sequelize";
 import * as errorMsg from "../constants/error.messages";
 
 export const parseError = (error) => {
-  console.log(error.message); // replace with logger
+  console.log(error); // replace with logger
 
   if (error instanceof ValidationError) {
     return new HttpError(errorMsg.VALIDATION, 400);
