@@ -3,11 +3,12 @@ import { Flag } from "@/types";
 import Toggle from "@/components/ui/Toggle";
 import { useFlagToggleMutation } from "@/hooks/flags";
 import { formatDateTime } from "@/utils/format";
-import UpdateFlagModal from "./UpdateFlagModal";
-import FlagsSegmentsModal from "./FlagsSegmentsModal";
 import { AxiosError } from "axios";
 import ToastTUI from "../ToastTUI";
 import toast from "react-hot-toast";
+import Modal from "../Modal";
+import UpdateFlagForm from "./UpdateFlagForm";
+import FlagsSegments from "./FlagsSegments";
 
 type FlagItemProps = Flag;
 
@@ -78,13 +79,16 @@ function FlagItem(props: FlagItemProps) {
           </span>
         </td>
       </tr>
-      <UpdateFlagModal {...props} open={openEdit} setOpen={setOpenEdit} />
-      <FlagsSegmentsModal
-        title={props.title}
-        fKey={props.fKey}
-        open={openSegmentsModal}
-        setOpen={setOpenSegmentsModal}
-      />
+      <Modal open={openEdit} setOpen={setOpenEdit}>
+        <UpdateFlagForm {...props} setOpen={setOpenEdit} />
+      </Modal>
+      <Modal open={openSegmentsModal} setOpen={setOpenSegmentsModal}>
+        <FlagsSegments
+          setOpen={setOpenSegmentsModal}
+          fKey={props.fKey}
+          title={props.title}
+        />
+      </Modal>
     </>
   );
 }

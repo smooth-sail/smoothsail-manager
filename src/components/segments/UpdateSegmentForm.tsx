@@ -1,9 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { NewSegment, Segment, SegmentOperator } from "@/types";
 import { newSegmentSchema } from "@/models/segments";
-import { useUpdateSegmentMutation } from "@/hooks/segments";
+import {
+  useDeleteSegmentMutation,
+  useUpdateSegmentMutation,
+} from "@/hooks/segments";
 import { RadioGroup } from "@headlessui/react";
 import { classNames } from "@/utils/classNames";
 import FormButton from "@/components/ui/FormButton";
@@ -12,6 +15,7 @@ import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
 import FormInput from "../ui/FormInput";
+import FormHeader from "../ui/FormHeader";
 
 function UpdateSegmentForm({
   setOpen,
@@ -62,8 +66,34 @@ function UpdateSegmentForm({
     setOpen(false);
   });
 
+  const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
+  const handleDelete = async () => {
+    try {
+      await deleteSegmentMutate(props.sKey);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message="Segment deleted from the database."
+        />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
+    setOpen(false);
+  };
+
   return (
     <>
+      <FormHeader
+        resource="segment"
+        onDelete={handleDelete}
+        isDelete={true}
+        directions={`Update ${props.title}.`}
+        action={`Edit segment: ${props.title}`}
+      />
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
@@ -173,14 +203,15 @@ function UpdateSegmentForm({
             ))}
           </div>
         </RadioGroup>
-        <FormButton typeOfButton="confirm" type="submit" text="Save" />
-        <FormButton
-          typeOfButton="cancel"
-          type="button"
-          text="Cancel"
-          onClick={() => setOpen(false)}
-        />
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"></div>
+        <div className="flex gap-4">
+          <FormButton
+            typeOfButton="cancel"
+            type="button"
+            text="Cancel"
+            onClick={() => setOpen(false)}
+          />
+          <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        </div>
       </form>
     </>
   );

@@ -2,10 +2,11 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import { useSegments } from "@/hooks/segments";
 import SegmentItem from "@/components/segments/SegmentItem";
-import CreateSegmentModal from "@/components/segments/CreateSegmentModal";
+import Modal from "@/components/Modal";
+import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
 
 export default function SegmentsTable() {
-  const [open, setOpen] = useState(false);
+  const [openCreateSegmentModal, setOpenCreateSegmentModal] = useState(false);
   const { data: segments, isLoading } = useSegments();
 
   if (isLoading) {
@@ -29,7 +30,7 @@ export default function SegmentsTable() {
             <Button
               size="xl"
               text="Create New Segment"
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenCreateSegmentModal(true)}
             />
           </div>
         </div>
@@ -74,7 +75,9 @@ export default function SegmentsTable() {
           </table>
         </div>
       </div>
-      <CreateSegmentModal open={open} setOpen={setOpen} />
+      <Modal open={openCreateSegmentModal} setOpen={setOpenCreateSegmentModal}>
+        <CreateSegmentForm setOpen={setOpenCreateSegmentModal} />
+      </Modal>
     </>
   );
 }

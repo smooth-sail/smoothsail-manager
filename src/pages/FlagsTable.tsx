@@ -2,7 +2,8 @@ import { useState } from "react";
 import FlagItem from "@/components/flags/FlagItem";
 import Button from "@/components/ui/Button";
 import { useFlags } from "@/hooks/flags";
-import CreateFlagModal from "@/components/flags/CreateFlagModal";
+import Modal from "@/components/Modal";
+import CreateFlagForm from "@/components/flags/CreateFlagForm";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
@@ -78,10 +79,9 @@ export default function FlagsTable() {
           </table>
         </div>
       </div>
-      <CreateFlagModal
-        open={openCreateFlagModal}
-        setOpen={setOpenCreateFlagModal}
-      />
+      <Modal open={openCreateFlagModal} setOpen={setOpenCreateFlagModal}>
+        <CreateFlagForm setOpen={setOpenCreateFlagModal} />
+      </Modal>
     </>
   );
 }

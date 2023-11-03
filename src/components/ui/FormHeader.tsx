@@ -1,16 +1,77 @@
-import { Fragment } from "react";
+import { classNames } from "@/utils/classNames";
 import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useState } from "react";
+import { createPortal } from "react-dom";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+
+type FormHeaderProps = {
+  action: string;
+  directions: string;
+  isDelete?: boolean;
+  onDelete?: () => void;
+  resource?: "flag" | "segment" | "attribute" | "rule";
+};
+
+function FormHeader({
+  isDelete,
+  action,
+  directions,
+  resource,
+  onDelete,
+}: FormHeaderProps) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  return (
+    <>
+      <div className="mb-4">
+        <Dialog.Title
+          as="h3"
+          className={classNames(
+            isDelete ? "flex justify-between" : "",
+            "text-base font-semibold leading-6 text-gray-900",
+          )}
+        >
+          <span className={classNames(isDelete ? "self-end" : "")}>
+            {action}
+          </span>
+          {isDelete && (
+            <button
+              type="button"
+              className="absolute right-2 top-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto focus:outline-none"
+              onClick={() => {
+                if (setOpenDeleteModal) {
+                  setOpenDeleteModal(true);
+                }
+              }}
+            >
+              Delete
+            </button>
+          )}
+        </Dialog.Title>
+        <div className="mt-2">
+          <p className="text-sm text-gray-500">{directions}</p>
+        </div>
+      </div>
+      {isDelete && resource && (
+        <FormHeader.DeleteModal
+          resource={resource}
+          setOpen={setOpenDeleteModal}
+          open={openDeleteModal}
+          onDelete={onDelete}
+        />
+      )}
+    </>
+  );
+}
 
 type DeleteModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onDelete: () => void;
+  onDelete?: () => void;
   resource: "flag" | "segment" | "attribute" | "rule";
 };
 
 function DeleteModal({ open, setOpen, onDelete, resource }: DeleteModalProps) {
-  return (
+  return createPortal(
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <Transition.Child
@@ -81,8 +142,11 @@ function DeleteModal({ open, setOpen, onDelete, resource }: DeleteModalProps) {
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition.Root>,
+    document.getElementById("portal")!,
   );
 }
 
-export default DeleteModal;
+FormHeader.DeleteModal = DeleteModal;
+
+export default FormHeader;

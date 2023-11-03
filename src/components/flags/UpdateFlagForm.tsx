@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useUpdateFlagMutation } from "@/hooks/flags";
+import { useDeleteFlagMutation, useUpdateFlagMutation } from "@/hooks/flags";
 import { Flag } from "@/types";
 import { flagUpdatesSchema } from "@/models/flags";
 import FormButton from "@/components/ui/FormButton";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
 import FormInput from "../ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
 
 type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,8 +53,31 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
     setOpen(false);
   });
 
+  const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
+  const handleDelete = async () => {
+    try {
+      await deleteFlagMutation(props.fKey);
+      toast.custom(
+        <ToastTUI type="success" message="Flag deleted from the database." />,
+      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const responseError = err.response?.data.error;
+        toast.custom(<ToastTUI type="error" message={responseError} />);
+      }
+    }
+    setOpen(false);
+  };
+
   return (
     <>
+      <FormHeader
+        resource="flag"
+        onDelete={handleDelete}
+        isDelete={true}
+        directions={`Update ${props.title}. Note, the flag key, created at, and updated at can not be changed manually.`}
+        action={`Edit flag: ${props.title}`}
+      />
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">

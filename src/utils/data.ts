@@ -31,19 +31,6 @@ export const segmentRulesOperators = [
 
 export const attributeTypes = ["boolean", "string", "number"] as const;
 
-export const operators = [
-  "is",
-  "is not",
-  "contains",
-  "does not contain",
-  "exists",
-  "does not exist",
-  "=",
-  "!=",
-  ">=",
-  "<=",
-];
-
 export const stringOperators = [
   "is",
   "is not",

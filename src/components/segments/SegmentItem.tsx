@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Segment } from "@/types";
-import SegmentsRulesDropdown from "./SegmentsRulesDropdown";
-import UpdateSegmentModal from "./UpdateSegmentModal";
+import { Attribute, Segment } from "@/types";
+import SegmentsRules from "./SegmentsRules";
+import Modal from "../Modal";
+import UpdateSegmentForm from "./UpdateSegmentForm";
 
-type SegmentItemProps = Segment;
+type SegmentItemProps = Segment & {
+  attributes: Attribute[];
+};
 
 function SegmentItem(props: SegmentItemProps) {
   const [openEdit, setOpenEdit] = useState(false);
+  const [openRulesModal, setOpenRulesModal] = useState(false);
 
   return (
     <>
@@ -28,8 +32,13 @@ function SegmentItem(props: SegmentItemProps) {
         <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
           {props.rulesOperator}
         </td>
-        <td className="px-3 py-4 text-sm text-gray-500">
-          {<SegmentsRulesDropdown sKey={props.sKey} rules={props.rules} />}
+        <td className="px-3 py-4 text-sm font-medium">
+          <span
+            onClick={() => setOpenRulesModal(true)}
+            className="cursor-pointer hover:text-ss-blgr"
+          >
+            Rules<span className="sr-only">, {props.title}</span>
+          </span>
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span
@@ -40,7 +49,17 @@ function SegmentItem(props: SegmentItemProps) {
           </span>
         </td>
       </tr>
-      <UpdateSegmentModal {...props} open={openEdit} setOpen={setOpenEdit} />
+      <Modal open={openEdit} setOpen={setOpenEdit}>
+        <UpdateSegmentForm {...props} setOpen={setOpenEdit} />
+      </Modal>
+      <Modal open={openRulesModal} setOpen={setOpenRulesModal}>
+        <SegmentsRules
+          title={props.title}
+          setOpen={setOpenRulesModal}
+          sKey={props.sKey}
+          rules={props.rules}
+        />
+      </Modal>
     </>
   );
 }
