@@ -11,3 +11,4 @@ export const segmRefFlagErr = (id, flagKeys) =>
   )}. Remove it from a flag and try again.`;
 export const UNSUPPORTED_ACTION =
   "Validation error occurred. This action is not supported.";
+export const DUPLICATE_ENTRY = "Validation error occured. Duplicate entry.";
