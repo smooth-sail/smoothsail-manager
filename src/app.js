@@ -5,8 +5,8 @@ import apiRouter from "./routes/api.routes";
 import keyRouter from "./routes/sdk.key.routes";
 import HttpError from "./models/http-error";
 import * as errorMsg from "./constants/error.messages";
-import dfFeatFlagInfo from "./models/sequelize.ff.instance";
-import dbSdkKey from "./models/sequelize.sdk.key.instance";
+import { sequelize as dfFeatFlagInfo } from "./models/flag.models";
+import { sequelize as dbSdkKey } from "./models/SdkKey";
 
 const app = express();
 app.use(cors()); // this should be later replaced with whitelisted domains
@@ -28,9 +28,10 @@ const PORT = process.env.PORT || 3000;
 const authenticateDatabases = async () => {
   {
     try {
+      await Promise.all([dfFeatFlagInfo.sync(), dbSdkKey.sync()]);
       await Promise.all([
-        dfFeatFlagInfo.authenticate(),
-        dbSdkKey.authenticate(),
+        dfFeatFlagInfo.authenticate({ alter: true }),
+        dbSdkKey.authenticate({ alter: true }),
       ]);
       app.listen(PORT, () =>
         console.log(`Feature Flag Manager is listening on port ${PORT}!`)
