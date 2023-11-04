@@ -1,17 +1,8 @@
 import "dotenv/config";
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import sequelize from "./sequelize.sdk.key.instance";
 
-export const sequelize = new Sequelize(
-  process.env.SDKKEYSDB,
-  process.env.PGUSER,
-  process.env.PGPASSWORD,
-  {
-    host: process.env.PGHOST,
-    dialect: "postgres",
-    // logging: (...msg) => console.log(msg), // might change this or delete (depending on what logging we want);
-  }
-);
-export const SdkKey = sequelize.define(
+const SdkKey = sequelize.define(
   "SdkKey",
   {
     id: {
@@ -62,3 +53,5 @@ export const SdkKey = sequelize.define(
     tableName: "sdk_keys",
   }
 );
+
+export { SdkKey, sequelize };
