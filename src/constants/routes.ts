@@ -42,3 +42,9 @@ export const updateAttributePath = (aKey: string) =>
 
 export const deleteAttributePath = (aKey: string) =>
   `${BASE_URL}/api/attributes/${aKey}`;
+
+// SDK
+
+export const GET_KEY = `${BASE_URL}/key`;
+
+export const REGENERATE_KEY = `${BASE_URL}/key/generate`;
