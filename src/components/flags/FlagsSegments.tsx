@@ -8,6 +8,8 @@ import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
 import FormHeader from "@/components/ui/FormHeader";
 import FormButton from "../ui/FormButton";
+import EmptyState from "../EmptyState";
+import { useNavigate } from "react-router-dom";
 
 export type FlagsSegmentsProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +22,7 @@ function FlagsSegments({ setOpen, title, fKey }: FlagsSegmentsProps) {
   const { data: segments } = useSegments();
   const { mutateAsync: updateFlagsSegmentMutate } =
     useUpdateFlagsSegmentMutation(fKey);
+  const navigate = useNavigate();
 
   const handleUpdateFlagSegment = async (sKey: string, action: string) => {
     try {
@@ -50,49 +53,62 @@ function FlagsSegments({ setOpen, title, fKey }: FlagsSegmentsProps) {
   return (
     <>
       <div className="mb-4">
-        <FormHeader
-          directions={`Click to associate a segment with ${title} or delete to delete that association. Close the modal when you're done. All updates will be sent automatically.`}
-          action={`Segments for ${title}`}
-        />
-        <div>
-          <ul role="list" className="divide-y divide-gray-100">
-            {segments?.map(({ title, sKey }) => (
-              <li
-                key={title}
-                className="flex items-center justify-between gap-x-6 py-5"
-              >
-                <div className="flex min-w-0 gap-x-4">
-                  <div className="min-w-0 flex-auto">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      {title}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    const action = isFlagsSegment(title)
-                      ? "segment add"
-                      : "segment remove";
-                    handleUpdateFlagSegment(sKey, action);
-                  }}
-                  className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
-                >
-                  {isFlagsSegment(title) ? "Add" : "Delete"}
-                </button>
-              </li>
-            ))}
-          </ul>
+        {flagsSegments?.length === 0 ? (
+          <EmptyState
+            buttonText="Segments"
+            subMessage="Go to the segments page to get started."
+            message="It doesn't look like you have any segments yet."
+            handleClick={() => navigate("/segments")}
+          />
+        ) : (
+          <>
+            <FormHeader
+              directions={`Click to associate a segment with ${title} or delete to delete that association. Close the modal when you're done. All updates will be sent automatically.`}
+              action={`Segments for ${title}`}
+            />
+            <div>
+              <ul role="list" className="divide-y divide-gray-100">
+                {segments?.map(({ title, sKey }) => (
+                  <li
+                    key={title}
+                    className="flex items-center justify-between gap-x-6 py-5"
+                  >
+                    <div className="flex min-w-0 gap-x-4">
+                      <div className="min-w-0 flex-auto">
+                        <p className="text-sm font-semibold leading-6 text-gray-900">
+                          {title}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const action = isFlagsSegment(title)
+                          ? "segment add"
+                          : "segment remove";
+                        handleUpdateFlagSegment(sKey, action);
+                      }}
+                      className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
+                    >
+                      {isFlagsSegment(title) ? "Add" : "Delete"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+      </div>
+      {flagsSegments?.length !== 0 && (
+        <div className="flex justify-center">
+          <FormButton
+            className="w-36"
+            typeOfButton="cancel"
+            type="button"
+            text="Close"
+            onClick={() => setOpen(false)}
+          />
         </div>
-      </div>
-      <div className="flex justify-center">
-        <FormButton
-          className="w-36"
-          typeOfButton="cancel"
-          type="button"
-          text="Close"
-          onClick={() => setOpen(false)}
-        />
-      </div>
+      )}
     </>
   );
 }

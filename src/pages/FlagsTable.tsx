@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import { useFlags } from "@/hooks/flags";
 import Modal from "@/components/Modal";
 import CreateFlagForm from "@/components/flags/CreateFlagForm";
+import EmptyState from "@/components/EmptyState";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
@@ -35,48 +36,60 @@ export default function FlagsTable() {
           </div>
         </div>
         <div className="-mx-4 mt-8 sm:-mx-0">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                >
-                  Title
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
-                >
-                  Flag Key
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
-                >
-                  Updated At
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                >
-                  <span className="sr-only">Segments</span>
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                >
-                  Toggle
-                </th>
-                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                  <span className="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {flags?.map((flag) => <FlagItem key={flag.fKey} {...flag} />)}
-            </tbody>
-          </table>
+          {flags?.length === 0 ? (
+            <div className="mt-36 flex justify-center items-center">
+              <EmptyState
+                handleClick={() => setOpenCreateFlagModal(true)}
+                isIcon={true}
+                buttonText="Create New Flag"
+                message="It doesn't look like you have any flags yet."
+                subMessage="Get started by creating a new one."
+              />
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead>
+                <tr>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                  >
+                    Title
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                  >
+                    Flag Key
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
+                  >
+                    Updated At
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <span className="sr-only">Segments</span>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Toggle
+                  </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {flags?.map((flag) => <FlagItem key={flag.fKey} {...flag} />)}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
       <Modal open={openCreateFlagModal} setOpen={setOpenCreateFlagModal}>
