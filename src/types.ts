@@ -48,3 +48,4 @@ export type Rule = {
 };
 
 export type Attribute = z.infer<typeof newAttributeSchema>;
+export type AttributeTypes = Attribute["type"];

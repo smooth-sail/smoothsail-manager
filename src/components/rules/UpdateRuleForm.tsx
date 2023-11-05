@@ -1,11 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useDeleteSegmentRule, useUpdateSegmentRule } from "@/hooks/segments";
 import FormButton from "@/components/ui/FormButton";
-import {
-  booleanOperators,
-  numberOperators,
-  stringOperators,
-} from "@/utils/data";
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
@@ -13,6 +8,7 @@ import FormHeader from "../ui/FormHeader";
 import { RuleFormInputs } from "./CreateRuleForm";
 import { Attribute } from "@/types";
 import FormInput from "../ui/FormInput";
+import { getValidOperators, isValidRuleValue } from "@/utils/helpers";
 
 type UpdateRuleFormProps = {
   sKey: string;
@@ -52,52 +48,20 @@ function UpdateRuleForm({
   const currDataType = attributes.find(
     (a) => a.name === watch("attribute"),
   )!.type;
-
-  const operators = (() => {
-    switch (currDataType) {
-      case "string":
-        return stringOperators;
-      case "number":
-        return numberOperators;
-      case "boolean":
-        return booleanOperators;
-    }
-  })();
+  const operators = getValidOperators(currDataType);
 
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
-    const attr = attributes.find((a) => a.name === attribute)!;
-
-    switch (attr.type) {
-      case "boolean":
-        if (value !== "true" && value !== "false") {
-          setError("value", { message: "Must be true or false" });
-          return;
-        }
-        break;
-      case "number":
-        if (!value || Number.isNaN(Number(value))) {
-          setError("value", { message: "The value must be a number" });
-          return;
-        }
-        break;
-      case "string":
-        if (!value) {
-          setError("value", { message: "Value is required" });
-          return;
-        }
-        break;
-    }
-
-    const data = {
-      aKey: attr.aKey,
-      operator,
-      value,
-      sKey,
-      rKey,
-    };
+    const { type, aKey } = attributes.find((a) => a.name === attribute)!;
+    if (!isValidRuleValue(type, value, setError)) return;
 
     try {
-      await updateSegmentRuleMutate(data);
+      await updateSegmentRuleMutate({
+        aKey,
+        operator,
+        value,
+        sKey,
+        rKey,
+      });
       toast.custom(
         <ToastTUI type="success" message="Rule successfully updated." />,
       );
@@ -110,7 +74,6 @@ function UpdateRuleForm({
     setOpen(false);
   });
 
-  // const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { mutateAsync: deleteRuleMutate } = useDeleteSegmentRule();
   const handleDelete = async () => {
     try {
@@ -124,7 +87,6 @@ function UpdateRuleForm({
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-    // setOpenDeleteModal(false);
     setOpen(false);
   };
 
@@ -160,7 +122,7 @@ function UpdateRuleForm({
               )}
             </select>
           </div>
-          <div>
+          <div className="flex-1">
             <label
               htmlFor="operator"
               className="block text-sm font-medium leading-6 text-gray-900"
@@ -178,7 +140,7 @@ function UpdateRuleForm({
               ))}
             </select>
           </div>
-          <div className="w-full">
+          <div className="flex-1">
             <label
               htmlFor="value"
               className="block text-sm font-medium leading-6 text-gray-900"

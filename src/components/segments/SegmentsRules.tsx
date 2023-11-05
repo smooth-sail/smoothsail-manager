@@ -6,6 +6,8 @@ import Modal from "../Modal";
 import UpdateRuleForm from "../rules/UpdateRuleForm";
 import CreateRuleForm from "../rules/CreateRuleForm";
 import FormHeader from "../ui/FormHeader";
+import { useNavigate } from "react-router-dom";
+import EmptyState from "../EmptyState";
 
 type SegmentsRulesProps = {
   rules: Rule[];
@@ -15,6 +17,7 @@ type SegmentsRulesProps = {
 };
 
 function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
+  const navigate = useNavigate();
   const [openCreateRuleModal, setOpenCreateRuleModal] = useState(false);
   const [openUpdateRuleModal, setOpenUpdateRuleModal] = useState(false);
   const [currAKey, setCurrAKey] = useState("");
@@ -78,11 +81,18 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
         />
       </div>
       <Modal open={openCreateRuleModal} setOpen={setOpenCreateRuleModal}>
-        {attributes && (
+        {attributes && attributes.length > 0 ? (
           <CreateRuleForm
             attributes={attributes}
             setOpen={setOpenCreateRuleModal}
             sKey={sKey}
+          />
+        ) : (
+          <EmptyState
+            buttonText="Attributes"
+            message="Go to the attributes page to get started."
+            resource="attribute"
+            handleClick={() => navigate("/attributes")}
           />
         )}
       </Modal>

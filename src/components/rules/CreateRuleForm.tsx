@@ -5,13 +5,9 @@ import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
 import { Attribute } from "@/types";
-import {
-  booleanOperators,
-  numberOperators,
-  stringOperators,
-} from "@/utils/data";
 import FormInput from "../ui/FormInput";
 import FormHeader from "../ui/FormHeader";
+import { getValidOperators, isValidRuleValue } from "@/utils/helpers";
 
 type RuleFormProps = {
   sKey: string;
@@ -45,44 +41,15 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
   const currDataType = attributes.find(
     (a) => a.name === watch("attribute"),
   )!.type;
-
-  const operators = (() => {
-    switch (currDataType) {
-      case "string":
-        return stringOperators;
-      case "number":
-        return numberOperators;
-      case "boolean":
-        return booleanOperators;
-    }
-  })();
+  const operators = getValidOperators(currDataType);
 
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
-    const attr = attributes.find((a) => a.name === attribute)!;
-    switch (attr.type) {
-      case "boolean":
-        if (value !== "true" && value !== "false") {
-          setError("value", { message: "Must be true or false" });
-          return;
-        }
-        break;
-      case "number":
-        if (!value || Number.isNaN(Number(value))) {
-          setError("value", { message: "The value must be a number" });
-          return;
-        }
-        break;
-      case "string":
-        if (!value) {
-          setError("value", { message: "Value is required" });
-          return;
-        }
-        break;
-    }
+    const { aKey, type } = attributes.find((a) => a.name === attribute)!;
+    if (!isValidRuleValue(type, value, setError)) return;
 
     try {
       await addSegmentRuleMutate({
-        aKey: attr.aKey,
+        aKey,
         operator,
         value,
         sKey,
@@ -110,7 +77,7 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
       />
       <form onSubmit={onSubmit}>
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
-          <div>
+          <div className="flex-1">
             <label
               htmlFor="attribute"
               className="block text-sm font-medium leading-6 text-gray-900"
@@ -129,7 +96,7 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
               )}
             </select>
           </div>
-          <div>
+          <div className="flex-1">
             <label
               htmlFor="operator"
               className="block text-sm font-medium leading-6 text-gray-900"
@@ -146,7 +113,7 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
               ))}
             </select>
           </div>
-          <div>
+          <div className="flex-1">
             <label
               htmlFor="value"
               className="block text-sm font-medium leading-6 text-gray-900"
