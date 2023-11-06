@@ -38,6 +38,8 @@ export const stringOperators = [
   "does not contain",
   "=",
   "!=",
+  "exists",
+  "does not exist",
 ] as const;
 
 export const numberOperators = ["=", "!=", ">=", "<="] as const;
