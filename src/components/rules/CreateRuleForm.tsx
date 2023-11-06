@@ -26,6 +26,7 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
     setError,
     formState: { errors },
@@ -48,10 +49,10 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
 
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     const { aKey, type } = attributes.find((a) => a.name === attribute)!;
-    if (!isValidRuleValue(type, value, setError)) return;
+    if (!isValidRuleValue(type, value, operator, setError)) return;
 
     if (isNoValueOperator()) {
-      value = "";
+      value = " ";
     }
 
     try {
@@ -94,7 +95,11 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
             <select
               id="attribute"
               className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              {...register("attribute")}
+              {...register("attribute", {
+                onChange: () => {
+                  setValue("operator", "=");
+                },
+              })}
             >
               {attributes.length === 0 ? (
                 <option disabled>No attributes</option>
@@ -113,7 +118,13 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
             <select
               id="operator"
               className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              {...register("operator")}
+              {...register("operator", {
+                onChange: () => {
+                  if (isNoValueOperator()) {
+                    setValue("value", "");
+                  }
+                },
+              })}
             >
               {operators.map((operator) => (
                 <option key={operator}>{operator}</option>
@@ -131,10 +142,12 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
               <FormInput
                 disabled={isNoValueOperator()}
                 className={
-                  isNoValueOperator() ? "text-gray-200 border-gray-200" : ""
+                  isNoValueOperator()
+                    ? "text-gray-200 border-gray-200 bg-gray-100"
+                    : ""
                 }
                 id="value"
-                placeholder="Enter a value"
+                placeholder={isNoValueOperator() ? "" : "Enter a value"}
                 register={register("value")}
                 isError={!!errors.value}
                 errorMessage={errors.value?.message}

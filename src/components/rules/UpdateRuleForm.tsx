@@ -33,6 +33,7 @@ function UpdateRuleForm({
     register,
     handleSubmit,
     watch,
+    setValue,
     setError,
     formState: { errors },
   } = useForm<RuleFormInputs>({
@@ -50,9 +51,16 @@ function UpdateRuleForm({
   )!.type;
   const operators = getValidOperators(currDataType);
 
+  const isNoValueOperator = () =>
+    watch("operator") === "exists" || watch("operator") === "does not exist";
+
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     const { type, aKey } = attributes.find((a) => a.name === attribute)!;
-    if (!isValidRuleValue(type, value, setError)) return;
+    if (!isValidRuleValue(type, operator, value, setError)) return;
+
+    if (isNoValueOperator()) {
+      value = " ";
+    }
 
     try {
       await updateSegmentRuleMutate({
@@ -113,7 +121,11 @@ function UpdateRuleForm({
             <select
               id="attribute"
               className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
-              {...register("attribute")}
+              {...register("attribute", {
+                onChange: () => {
+                  setValue("operator", "=");
+                },
+              })}
             >
               {attributes.length === 0 ? (
                 <option disabled>No attributes</option>
@@ -133,7 +145,13 @@ function UpdateRuleForm({
               id="operator"
               className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-ss-blgr sm:text-sm sm:leading-6"
               defaultValue={operators.find((o) => o === operator)!}
-              {...register("operator")}
+              {...register("operator", {
+                onChange: () => {
+                  if (isNoValueOperator()) {
+                    setValue("value", "");
+                  }
+                },
+              })}
             >
               {operators.map((operator) => (
                 <option key={operator}>{operator}</option>
@@ -149,8 +167,14 @@ function UpdateRuleForm({
             </label>
             <div className="mt-2">
               <FormInput
+                disabled={isNoValueOperator()}
+                className={
+                  isNoValueOperator()
+                    ? "text-gray-200 border-gray-200 bg-gray-100"
+                    : ""
+                }
                 id="value"
-                placeholder="Enter a value"
+                placeholder={isNoValueOperator() ? "" : "Enter a value"}
                 register={register("value")}
                 isError={!!errors.value}
                 errorMessage={errors.value?.message}
