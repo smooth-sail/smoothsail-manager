@@ -28,10 +28,13 @@ const PORT = process.env.PORT || 3000;
 const authenticateDatabases = async () => {
   {
     try {
-      await Promise.all([dfFeatFlagInfo.sync(), dbSdkKey.sync()]);
       await Promise.all([
-        dfFeatFlagInfo.authenticate({ alter: true }),
-        dbSdkKey.authenticate({ alter: true }),
+        dfFeatFlagInfo.authenticate(),
+        dbSdkKey.authenticate(),
+      ]);
+      await Promise.all([
+        dfFeatFlagInfo.sync({ alter: true }),
+        dbSdkKey.sync({ alter: true }),
       ]);
       app.listen(PORT, () =>
         console.log(`Feature Flag Manager is listening on port ${PORT}!`)
