@@ -1,4 +1,5 @@
 import "dotenv/config";
+import winstonLogger from "../config/logger";
 import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize(
@@ -8,7 +9,8 @@ const sequelize = new Sequelize(
   {
     host: process.env.PGHOST,
     dialect: "postgres",
-    // logging: (...msg) => console.log(msg), // might change this or delete (depending on what logging we want);
+    logging: (message) =>
+      winstonLogger.verbose(`\x1b[36m[sequelize]\x1b[0m ${message}`),
   }
 );
 
