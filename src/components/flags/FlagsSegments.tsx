@@ -53,7 +53,7 @@ function FlagsSegments({ setOpen, title, fKey }: FlagsSegmentsProps) {
   return (
     <>
       <div className="mb-4">
-        {flagsSegments?.length === 0 ? (
+        {segments?.length === 0 ? (
           <EmptyState
             buttonText="Segments"
             subMessage="Go to the segments page to get started."
@@ -98,7 +98,7 @@ function FlagsSegments({ setOpen, title, fKey }: FlagsSegmentsProps) {
           </>
         )}
       </div>
-      {flagsSegments?.length !== 0 && (
+      {segments?.length !== 0 && (
         <div className="flex justify-center">
           <FormButton
             className="w-36"
