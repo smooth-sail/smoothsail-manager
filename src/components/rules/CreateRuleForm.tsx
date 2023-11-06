@@ -43,9 +43,16 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
   )!.type;
   const operators = getValidOperators(currDataType);
 
+  const isNoValueOperator = () =>
+    watch("operator") === "exists" || watch("operator") === "does not exist";
+
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     const { aKey, type } = attributes.find((a) => a.name === attribute)!;
     if (!isValidRuleValue(type, value, setError)) return;
+
+    if (isNoValueOperator()) {
+      value = "";
+    }
 
     try {
       await addSegmentRuleMutate({
@@ -122,6 +129,10 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
             </label>
             <div className="mt-2">
               <FormInput
+                disabled={isNoValueOperator()}
+                className={
+                  isNoValueOperator() ? "text-gray-200 border-gray-200" : ""
+                }
                 id="value"
                 placeholder="Enter a value"
                 register={register("value")}
