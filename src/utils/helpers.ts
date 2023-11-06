@@ -25,8 +25,11 @@ type RHKSetErrorFunc = (
 export const isValidRuleValue = (
   type: AttributeTypes,
   value: string,
+  operator: string,
   setError: RHKSetErrorFunc,
 ) => {
+  if (operator === "exists" || operator === "does not exist") return true;
+
   switch (type) {
     case "boolean":
       if (value !== "true" && value !== "false") {
