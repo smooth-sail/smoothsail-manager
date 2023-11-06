@@ -30,7 +30,7 @@ VALUES
 INSERT INTO
   rules (r_key, operator, value, segment_id, attribute_id)
 VALUES
-  ('1abc', 'contains', '@gmail.com', 1, 1),
-  ('bcd2', '=', true, 1, 3),
-  ('sl0', 'is', 'WA', 2, 2),
-  ('97nd', '>=', 30, 2, 4);
+  ('e8d70b33-cd4a-48b8-a09d-961226ad9b72', 'contains', '@gmail.com', 1, 1),
+  ('1c240416-e6f9-4ad3-9d59-e055ee243ca6', '=', true, 1, 3),
+  ('e48a61c1-38ac-4a6e-ac0f-9f01b28f7a71', 'is', 'WA', 2, 2),
+  ('e48a61c1-38ac-4a6e-ac0f-9f01b28f7a09', '>=', 30, 2, 4);
