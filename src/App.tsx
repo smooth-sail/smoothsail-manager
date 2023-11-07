@@ -8,6 +8,7 @@ import NotFound from "@/pages/NotFound";
 import SegmentsTable from "@/pages/SegmentsTable";
 import AttributesTable from "@/pages/AttributesTable";
 import { Toaster } from "react-hot-toast";
+import SDKKey from "@/pages/SDKKey";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,6 +28,7 @@ function App() {
               <Route path="/flags" element={<FlagsTable />} />
               <Route path="/segments" element={<SegmentsTable />} />
               <Route path="/attributes" element={<AttributesTable />} />
+              <Route path="/sdk" element={<SDKKey />} />
               <Route path="/" element={<FlagsTable />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

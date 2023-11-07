@@ -1,8 +1,8 @@
 import {
   HomeIcon,
-  KeyIcon,
   UserGroupIcon,
   TableCellsIcon,
+  KeyIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "../types";
 
@@ -15,7 +15,7 @@ export const navigation: NavLink[] = [
     icon: TableCellsIcon,
     current: false,
   },
-  { name: "SDK Key", href: "/key", icon: KeyIcon, current: false },
+  { name: "SDK Key", href: "/sdk", icon: KeyIcon, current: false },
 ];
 
 export const segmentRulesOperators = [
