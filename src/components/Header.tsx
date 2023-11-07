@@ -1,4 +1,6 @@
+import { SearchContext } from "@/services/context";
 import { Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useContext } from "react";
 import { useMatch } from "react-router-dom";
 
 type HeaderProps = {
@@ -7,6 +9,7 @@ type HeaderProps = {
 
 function Header({ setSidebarOpen }: HeaderProps) {
   const match = useMatch("/sdk");
+  const { search, setSearch } = useContext(SearchContext);
 
   return (
     <div className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -19,9 +22,9 @@ function Header({ setSidebarOpen }: HeaderProps) {
         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
       </button>
 
-      {/* Separator */}
       {!match && (
         <>
+          {/* Separator */}
           <div
             className="h-6 w-px bg-gray-900/10 lg:hidden"
             aria-hidden="true"
@@ -38,6 +41,10 @@ function Header({ setSidebarOpen }: HeaderProps) {
               <input
                 id="search-field"
                 className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearch(e.target.value)
+                }
+                value={search}
                 placeholder="Search..."
                 type="search"
                 name="search"
