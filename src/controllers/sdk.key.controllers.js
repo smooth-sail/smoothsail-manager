@@ -17,10 +17,10 @@ export const regenerateKey = async (req, res, next) => {
   let payload;
   try {
     payload = await generateNewSdkKey();
+    jsm.publishSdkUpdate();
   } catch (error) {
     return next(parseError(error));
   }
 
-  jsm.publishSdkUpdate();
   res.status(200).json({ payload });
 };
