@@ -1,14 +1,16 @@
 import { useForm } from "react-hook-form";
-import { useDeleteSegmentRule, useUpdateSegmentRule } from "@/hooks/segments";
-import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
-import FormHeader from "../ui/FormHeader";
-import { RuleFormInputs } from "./CreateRuleForm";
-import { Attribute } from "@/types";
-import FormInput from "../ui/FormInput";
+
 import { getValidOperators, isValidRuleValue } from "@/utils/helpers";
+import { useDeleteSegmentRule, useUpdateSegmentRule } from "@/hooks/segments";
+import { Attribute } from "@/types";
+
+import { RuleFormInputs } from "./CreateRuleForm";
+import FormHeader from "@/components/ui/FormHeader";
+import FormButton from "@/components/ui/FormButton";
+import ToastTUI from "@/components/ToastTUI";
+import FormInput from "@/components/ui/FormInput";
 
 type UpdateRuleFormProps = {
   sKey: string;

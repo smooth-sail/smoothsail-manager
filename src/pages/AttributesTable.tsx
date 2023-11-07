@@ -1,11 +1,13 @@
 import { useState } from "react";
-import Button from "@/components/ui/Button";
+
 import { useAttributes } from "@/hooks/attributes";
-import AttributeItem from "@/components/attributes/AttributeItem";
-import Modal from "@/components/Modal";
-import CreateAttributeForm from "@/components/attributes/CreateAttributeForm";
-import EmptyState from "@/components/EmptyState";
 import { useSearch } from "@/hooks/useSearch";
+
+import Button from "@/components/ui/Button";
+import Modal from "@/components/Modal";
+import EmptyState from "@/components/EmptyState";
+import AttributeItem from "@/components/attributes/AttributeItem";
+import CreateAttributeForm from "@/components/attributes/CreateAttributeForm";
 
 function AttributesTable() {
   const [openCreateAttributeModal, setOpenCreateAttributeModal] =

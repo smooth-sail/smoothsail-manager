@@ -1,13 +1,16 @@
 import { useState } from "react";
+
+import { Toaster } from "react-hot-toast";
+import { Route, Routes } from "react-router-dom";
+
 import DesktopSidebar from "@/components/DesktopSidebar";
 import Header from "@/components/Header";
 import MobileSidebar from "@/components/MobileSidebar";
-import { Route, Routes } from "react-router-dom";
+
 import FlagsTable from "@/pages/FlagsTable";
 import NotFound from "@/pages/NotFound";
 import SegmentsTable from "@/pages/SegmentsTable";
 import AttributesTable from "@/pages/AttributesTable";
-import { Toaster } from "react-hot-toast";
 import SDKKey from "@/pages/SDKKey";
 
 function App() {

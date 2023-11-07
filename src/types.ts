@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { newFlagSchema } from "./models/flags";
 import { newSegmentSchema, segmentOperatorSchema } from "./models/segments";
 import { newAttributeSchema } from "./models/attributes";

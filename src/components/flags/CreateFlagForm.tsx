@@ -1,14 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { AxiosError } from "axios";
+
+import { newFlagSchema } from "@/models/flags";
 import { useCreateFlagMutation } from "@/hooks/flags";
 import { NewFlag } from "@/types";
-import { newFlagSchema } from "@/models/flags";
+
+import ToastTUI from "@/components/ToastTUI";
 import FormButton from "@/components/ui/FormButton";
-import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
-import { AxiosError } from "axios";
-import FormInput from "../ui/FormInput";
-import FormHeader from "../ui/FormHeader";
+import FormInput from "@/components/ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
 
 function CreateFlagForm({
   setOpen,

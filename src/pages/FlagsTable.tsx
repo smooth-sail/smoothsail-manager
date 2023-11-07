@@ -1,11 +1,13 @@
 import { useState } from "react";
-import FlagItem from "@/components/flags/FlagItem";
-import Button from "@/components/ui/Button";
+
 import { useFlags } from "@/hooks/flags";
-import Modal from "@/components/Modal";
-import CreateFlagForm from "@/components/flags/CreateFlagForm";
-import EmptyState from "@/components/EmptyState";
 import { useSearch } from "@/hooks/useSearch";
+
+import Modal from "@/components/Modal";
+import EmptyState from "@/components/EmptyState";
+import Button from "@/components/ui/Button";
+import FlagItem from "@/components/flags/FlagItem";
+import CreateFlagForm from "@/components/flags/CreateFlagForm";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);

@@ -1,13 +1,15 @@
 import { useForm } from "react-hook-form";
-import { useAddSegmentRule } from "@/hooks/segments";
-import FormButton from "@/components/ui/FormButton";
 import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
-import { Attribute } from "@/types";
-import FormInput from "../ui/FormInput";
-import FormHeader from "../ui/FormHeader";
+
 import { getValidOperators, isValidRuleValue } from "@/utils/helpers";
+import { useAddSegmentRule } from "@/hooks/segments";
+import { Attribute } from "@/types";
+
+import FormButton from "@/components/ui/FormButton";
+import ToastTUI from "@/components/ToastTUI";
+import FormInput from "@/components/ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
 
 type RuleFormProps = {
   sKey: string;

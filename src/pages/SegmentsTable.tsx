@@ -1,11 +1,13 @@
 import { useState } from "react";
-import Button from "@/components/ui/Button";
+
 import { useSegments } from "@/hooks/segments";
-import SegmentItem from "@/components/segments/SegmentItem";
-import Modal from "@/components/Modal";
-import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
-import EmptyState from "@/components/EmptyState";
 import { useSearch } from "@/hooks/useSearch";
+
+import Modal from "@/components/Modal";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/EmptyState";
+import SegmentItem from "@/components/segments/SegmentItem";
+import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
 
 export default function SegmentsTable() {
   const [openCreateSegmentModal, setOpenCreateSegmentModal] = useState(false);

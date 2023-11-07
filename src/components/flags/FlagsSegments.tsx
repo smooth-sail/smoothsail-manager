@@ -1,15 +1,17 @@
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+
 import {
   useFlagsSegments,
   useSegments,
   useUpdateFlagsSegmentMutation,
 } from "@/hooks/segments";
-import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
-import { AxiosError } from "axios";
+
+import ToastTUI from "@/components/ToastTUI";
 import FormHeader from "@/components/ui/FormHeader";
-import FormButton from "../ui/FormButton";
-import EmptyState from "../EmptyState";
-import { useNavigate } from "react-router-dom";
+import FormButton from "@/components/ui/FormButton";
+import EmptyState from "@/components/EmptyState";
 
 export type FlagsSegmentsProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,21 +1,24 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { NewSegment, Segment, SegmentOperator } from "@/types";
+import { RadioGroup } from "@headlessui/react";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+
 import { newSegmentSchema } from "@/models/segments";
 import {
   useDeleteSegmentMutation,
   useUpdateSegmentMutation,
 } from "@/hooks/segments";
-import { RadioGroup } from "@headlessui/react";
-import { classNames } from "@/utils/classNames";
-import FormButton from "@/components/ui/FormButton";
+import { classNames } from "@/utils/helpers";
 import { segmentRulesOperators } from "@/utils/data";
-import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
-import { AxiosError } from "axios";
-import FormInput from "../ui/FormInput";
-import FormHeader from "../ui/FormHeader";
+import { NewSegment, Segment, SegmentOperator } from "@/types";
+
+import ToastTUI from "@/components/ToastTUI";
+import FormButton from "@/components/ui/FormButton";
+import FormInput from "@/components/ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
 
 function UpdateSegmentForm({
   setOpen,

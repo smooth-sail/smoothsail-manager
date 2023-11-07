@@ -1,17 +1,19 @@
 import { useForm } from "react-hook-form";
-import FormButton from "@/components/ui/FormButton";
-import { Attribute } from "@/types";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   useDeleteAttributeMutation,
   useUpdateAttributeMutation,
 } from "@/hooks/attributes";
-import { AxiosError } from "axios";
-import toast from "react-hot-toast";
-import ToastTUI from "../ToastTUI";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { attributeUpdateSchema } from "@/models/attributes";
-import FormInput from "../ui/FormInput";
-import FormHeader from "../ui/FormHeader";
+import { Attribute } from "@/types";
+
+import ToastTUI from "@/components/ToastTUI";
+import FormInput from "@/components/ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
+import FormButton from "@/components/ui/FormButton";
 
 type UpdateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

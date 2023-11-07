@@ -1,7 +1,7 @@
 const PORT = 3000;
 const BASE_URL = `http://localhost:${PORT}`;
 
-// Flags
+/* Flags */
 
 export const GET_FLAGS = `${BASE_URL}/api/flags`;
 
@@ -16,7 +16,7 @@ export const updateFlagPath = (fKey: string) => `${BASE_URL}/api/flags/${fKey}`;
 export const updateFlagsSegmentsPath = (fKey: string) =>
   `${BASE_URL}/api/flags/${fKey}`;
 
-// Segments
+/* Segments */
 
 export const GET_SEGMENTS = `${BASE_URL}/api/segments`;
 
@@ -31,7 +31,7 @@ export const updateSegmentPath = (sKey: string) =>
 export const deleteSegmentPath = (sKey: string) =>
   `${BASE_URL}/api/segments/${sKey}`;
 
-// Attributes
+/* Attributes */
 
 export const GET_ATTRIBUTES = `${BASE_URL}/api/attributes`;
 
@@ -43,7 +43,7 @@ export const updateAttributePath = (aKey: string) =>
 export const deleteAttributePath = (aKey: string) =>
   `${BASE_URL}/api/attributes/${aKey}`;
 
-// SDK
+/* SDK */
 
 export const GET_KEY = `${BASE_URL}/key`;
 

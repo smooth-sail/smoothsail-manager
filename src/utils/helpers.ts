@@ -1,6 +1,11 @@
-import { AttributeTypes } from "@/types";
-import { booleanOperators, numberOperators, stringOperators } from "./data";
 import { ErrorOption } from "react-hook-form";
+
+import { booleanOperators, numberOperators, stringOperators } from "./data";
+import { AttributeTypes } from "@/types";
+
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export const getValidOperators = (dataType: AttributeTypes) => {
   const operators = {

@@ -1,11 +1,13 @@
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { ClipboardDocumentIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { AxiosError } from "axios";
+
+import { useGenerateKeyMutation, useKey } from "@/hooks/sdk";
+
 import ToastTUI from "@/components/ToastTUI";
 import FormButton from "@/components/ui/FormButton";
 import FormHeader from "@/components/ui/FormHeader";
-import { useGenerateKeyMutation, useKey } from "@/hooks/sdk";
-import { ClipboardDocumentIcon, KeyIcon } from "@heroicons/react/24/outline";
-import { AxiosError } from "axios";
-import { useState } from "react";
-import toast from "react-hot-toast";
 
 function SDKKey() {
   const { error, isLoading, data: sdkKey } = useKey();

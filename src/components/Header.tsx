@@ -1,7 +1,9 @@
-import { SearchContext } from "@/services/context";
-import { Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useContext } from "react";
+
 import { useMatch } from "react-router-dom";
+import { Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+
+import { SearchContext } from "@/services/context";
 
 type HeaderProps = {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;

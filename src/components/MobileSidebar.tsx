@@ -1,8 +1,10 @@
+import { Fragment } from "react";
+
+import { Link, useLocation } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { classNames } from "@/utils/classNames";
+
+import { classNames } from "@/utils/helpers";
 import { navigation as navLinks } from "@/utils/data";
 
 type MobileSidebarProps = {

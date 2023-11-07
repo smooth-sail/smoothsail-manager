@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NewSegment, Rule, Segment, SegmentUpdates } from "../types";
+
 import {
   CREATE_SEGMENT,
   GET_SEGMENTS,
@@ -8,6 +8,7 @@ import {
   updateFlagsSegmentsPath,
   updateSegmentPath,
 } from "../constants/routes";
+import { NewSegment, Rule, Segment, SegmentUpdates } from "../types";
 
 type AllSegmentsResponse = {
   payload: Segment[];

@@ -1,8 +1,10 @@
-import { classNames } from "@/utils/classNames";
-import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { createPortal } from "react-dom";
+
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+
+import { classNames } from "@/utils/helpers";
+import { Dialog, Transition } from "@headlessui/react";
 
 type FormHeaderProps = {
   action: string;

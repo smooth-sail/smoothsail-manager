@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Rule } from "@/types";
-import { useAttributes } from "@/hooks/attributes";
-import FormButton from "../ui/FormButton";
-import Modal from "../Modal";
-import UpdateRuleForm from "../rules/UpdateRuleForm";
-import CreateRuleForm from "../rules/CreateRuleForm";
-import FormHeader from "../ui/FormHeader";
+
 import { useNavigate } from "react-router-dom";
-import EmptyState from "../EmptyState";
+
+import { useAttributes } from "@/hooks/attributes";
+import { Rule } from "@/types";
+
+import Modal from "@/components/Modal";
+import FormButton from "@/components/ui/FormButton";
+import FormHeader from "@/components/ui/FormHeader";
+import EmptyState from "@/components/EmptyState";
+import CreateRuleForm from "../rules/CreateRuleForm";
+import UpdateRuleForm from "../rules/UpdateRuleForm";
 
 type SegmentsRulesProps = {
   rules: Rule[];

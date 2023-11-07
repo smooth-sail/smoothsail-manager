@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Flag, FlagUpdates, NewFlag } from "../types";
+
 import {
   CREATE_FLAG,
   GET_FLAGS,
@@ -7,19 +7,14 @@ import {
   toggleFlagPath,
   updateFlagPath,
 } from "../constants/routes";
+import { Flag, FlagUpdates, NewFlag } from "../types";
 
 type AllFlagsResponse = {
   payload: Flag[];
 };
 
-type FlagResponse =
-  | {
-      payload: Flag;
-    }
-  | ErrorResponse;
-
-type ErrorResponse = {
-  error: string;
+type FlagResponse = {
+  payload: Flag;
 };
 
 export const getFlags = async (): Promise<Flag[]> => {
@@ -43,11 +38,7 @@ export const toggleFlag = async ({
 
 export const createFlag = async (newFlag: NewFlag) => {
   const { data } = await axios.post<FlagResponse>(CREATE_FLAG, newFlag);
-  if ("payload" in data) {
-    return data.payload;
-  }
-
-  return data.error;
+  return data.payload;
 };
 
 export const updateFlag = async (flagUpdate: FlagUpdates) => {

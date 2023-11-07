@@ -1,15 +1,17 @@
-import { useCreateAttributeMutation } from "@/hooks/attributes";
 import { useForm } from "react-hook-form";
-import FormButton from "@/components/ui/FormButton";
-import { Attribute } from "@/types";
-import { attributeTypes } from "@/utils/data";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import ToastTUI from "../ToastTUI";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useCreateAttributeMutation } from "@/hooks/attributes";
+import { attributeTypes } from "@/utils/data";
 import { newAttributeSchema } from "@/models/attributes";
-import FormInput from "../ui/FormInput";
-import FormHeader from "../ui/FormHeader";
+
+import FormButton from "@/components/ui/FormButton";
+import FormInput from "@/components/ui/FormInput";
+import FormHeader from "@/components/ui/FormHeader";
+import ToastTUI from "@/components/ToastTUI";
+import { Attribute } from "@/types";
 
 type CreateAttributeFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
