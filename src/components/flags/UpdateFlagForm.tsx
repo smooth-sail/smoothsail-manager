@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -12,12 +14,18 @@ import ToastTUI from "@/components/ToastTUI";
 import FormButton from "@/components/ui/FormButton";
 import FormInput from "@/components/ui/FormInput";
 import FormHeader from "@/components/ui/FormHeader";
+import DeleteModal from "@/components/DeleteModal";
+import ButtonGroup from "@/components/ui/ButtonGroup";
 
 type UpdateFlagFormProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Flag;
 
 function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
   const {
     handleSubmit,
     register,
@@ -30,57 +38,63 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
     },
   });
 
-  const { mutateAsync: updateFlagMutation } = useUpdateFlagMutation();
+  const { mutateAsync: updateFlagBody } = useUpdateFlagMutation();
 
-  const onSubmit = handleSubmit(async (bodyUpdates) => {
-    const flagUpdates = {
-      ...bodyUpdates,
-      fKey: props.fKey,
-    };
-
+  const onSubmit = handleSubmit((bodyUpdates) => {
     try {
-      await updateFlagMutation(flagUpdates);
-      toast.custom(
-        <ToastTUI
-          type="success"
-          message={`Flag with key ${props.fKey} updated in the database.`}
-        />,
-      );
+      setIsLoading(true);
+
+      setTimeout(async () => {
+        await updateFlagBody({
+          ...bodyUpdates,
+          fKey: props.fKey,
+        });
+        setIsLoading(false);
+        toast.custom(
+          <ToastTUI
+            type="success"
+            message={`Flag with key ${props.fKey} updated in the database.`}
+          />,
+        );
+        setOpen(false);
+      }, 100);
     } catch (err: unknown) {
+      setIsLoading(false);
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-    setOpen(false);
   });
 
   const { mutateAsync: deleteFlagMutation } = useDeleteFlagMutation();
-  const handleDelete = async () => {
+  const handleDelete = () => {
     try {
-      await deleteFlagMutation(props.fKey);
-      toast.custom(
-        <ToastTUI type="success" message="Flag deleted from the database." />,
-      );
+      setIsDeleteLoading(true);
+
+      setTimeout(async () => {
+        await deleteFlagMutation(props.fKey);
+        toast.custom(
+          <ToastTUI type="success" message="Flag deleted from the database." />,
+        );
+        setOpen(false);
+      }, 100);
     } catch (err: unknown) {
+      setIsDeleteLoading(false);
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-    setOpen(false);
   };
 
   return (
     <>
-      <FormHeader
-        resource="flag"
-        onDelete={handleDelete}
-        isDelete={true}
-        directions={`Update ${props.title}. Note, the flag key, created at, and updated at can not be changed manually.`}
-        action={`Edit flag: ${props.title}`}
-      />
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
+        <FormHeader
+          action={`Edit flag: ${props.title}`}
+          directions={`Update ${props.title}. Note, the flag key, created at, and updated at can not be changed manually.`}
+        />
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -150,16 +164,37 @@ function UpdateFlagForm({ setOpen, ...props }: UpdateFlagFormProps) {
             />
           </div>
         </div>
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        <ButtonGroup groupType="update">
           <FormButton
-            typeOfButton="cancel"
+            typeOfButton="delete"
             type="button"
-            text="Cancel"
-            onClick={() => setOpen(false)}
+            text="Delete"
+            onClick={() => setOpenDeleteModal(true)}
           />
-        </div>
+          <div className="flex gap-3">
+            <FormButton
+              className="w-24"
+              typeOfButton="cancel"
+              type="button"
+              text="Cancel"
+              onClick={() => setOpen(false)}
+            />
+            <FormButton
+              className="w-24"
+              typeOfButton="confirm"
+              type="submit"
+              text={isLoading ? "Loading..." : "Save"}
+            />
+          </div>
+        </ButtonGroup>
       </form>
+      <DeleteModal
+        resource="flag"
+        isLoading={isDeleteLoading}
+        setOpen={setOpenDeleteModal}
+        open={openDeleteModal}
+        onDelete={handleDelete}
+      />
     </>
   );
 }

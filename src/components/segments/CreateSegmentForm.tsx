@@ -16,6 +16,7 @@ import FormButton from "@/components/ui/FormButton";
 import ToastTUI from "@/components/ToastTUI";
 import FormInput from "@/components/ui/FormInput";
 import FormHeader from "@/components/ui/FormHeader";
+import ButtonGroup from "@/components/ui/ButtonGroup";
 
 function CreateSegmentForm({
   setOpen,
@@ -54,11 +55,11 @@ function CreateSegmentForm({
 
   return (
     <>
-      <FormHeader
-        directions="Define your segment. Note, the segment key will be used to identify your segment in the database and can not be updated once it's created."
-        action="Create a Segment"
-      />
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
+        <FormHeader
+          directions="Define your segment. Note, the segment key will be used to identify your segment in the database and can not be updated once it's created."
+          action="Create a Segment"
+        />
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -174,15 +175,21 @@ function CreateSegmentForm({
             ))}
           </div>
         </RadioGroup>
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <FormButton typeOfButton="confirm" type="submit" text="Save" />
+        <ButtonGroup groupType="create">
           <FormButton
+            className="w-24"
             typeOfButton="cancel"
             type="button"
             text="Cancel"
             onClick={() => setOpen(false)}
           />
-        </div>
+          <FormButton
+            className="w-24"
+            typeOfButton="confirm"
+            type="submit"
+            text="Save"
+          />
+        </ButtonGroup>
       </form>
     </>
   );

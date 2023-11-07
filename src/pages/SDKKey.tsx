@@ -93,7 +93,7 @@ function SDKKey() {
           )}
           <div className="flex justify-end">
             <FormButton
-              className="w-40 mt-4"
+              className="w-fit mt-4"
               type="button"
               typeOfButton="confirm"
               text="Regenerate Key"

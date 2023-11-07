@@ -58,7 +58,7 @@ function UpdateRuleForm({
 
   const onSubmit = handleSubmit(async ({ attribute, operator, value }) => {
     const { type, aKey } = attributes.find((a) => a.name === attribute)!;
-    if (!isValidRuleValue(type, operator, value, setError)) return;
+    if (!isValidRuleValue(type, value, operator, setError)) return;
 
     if (isNoValueOperator()) {
       value = " ";

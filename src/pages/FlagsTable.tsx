@@ -28,7 +28,8 @@ export default function FlagsTable() {
             </h1>
             <p className="mt-2 text-sm text-gray-700">
               A list of all feature flags created. Click edit to view full
-              details and add any segments you've created.
+              details or click segments to add/remove any segments you've
+              created.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">

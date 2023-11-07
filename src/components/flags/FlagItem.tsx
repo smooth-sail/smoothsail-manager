@@ -17,12 +17,12 @@ function FlagItem(props: Flag) {
   const [isActive, setIsActive] = useState(props.isActive);
   const [openSegmentsModal, setOpenSegmentsModal] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const { mutateAsync } = useFlagToggleMutation();
+  const { mutateAsync: toggleFlag } = useFlagToggleMutation();
 
   const handleIsActive = async (checked: boolean) => {
     try {
       setIsActive(checked);
-      await mutateAsync({ isActive: checked, fKey: props.fKey });
+      await toggleFlag({ isActive: checked, fKey: props.fKey });
       toast.custom(
         <ToastTUI
           type="success"
