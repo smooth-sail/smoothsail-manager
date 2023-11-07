@@ -5,11 +5,13 @@ import AttributeItem from "@/components/attributes/AttributeItem";
 import Modal from "@/components/Modal";
 import CreateAttributeForm from "@/components/attributes/CreateAttributeForm";
 import EmptyState from "@/components/EmptyState";
+import { useSearch } from "@/hooks/useSearch";
 
 function AttributesTable() {
   const [openCreateAttributeModal, setOpenCreateAttributeModal] =
     useState(false);
   const { data: attributes, isLoading } = useAttributes();
+  const { search } = useSearch();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -75,9 +77,13 @@ function AttributesTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {attributes?.map((attribute) => (
-                  <AttributeItem key={attribute.aKey} {...attribute} />
-                ))}
+                {attributes
+                  ?.filter(({ name }) =>
+                    name.toLowerCase().startsWith(search.toLowerCase()),
+                  )
+                  .map((attribute) => (
+                    <AttributeItem key={attribute.aKey} {...attribute} />
+                  ))}
               </tbody>
             </table>
           )}

@@ -5,10 +5,12 @@ import { useFlags } from "@/hooks/flags";
 import Modal from "@/components/Modal";
 import CreateFlagForm from "@/components/flags/CreateFlagForm";
 import EmptyState from "@/components/EmptyState";
+import { useSearch } from "@/hooks/useSearch";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
   const { data: flags, isLoading } = useFlags();
+  const { search } = useSearch();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -86,7 +88,11 @@ export default function FlagsTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {flags?.map((flag) => <FlagItem key={flag.fKey} {...flag} />)}
+                {flags
+                  ?.filter(({ title }) =>
+                    title.toLowerCase().startsWith(search.toLowerCase()),
+                  )
+                  .map((flag) => <FlagItem key={flag.fKey} {...flag} />)}
               </tbody>
             </table>
           )}

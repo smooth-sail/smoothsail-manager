@@ -5,10 +5,12 @@ import SegmentItem from "@/components/segments/SegmentItem";
 import Modal from "@/components/Modal";
 import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
 import EmptyState from "@/components/EmptyState";
+import { useSearch } from "@/hooks/useSearch";
 
 export default function SegmentsTable() {
   const [openCreateSegmentModal, setOpenCreateSegmentModal] = useState(false);
   const { data: segments, isLoading } = useSegments();
+  const { search } = useSearch();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -80,9 +82,13 @@ export default function SegmentsTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {segments?.map((segment) => (
-                  <SegmentItem key={segment.sKey} {...segment} />
-                ))}
+                {segments
+                  ?.filter(({ title }) =>
+                    title.toLowerCase().startsWith(search.toLowerCase()),
+                  )
+                  .map((segment) => (
+                    <SegmentItem key={segment.sKey} {...segment} />
+                  ))}
               </tbody>
             </table>
           )}
