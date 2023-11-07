@@ -11,6 +11,7 @@ const options = {
     maxsize: 5242880, // 5MB
     maxFiles: 5,
     format: format.combine(format.timestamp(), format.json()),
+    silent: process.env.NODE_ENV === "test",
   },
   console: {
     format: combine(
@@ -25,6 +26,7 @@ const options = {
     level: process.env.LOGLEVEL || "warn",
     defaultMeta: { service: "user-service" },
     handleExceptions: true,
+    silent: process.env.NODE_ENV === "test",
   },
 };
 const logger = createLogger({
