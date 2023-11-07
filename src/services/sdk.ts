@@ -1,4 +1,4 @@
-import { GET_KEY } from "@/constants/routes";
+import { GET_KEY, REGENERATE_KEY } from "@/constants/routes";
 import axios from "axios";
 
 type KeyResponse = {
@@ -7,5 +7,10 @@ type KeyResponse = {
 
 export const getKey = async (): Promise<string> => {
   const { data } = await axios.get<KeyResponse>(GET_KEY);
+  return data.payload;
+};
+
+export const regenerateKey = async (): Promise<string> => {
+  const { data } = await axios.post<KeyResponse>(REGENERATE_KEY);
   return data.payload;
 };
