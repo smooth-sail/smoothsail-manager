@@ -31,12 +31,11 @@ export const createFlag = async (req, res, next) => {
   let flag;
   try {
     flag = await flagServices.createFlag(req.body);
+    let msg = { type: "new-flag", payload: flag };
+    jsm.publishFlagUpdate(msg);
   } catch (error) {
     return next(parseError(error));
   }
-
-  let msg = { type: "new-flag", payload: flag };
-  jsm.publishFlagUpdate(msg);
 
   return res.status(201).json({ payload: flag });
 };
@@ -45,12 +44,11 @@ export const deleteFlag = async (req, res, next) => {
   let flagKey = req.params.fKey;
   try {
     await flagServices.deleteFlag(flagKey);
+    let msg = { type: "deleted-flag", payload: flagKey };
+    jsm.publishFlagUpdate(msg);
   } catch (error) {
     return next(parseError(error));
   }
-
-  let msg = { type: "deleted-flag", payload: flagKey };
-  jsm.publishFlagUpdate(msg);
 
   return res.status(200).json({ message: successMsg.succDeletedItem("flag") });
 };
@@ -60,8 +58,8 @@ export const updateFlag = async (req, res, next) => {
   let fKey = req.params.fKey;
 
   let payload;
-  let msg;
   try {
+    let msg;
     if (action === "body update") {
       const { title, description } = req.body.payload;
       payload = await flagServices.updateFlagBody(fKey, title, description);
@@ -98,12 +96,12 @@ export const updateFlag = async (req, res, next) => {
     } else {
       throw new HttpError(UNSUPPORTED_ACTION, 400);
     }
+
+    if (msg) {
+      jsm.publishFlagUpdate(msg);
+    }
   } catch (error) {
     return next(parseError(error));
-  }
-
-  if (msg) {
-    jsm.publishFlagUpdate(msg);
   }
 
   return res.status(200).json({ payload });

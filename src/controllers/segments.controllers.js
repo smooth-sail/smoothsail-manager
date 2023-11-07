@@ -63,8 +63,8 @@ export const updateSegment = async (req, res, next) => {
   let action = req.body.action;
 
   let payload;
-  let msg;
   try {
+    let msg;
     if (action === "body update") {
       const segment = await segmServices.updateSegmentBody({
         segmentKey: req.params.sKey,
@@ -113,10 +113,10 @@ export const updateSegment = async (req, res, next) => {
     } else {
       throw new HttpError(UNSUPPORTED_ACTION, 400);
     }
+    jsm.publishFlagUpdate(msg);
   } catch (error) {
     return next(parseError(error));
   }
 
-  jsm.publishFlagUpdate(msg);
   return res.status(200).json(payload);
 };
