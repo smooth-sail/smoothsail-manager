@@ -1,5 +1,5 @@
 import "dotenv/config";
-
+import logger from "../config/logger";
 import { connect, StringCodec, consumerOpts, createInbox, Events } from "nats";
 
 import {
@@ -44,12 +44,12 @@ class JetstreamManager {
       const date = new Date().toLocaleString();
       switch (s.type) {
         case Events.Disconnect:
-          console.log(
+          logger.warn(
             `${date}: NATS Jetstream client disconnected from nats://${s.data}`
           );
           break;
         case Events.Reconnect:
-          console.log(
+          logger.info(
             `${date}: NATS Jetstream client reconnected to nats://${s.data}`
           );
           break;
@@ -102,10 +102,10 @@ class JetstreamManager {
     try {
       await this.js.publish(fullSubject, message);
     } catch (err) {
-      console.log(
-        `Publish message unsuccessful, check your NATS Jetstream connection.`
+      logger.error(
+        `Publish message unsuccessful, check your NATS Jetstream connection.`,
+        err
       );
-      console.error(err);
     }
   }
 
@@ -139,7 +139,7 @@ class JetstreamManager {
 
   async _handleFlagsRequest(err, msg) {
     if (err) {
-      console.error("Error:", err);
+      logger.error(err);
     } else {
       this._publishFlagData();
       msg.ack();
