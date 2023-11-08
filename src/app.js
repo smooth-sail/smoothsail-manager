@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import path from "path";
 import winstonLogger from "./config/logger";
 import apiRouter from "./routes/api.routes";
 import keyRouter from "./routes/sdk.key.routes";
@@ -16,6 +17,7 @@ app.use(morgan("combined", { stream: winstonLogger.stream }));
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, "../client/dist")));
 app.use("/api", apiRouter);
 app.use("/key", keyRouter);
 
@@ -26,7 +28,7 @@ app.use("/", (req, res, next) => {
 app.use((error, req, res, next) => {
   if (error.code !== 500) {
     winstonLogger.error(
-      `${error.code} - ${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+      `${error.code} - ${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
     );
   }
 
@@ -47,11 +49,13 @@ const authenticateDatabases = async () => {
         dbSdkKey.sync({ alter: true }),
       ]);
       app.listen(PORT, () =>
-        winstonLogger.info(`Feature Flag Manager is listening on port ${PORT}!`)
+        winstonLogger.info(
+          `Feature Flag Manager is listening on port ${PORT}!`,
+        ),
       );
     } catch (error) {
       winstonLogger.error(
-        `Unable to connect to one or both databases: ${error.message}`
+        `Unable to connect to one or both databases: ${error.message}`,
       );
       process.exit(1);
     }
