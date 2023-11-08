@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { classNames } from "@/utils/classNames";
+
+import { classNames } from "@/utils/helpers";
 import { navigation as navLinks } from "@/utils/data";
 
 function DesktopSidebar() {

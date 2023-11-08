@@ -1,11 +1,13 @@
 import { useState } from "react";
-import Button from "@/components/ui/Button";
+
 import { useSegments } from "@/hooks/segments";
-import SegmentItem from "@/components/segments/SegmentItem";
-import Modal from "@/components/Modal";
-import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
-import EmptyState from "@/components/EmptyState";
 import { useSearch } from "@/hooks/useSearch";
+
+import Modal from "@/components/Modal";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/EmptyState";
+import SegmentItem from "@/components/segments/SegmentItem";
+import CreateSegmentForm from "@/components/segments/CreateSegmentForm";
 
 export default function SegmentsTable() {
   const [openCreateSegmentModal, setOpenCreateSegmentModal] = useState(false);
@@ -26,7 +28,7 @@ export default function SegmentsTable() {
             </h1>
             <p className="mt-2 text-sm text-gray-700">
               A list of all segments created. Click edit to modify segment
-              details or click a rule to modify that rule.
+              details or click rules to add/remove rules from a segment.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">

@@ -1,6 +1,7 @@
 import { Fragment, ReactNode } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { createPortal } from "react-dom";
+
+import { Dialog, Transition } from "@headlessui/react";
 
 type ModalProps = {
   open: boolean;

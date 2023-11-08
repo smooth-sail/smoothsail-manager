@@ -1,27 +1,28 @@
 import { useState } from "react";
-import { Flag } from "@/types";
-import Toggle from "@/components/ui/Toggle";
-import { useFlagToggleMutation } from "@/hooks/flags";
-import { formatDateTime } from "@/utils/format";
-import { AxiosError } from "axios";
+
 import ToastTUI from "../ToastTUI";
 import toast from "react-hot-toast";
-import Modal from "../Modal";
+import { AxiosError } from "axios";
+
+import { useFlagToggleMutation } from "@/hooks/flags";
+import { formatDateTime } from "@/utils/format";
+import { Flag } from "@/types";
+
+import Modal from "@/components/Modal";
+import Toggle from "@/components/ui/Toggle";
 import UpdateFlagForm from "./UpdateFlagForm";
 import FlagsSegments from "./FlagsSegments";
 
-type FlagItemProps = Flag;
-
-function FlagItem(props: FlagItemProps) {
+function FlagItem(props: Flag) {
   const [isActive, setIsActive] = useState(props.isActive);
   const [openSegmentsModal, setOpenSegmentsModal] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const { mutateAsync } = useFlagToggleMutation();
+  const { mutateAsync: toggleFlag } = useFlagToggleMutation();
 
   const handleIsActive = async (checked: boolean) => {
     try {
       setIsActive(checked);
-      await mutateAsync({ isActive: checked, fKey: props.fKey });
+      await toggleFlag({ isActive: checked, fKey: props.fKey });
       toast.custom(
         <ToastTUI
           type="success"
@@ -68,7 +69,7 @@ function FlagItem(props: FlagItemProps) {
           </span>
         </td>
         <td className="px-3 py-4 text-sm text-gray-500">
-          <Toggle is_active={isActive} onIsActive={handleIsActive} />
+          <Toggle isActive={isActive} onIsActive={handleIsActive} />
         </td>
         <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <span

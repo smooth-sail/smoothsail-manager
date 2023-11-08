@@ -1,5 +1,6 @@
-import { GET_KEY, REGENERATE_KEY } from "@/constants/routes";
 import axios from "axios";
+
+import { GET_KEY, REGENERATE_KEY } from "@/constants/routes";
 
 type KeyResponse = {
   payload: string;

@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Rule } from "@/types";
-import { useAttributes } from "@/hooks/attributes";
-import FormButton from "../ui/FormButton";
-import Modal from "../Modal";
-import UpdateRuleForm from "../rules/UpdateRuleForm";
-import CreateRuleForm from "../rules/CreateRuleForm";
-import FormHeader from "../ui/FormHeader";
+
 import { useNavigate } from "react-router-dom";
-import EmptyState from "../EmptyState";
+
+import { useAttributes } from "@/hooks/attributes";
+import { Rule } from "@/types";
+
+import Modal from "@/components/Modal";
+import FormButton from "@/components/ui/FormButton";
+import FormHeader from "@/components/ui/FormHeader";
+import EmptyState from "@/components/EmptyState";
+import CreateRuleForm from "../rules/CreateRuleForm";
+import UpdateRuleForm from "../rules/UpdateRuleForm";
 
 type SegmentsRulesProps = {
   rules: Rule[];
@@ -17,13 +20,13 @@ type SegmentsRulesProps = {
 };
 
 function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
-  const navigate = useNavigate();
   const [openCreateRuleModal, setOpenCreateRuleModal] = useState(false);
   const [openUpdateRuleModal, setOpenUpdateRuleModal] = useState(false);
   const [currAKey, setCurrAKey] = useState("");
   const [currRKey, setCurrRKey] = useState("");
   const [currOperator, setCurrOperator] = useState("");
   const [currValue, setCurrValue] = useState("");
+  const navigate = useNavigate();
 
   const { data: attributes } = useAttributes();
 
@@ -73,7 +76,7 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
               ))}
             </ul>
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="mt-2 flex justify-end gap-4">
             <FormButton
               className="w-28"
               typeOfButton="cancel"

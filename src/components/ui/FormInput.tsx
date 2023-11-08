@@ -1,6 +1,7 @@
-import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { InputHTMLAttributes } from "react";
+
 import { UseFormRegisterReturn } from "react-hook-form";
+import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   register: UseFormRegisterReturn<string>;

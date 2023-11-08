@@ -1,11 +1,13 @@
 import { useState } from "react";
-import FlagItem from "@/components/flags/FlagItem";
-import Button from "@/components/ui/Button";
+
 import { useFlags } from "@/hooks/flags";
-import Modal from "@/components/Modal";
-import CreateFlagForm from "@/components/flags/CreateFlagForm";
-import EmptyState from "@/components/EmptyState";
 import { useSearch } from "@/hooks/useSearch";
+
+import Modal from "@/components/Modal";
+import EmptyState from "@/components/EmptyState";
+import Button from "@/components/ui/Button";
+import FlagItem from "@/components/flags/FlagItem";
+import CreateFlagForm from "@/components/flags/CreateFlagForm";
 
 export default function FlagsTable() {
   const [openCreateFlagModal, setOpenCreateFlagModal] = useState(false);
@@ -26,7 +28,8 @@ export default function FlagsTable() {
             </h1>
             <p className="mt-2 text-sm text-gray-700">
               A list of all feature flags created. Click edit to view full
-              details and add any segments you've created.
+              details or click segments to add/remove any segments you've
+              created.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">

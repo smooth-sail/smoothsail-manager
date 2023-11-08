@@ -1,11 +1,12 @@
 import axios from "axios";
-import { Attribute } from "../types";
+
 import {
   CREATE_ATTRIBUTE,
   GET_ATTRIBUTES,
   deleteAttributePath,
   updateAttributePath,
 } from "../constants/routes";
+import { Attribute } from "../types";
 
 type AllAttributesResponse = {
   payload: Attribute[];
