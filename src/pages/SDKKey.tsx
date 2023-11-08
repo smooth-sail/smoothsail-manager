@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { ClipboardDocumentIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { AxiosError } from "axios";
 
 import { useGenerateKeyMutation, useKey } from "@/hooks/sdk";
@@ -53,7 +53,7 @@ function SDKKey() {
   }
 
   return (
-    <div className="bg-white max-w-2xl shadow sm:rounded-lg">
+    <div className="bg-white max-w-4xl shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-base font-semibold leading-6 text-gray-900">
           SDK Key
@@ -64,20 +64,11 @@ function SDKKey() {
         </p>
         {sdkKey && (
           <div className="mt-5">
-            <div className="rounded-md bg-gray-50 px-6 py-5 sm:flex sm:items-center sm:justify-between">
-              <div className="sm:flex sm:items-center">
-                <KeyIcon
-                  className="h-8 w-auto sm:h-6 sm:flex-shrink-0"
-                  viewBox="0 0 36 24"
-                  aria-hidden="true"
-                />
-                <div className="mt-3 sm:ml-4 sm:mt-0">
-                  <div className="text-sm font-medium text-gray-900 break-words">
-                    {sdkKey}
-                  </div>
-                </div>
+            <div className="rounded-md bg-gray-50 px-6 py-5 xl:flex xl:items-center xl:justify-between">
+              <div className="text-sm font-medium text-gray-900 break-words">
+                {sdkKey}
               </div>
-              <div className="mt-4 sm:ml-6 sm:mt-0 sm:flex-shrink-0">
+              <div className="mt-4 xl:mt-0 sm:flex-shrink-0">
                 <button
                   type="button"
                   className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
