@@ -86,7 +86,7 @@ function CreateRuleForm({ sKey, setOpen, attributes }: RuleFormProps) {
         directions="Define your rule. Note, the value allowed is based on the data type of the attribute."
         action="Create a Rule"
       />
-      <div className="mt-2 flex flex-col sm:flex-row gap-3 mb-4">
+      <div className="mt-4 flex flex-col sm:flex-row gap-3 mb-6">
         <div className="flex-1">
           <label
             htmlFor="attribute"

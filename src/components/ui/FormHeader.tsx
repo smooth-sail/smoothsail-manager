@@ -7,7 +7,7 @@ type FormHeaderProps = {
 
 function FormHeader({ action, directions }: FormHeaderProps) {
   return (
-    <div>
+    <div className="mb-2">
       <Dialog.Title
         as="h3"
         className="text-base font-semibold leading-6 text-gray-900"

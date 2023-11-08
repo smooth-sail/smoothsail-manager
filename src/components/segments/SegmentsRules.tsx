@@ -76,7 +76,7 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
               ))}
             </ul>
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="mt-2 flex justify-end gap-4">
             <FormButton
               className="w-28"
               typeOfButton="cancel"

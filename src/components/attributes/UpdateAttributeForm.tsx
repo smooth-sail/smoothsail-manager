@@ -88,7 +88,7 @@ function UpdateAttributeForm({
         directions="Update your attribute. Note, you can only update the title. Attribute key and data type cannot be changed."
         action={`Edit attribute: ${name}`}
       />
-      <div className="mt-2 flex flex-col sm:flex-row gap-3 mb-4">
+      <div className="mt-4 flex flex-col sm:flex-row gap-3 mb-6">
         <div className="flex-1">
           <label
             htmlFor="name"

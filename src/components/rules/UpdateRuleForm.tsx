@@ -114,7 +114,7 @@ function UpdateRuleForm({
         }
         action="Edit a rule"
       />
-      <div className="mt-2 flex flex-col sm:flex-row gap-3 mb-4">
+      <div className="mt-4 flex flex-col sm:flex-row gap-3 mb-6">
         <div>
           <label
             htmlFor="attribute"
