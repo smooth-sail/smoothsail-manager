@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -20,7 +18,6 @@ function CreateFlagForm({
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
   const {
     handleSubmit,
     register,
@@ -29,25 +26,19 @@ function CreateFlagForm({
     resolver: zodResolver(newFlagSchema),
   });
 
-  const { mutateAsync } = useCreateFlagMutation();
+  const { mutateAsync: createFlag } = useCreateFlagMutation();
 
-  const onSubmit = handleSubmit((newFlag) => {
+  const onSubmit = handleSubmit(async (newFlag) => {
     try {
-      setIsLoading(true);
-
-      setTimeout(async () => {
-        await mutateAsync(newFlag);
-        setIsLoading(false);
-        toast.custom(
-          <ToastTUI
-            type="success"
-            message={`Flag with key ${newFlag.fKey} saved to database.`}
-          />,
-        );
-        setOpen(false);
-      }, 300);
+      await createFlag(newFlag);
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Flag with key ${newFlag.fKey} saved to database.`}
+        />,
+      );
+      setOpen(false);
     } catch (err: unknown) {
-      setIsLoading(false);
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
@@ -59,7 +50,7 @@ function CreateFlagForm({
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
       <FormHeader
         action="Create a Flag"
-        directions="Define your flag. Note, the flag key will be used to identify your flag in the database and can not be updated once it's created."
+        directions="Define your flag. Note, the flag key cannot be changed after the flag is created."
       />
       <div className="flex-col flex sm:flex-row gap-3">
         <div className="w-full">
@@ -127,7 +118,7 @@ function CreateFlagForm({
           className="w-24"
           typeOfButton="confirm"
           type="submit"
-          text={isLoading ? "Loading..." : "Save"}
+          text="Save"
         />
       </ButtonGroup>
     </form>

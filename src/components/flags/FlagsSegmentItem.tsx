@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import toast from "react-hot-toast";
 import ToastTUI from "../ToastTUI";
 import { AxiosError } from "axios";
@@ -19,32 +17,24 @@ function FlagsSegmentItem({
   sKey,
   isFlagsSegment,
 }: FlagsSegmentItemProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const { mutateAsync: updateFlagsSegment } =
     useUpdateFlagsSegmentMutation(fKey);
-  const handleUpdate = (sKey: string, action: string) => {
+  const handleUpdate = async (sKey: string, action: string) => {
     try {
-      setIsLoading(true);
-
-      setTimeout(async () => {
-        await updateFlagsSegment({
-          fKey,
-          sKey,
-          action,
-        });
-        setIsLoading(false);
-        toast.custom(
-          <ToastTUI
-            type="success"
-            message={`Segment successfully ${
-              action === "segment add" ? "added" : "removed"
-            }.`}
-          />,
-        );
-      }, 100);
+      await updateFlagsSegment({
+        fKey,
+        sKey,
+        action,
+      });
+      toast.custom(
+        <ToastTUI
+          type="success"
+          message={`Segment successfully ${
+            action === "segment add" ? "added" : "removed"
+          }.`}
+        />,
+      );
     } catch (err: unknown) {
-      setIsLoading(false);
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
@@ -70,7 +60,7 @@ function FlagsSegmentItem({
         }}
         className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-ss-blgr"
       >
-        {isLoading ? "Loading..." : isFlagsSegment(title) ? "Add" : "Delete"}
+        {isFlagsSegment(title) ? "Add" : "Delete"}
       </button>
     </li>
   );

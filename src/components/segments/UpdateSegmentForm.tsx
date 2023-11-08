@@ -16,9 +16,11 @@ import { segmentRulesOperators } from "@/utils/data";
 import { NewSegment, Segment, SegmentOperator } from "@/types";
 
 import ToastTUI from "@/components/ToastTUI";
+import DeleteModal from "@/components/DeleteModal";
 import FormButton from "@/components/ui/FormButton";
 import FormInput from "@/components/ui/FormInput";
 import FormHeader from "@/components/ui/FormHeader";
+import ButtonGroup from "@/components/ui/ButtonGroup";
 
 function UpdateSegmentForm({
   setOpen,
@@ -26,6 +28,7 @@ function UpdateSegmentForm({
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & Segment) {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selected, setSelected] = useState(() => {
     return segmentRulesOperators[
       segmentRulesOperators
@@ -52,6 +55,7 @@ function UpdateSegmentForm({
   const onSubmit = handleSubmit(async (segmentUpdates) => {
     segmentUpdates.rulesOperator =
       selected.name.toLowerCase() as SegmentOperator;
+
     try {
       await updateSegmentMutate(segmentUpdates);
       toast.custom(
@@ -60,44 +64,41 @@ function UpdateSegmentForm({
           message={`Segment with key ${props.sKey} updated.`}
         />,
       );
+      setOpen(false);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-    setOpen(false);
   });
 
-  const { mutateAsync: deleteSegmentMutate } = useDeleteSegmentMutation();
+  const { mutateAsync: deleteSegment } = useDeleteSegmentMutation();
   const handleDelete = async () => {
     try {
-      await deleteSegmentMutate(props.sKey);
+      await deleteSegment(props.sKey);
       toast.custom(
         <ToastTUI
           type="success"
           message="Segment deleted from the database."
         />,
       );
+      setOpen(false);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const responseError = err.response?.data.error;
         toast.custom(<ToastTUI type="error" message={responseError} />);
       }
     }
-    setOpen(false);
   };
 
   return (
     <>
-      <FormHeader
-        resource="segment"
-        onDelete={handleDelete}
-        isDelete={true}
-        directions={`Update ${props.title}.`}
-        action={`Edit segment: ${props.title}`}
-      />
       <form onSubmit={onSubmit} className="flex flex-col gap-3">
+        <FormHeader
+          directions="Update your segment. Note, the segment key cannot be changed."
+          action={`Edit segment: ${props.title}`}
+        />
         <div className="flex-col flex sm:flex-row gap-3">
           <div className="w-full">
             <label
@@ -206,16 +207,36 @@ function UpdateSegmentForm({
             ))}
           </div>
         </RadioGroup>
-        <div className="flex gap-4">
+        <ButtonGroup groupType="update">
           <FormButton
-            typeOfButton="cancel"
+            typeOfButton="delete"
             type="button"
-            text="Cancel"
-            onClick={() => setOpen(false)}
+            text="Delete"
+            onClick={() => setOpenDeleteModal(true)}
           />
-          <FormButton typeOfButton="confirm" type="submit" text="Save" />
-        </div>
+          <div className="flex gap-3">
+            <FormButton
+              className="w-24"
+              typeOfButton="cancel"
+              type="button"
+              text="Cancel"
+              onClick={() => setOpen(false)}
+            />
+            <FormButton
+              className="w-24"
+              typeOfButton="confirm"
+              type="submit"
+              text="Save"
+            />
+          </div>
+        </ButtonGroup>
       </form>
+      <DeleteModal
+        resource="segment"
+        setOpen={setOpenDeleteModal}
+        open={openDeleteModal}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
