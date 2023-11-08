@@ -26,6 +26,7 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
   const [currRKey, setCurrRKey] = useState("");
   const [currOperator, setCurrOperator] = useState("");
   const [currValue, setCurrValue] = useState("");
+  const navigate = useNavigate();
 
   const { data: attributes } = useAttributes();
 
@@ -94,11 +95,18 @@ function SegmentsRules({ rules, sKey, setOpen, title }: SegmentsRulesProps) {
         </>
       )}
       <Modal open={openCreateRuleModal} setOpen={setOpenCreateRuleModal}>
-        {attributes && (
+        {attributes && attributes.length > 0 ? (
           <CreateRuleForm
             attributes={attributes}
             setOpen={setOpenCreateRuleModal}
             sKey={sKey}
+          />
+        ) : (
+          <EmptyState
+            buttonText="Attributes"
+            subMessage="Go to the attributes page to get started."
+            message="It doesn't look like you have any attributes yet."
+            handleClick={() => navigate("/attributes")}
           />
         )}
       </Modal>
