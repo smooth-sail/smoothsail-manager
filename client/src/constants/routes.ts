@@ -1,50 +1,41 @@
-const PORT = 3000;
-const BASE_URL = `http://localhost:${PORT}`;
-
 /* Flags */
 
-export const GET_FLAGS = `${BASE_URL}/api/flags`;
+export const GET_FLAGS = "/api/flags";
 
-export const CREATE_FLAG = `${BASE_URL}/api/flags`;
+export const CREATE_FLAG = "/api/flags";
 
-export const toggleFlagPath = (fKey: string) => `${BASE_URL}/api/flags/${fKey}`;
+export const toggleFlagPath = (fKey: string) => `/api/flags/${fKey}`;
 
-export const deleteFlagPath = (fKey: string) => `${BASE_URL}/api/flags/${fKey}`;
+export const deleteFlagPath = (fKey: string) => `/api/flags/${fKey}`;
 
-export const updateFlagPath = (fKey: string) => `${BASE_URL}/api/flags/${fKey}`;
+export const updateFlagPath = (fKey: string) => `/api/flags/${fKey}`;
 
-export const updateFlagsSegmentsPath = (fKey: string) =>
-  `${BASE_URL}/api/flags/${fKey}`;
+export const updateFlagsSegmentsPath = (fKey: string) => `/api/flags/${fKey}`;
 
 /* Segments */
 
-export const GET_SEGMENTS = `${BASE_URL}/api/segments`;
+export const GET_SEGMENTS = "/api/segments";
 
-export const CREATE_SEGMENT = `${BASE_URL}/api/segments`;
+export const CREATE_SEGMENT = "/api/segments";
 
-export const flagsSegmentsPath = (fKey: string) =>
-  `${BASE_URL}/api/segments?fKey=${fKey}`;
+export const flagsSegmentsPath = (fKey: string) => `/api/segments?fKey=${fKey}`;
 
-export const updateSegmentPath = (sKey: string) =>
-  `${BASE_URL}/api/segments/${sKey}`;
+export const updateSegmentPath = (sKey: string) => `/api/segments/${sKey}`;
 
-export const deleteSegmentPath = (sKey: string) =>
-  `${BASE_URL}/api/segments/${sKey}`;
+export const deleteSegmentPath = (sKey: string) => `/api/segments/${sKey}`;
 
 /* Attributes */
 
-export const GET_ATTRIBUTES = `${BASE_URL}/api/attributes`;
+export const GET_ATTRIBUTES = "/api/attributes";
 
-export const CREATE_ATTRIBUTE = `${BASE_URL}/api/attributes`;
+export const CREATE_ATTRIBUTE = "/api/attributes";
 
-export const updateAttributePath = (aKey: string) =>
-  `${BASE_URL}/api/attributes/${aKey}`;
+export const updateAttributePath = (aKey: string) => `/api/attributes/${aKey}`;
 
-export const deleteAttributePath = (aKey: string) =>
-  `${BASE_URL}/api/attributes/${aKey}`;
+export const deleteAttributePath = (aKey: string) => `/api/attributes/${aKey}`;
 
 /* SDK */
 
-export const GET_KEY = `${BASE_URL}/key`;
+export const GET_KEY = "/key";
 
-export const REGENERATE_KEY = `${BASE_URL}/key/generate`;
+export const REGENERATE_KEY = "/key/generate";
