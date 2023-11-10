@@ -50,7 +50,7 @@ const authenticateDatabases = async () => {
       ]);
       app.listen(PORT, () =>
         winstonLogger.info(
-          `Feature Flag Manager is listening on port ${PORT}!`,
+          `SmoothSail dashboard is available at http://localhost:${PORT}`,
         ),
       );
     } catch (error) {
