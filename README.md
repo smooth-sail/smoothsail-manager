@@ -64,7 +64,7 @@ Status code: `200`
 }
 ```
 
-If no key exists in the database it will create a new valid key.
+If no key exists in the database, it will create a new valid key.
 
 &nbsp;
 
@@ -85,6 +85,10 @@ Status codes: `500`
 ```http
 POST /key
 ```
+&nbsp;
+
+> [!CAUTION]
+> Invalidates any existing key
 
 &nbsp;
 
@@ -95,14 +99,13 @@ no body
 &nbsp;
 
 _Returns on success:_
-
-invalidates any existing key and returns a new valid key.
+returns a new valid key.
 
 Status code: `200`
 
 ```jsx
 {
-  payload: string
+  payload: sdkKey
 }
 ```
 
@@ -122,7 +125,7 @@ Status codes: `500`
 
 ## Flag endpoints
 
-### Flag Object:
+### Flag Object
 
 ```jsx
 {
@@ -173,7 +176,7 @@ Status codes: `500`
 
 <br/><br/>
 
-### Get a flag by flag key
+### Get a flag by a flag key
 
 ```http
 GET /api/flags/:fKey
@@ -184,6 +187,7 @@ GET /api/flags/:fKey
 _Expects:_
 
 no body.
+
 `fKey` ⇒ feature flag key (an HTTP path parameter)
 
 &nbsp;
@@ -267,6 +271,7 @@ DELETE /api/flags/:fKey
 _Expects:_
 
 no body.
+
 `fKey` ⇒ feature flag key (an HTTP path parameter)
 
 &nbsp;
@@ -511,8 +516,10 @@ Status code: `200`
   payload: segment
 }
 ```
+&nbsp;
 
-Returns segment with empty rules array. To add rules, you need to create a segment first and then add a rule separately (see below)
+> [!NOTE]
+> Returns segment with empty rules array. To add rules, you need to create a segment first and then add a rule separately (see below)
 
 &nbsp;
 
@@ -538,7 +545,8 @@ DELETE /api/segments/:sKey
 
 _Expects:_
 
-no body expected.
+no body.
+
 `sKey` ⇒ key of the segment (an HTTP path parameter)
 
 &nbsp;
@@ -610,8 +618,8 @@ Reply body for each action type:
   payload: segment
 }
 ```
-
-`segment` ⇒ segment without attribute `rules`
+> [!NOTE]
+> returned segment does not contain attribute `rules`
 
 `rule add`
 
@@ -664,7 +672,7 @@ Status codes: `400`, `404`, `409`, `500`
 
 ## Attribute endpoints
 
-### Attribute object:
+### Attribute object
 
 ```jsx
 {
@@ -723,7 +731,8 @@ GET /api/attributes/:aKey
 _Expects:_
 
 no body.
-aKey ⇒ key of the attribute (an HTTP path parameter)
+
+`aKey` ⇒ key of the attribute (an HTTP path parameter)
 
 &nbsp;
 
@@ -808,9 +817,10 @@ DELETE /api/attributes/:aKey
 _Expects:_
 
 no body.
-`aKey` ⇒ key of the attribute (an HTTP path parameter)
 
-if an attribute is used in a rule & if you delete this attribute, all the rules that involve this attribute will be automatically deleted.
+`aKey` ⇒ key of the attribute (an HTTP path parameter)
+> [!CAUTION]
+> If an attribute is used in a rule & if you delete this attribute, all the rules that involve this attribute will be automatically deleted.
 
 &nbsp;
 
