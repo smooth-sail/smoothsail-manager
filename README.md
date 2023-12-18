@@ -1,9 +1,32 @@
 # SmoothSail Manager platform set up
-## Run locally
 
-- Create `.env` file with the following:
+## How to run locally
+
+Install the required prerequisites and then follow the steps below.
+
+### Prerequisites
+
+You'll need:
+
+- [Postgres](https://www.postgresql.org/) for the database
+- [NATS JetStream](https://docs.nats.io/nats-concepts/jetstream) for relaying reliable messages
+- [Node.js](https://nodejs.org/en) to run the project
+
+Run the following commands:
+
+```bash
+git clone https://github.com/smooth-sail/smoothsail-manager.git
+cd smoothsail-manager
+npm install
+```
+
+### Configuration
+
+Create a `.env` file with the following:
 
 ```
+PORT=3000
+
 PGUSER=<username>
 PGHOST=localhost
 PGDATABASE=<ffdatabasename>
@@ -16,32 +39,33 @@ LOGLEVEL=info
 NODE_ENV=dev
 ```
 
-- if the name is between `<>` replace with your own credentials
+- `PORT` is the port the Manager will be running on
+- `SDKKEYSDB` and `PGDATABASE` should be the names of databases created on Postgres
+- replace anything that has `<>` with your own credentials
+- the `SECRET_KEY` will also need to be used for the SmoothSail SDK Service
 - if PGPORT is not set it will use default value of 5432
 - PGPASSWORD does not have to be set if you don't have a password
-- LOGLEVEL desired log lever (examples: `verbose`, `info`, `warn`). If not specified, defaults to `warn`
+- LOGLEVEL desired log level (examples: `verbose`, `info`, `warn`). If not specified, defaults to `warn`
 - NODE_ENV - set to `test` before running tests
 
-## Running the NATS Server
+### Running SmoothSail Manager platform
 
-Before running the Node.js application, it's essential to start the NATS server as a separate service. The NATS server is responsible for message routing and communication. Follow the steps below to start the NATS server:
+Before running the Node.js application, it's essential to start the NATS server as a separate service. The NATS server is responsible for message routing and communication. :
 
-1. **Install NATS Server**:
+```bash
+nats-server -js -p <portnumber>
+```
 
-   If you haven't already, you can download and install the NATS server by using the following command.
+From the root of `smoothsail-manager` run the following command to start the manager:
 
-   ```bash
-   npm install nats-server
-   ```
+```bash
+npm run dev
+```
 
-2. **Start NATS Server**:
+The SmoothSail dashboard will be available at `http://localhost:3000` (unless default port was changed)
 
-   Once the NATS server is installed, you can start it as a background service. Open your terminal or command prompt and use the following command to start the NATS server with NATS JetStream. You can specify additional configuration options as needed.
+You'll need the [SDK Service](https://github.com/smooth-sail/smoothsail-sdk-service) in order to communicate feature flag data to consumer applications. If you haven't yet head on over there to get that running.
 
-   ```bash
-   nats-server -js -p <portnumber>
-   ```
-<br><br><br><br>
 # SmoothSail Manager platform API
 
 ## SDK keys endpoints
@@ -60,7 +84,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: sdkKey
+  payload: sdkKey;
 }
 ```
 
@@ -74,7 +98,7 @@ Status codes: `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -85,6 +109,7 @@ Status codes: `500`
 ```http
 POST /key
 ```
+
 &nbsp;
 
 > [!CAUTION]
@@ -105,7 +130,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: sdkKey
+  payload: sdkKey;
 }
 ```
 
@@ -117,7 +142,7 @@ Status codes: `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -170,7 +195,7 @@ Status codes: `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -198,7 +223,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: flag
+  payload: flag;
 }
 ```
 
@@ -210,7 +235,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -242,7 +267,7 @@ Status code: `201`
 
 ```jsx
 {
-  payload: flag
+  payload: flag;
 }
 ```
 
@@ -254,7 +279,7 @@ Status codes: `400`, `409`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -282,7 +307,7 @@ Status code: `200`
 
 ```jsx
 {
-  message: "Flag successfully deleted."
+  message: "Flag successfully deleted.";
 }
 ```
 
@@ -294,7 +319,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -342,7 +367,7 @@ Reply body for each action type:
 
 ```jsx
 {
-  payload: flag
+  payload: flag;
 }
 ```
 
@@ -350,7 +375,7 @@ Reply body for each action type:
 
 ```jsx
 {
-  payload: flag
+  payload: flag;
 }
 ```
 
@@ -358,7 +383,7 @@ Reply body for each action type:
 
 ```jsx
 {
-  payload: segment
+  payload: segment;
 }
 ```
 
@@ -367,7 +392,7 @@ Reply body for each action type:
 ```jsx
 {
   payload: {
-    message: "Segment was successfully removed."
+    message: "Segment was successfully removed.";
   }
 }
 ```
@@ -380,7 +405,7 @@ Status codes: `400`, `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -444,7 +469,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -464,7 +489,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: segment
+  payload: segment;
 }
 ```
 
@@ -476,7 +501,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -513,9 +538,10 @@ Status code: `200`
 
 ```jsx
 {
-  payload: segment
+  payload: segment;
 }
 ```
+
 &nbsp;
 
 > [!NOTE]
@@ -529,7 +555,7 @@ Status codes: `400`, `409`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -557,7 +583,7 @@ Status code: `200`
 
 ```jsx
 {
-  message: "Segment successfully deleted."
+  message: "Segment successfully deleted.";
 }
 ```
 
@@ -569,7 +595,7 @@ Status codes: `404`, `409`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -615,9 +641,10 @@ Reply body for each action type:
 
 ```jsx
 {
-  payload: segment
+  payload: segment;
 }
 ```
+
 > [!NOTE]
 > returned segment does not contain attribute `rules`
 
@@ -664,7 +691,7 @@ Status codes: `400`, `404`, `409`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -714,7 +741,7 @@ Status codes: `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -742,7 +769,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: attribute
+  payload: attribute;
 }
 ```
 
@@ -754,7 +781,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -788,7 +815,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: attribute
+  payload: attribute;
 }
 ```
 
@@ -800,7 +827,7 @@ Status codes: `400`, `409`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -819,6 +846,7 @@ _Expects:_
 no body.
 
 `aKey` ⇒ key of the attribute (an HTTP path parameter)
+
 > [!CAUTION]
 > If an attribute is used in a rule & if you delete this attribute, all the rules that involve this attribute will be automatically deleted.
 
@@ -830,7 +858,7 @@ Status code: `200`
 
 ```jsx
 {
-  message: "Attribute successfully deleted."
+  message: "Attribute successfully deleted.";
 }
 ```
 
@@ -842,7 +870,7 @@ Status codes: `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
 
@@ -879,7 +907,7 @@ Status code: `200`
 
 ```jsx
 {
-  payload: attribute
+  payload: attribute;
 }
 ```
 
@@ -891,6 +919,6 @@ Status codes: `400`, `404`, `500`
 
 ```jsx
 {
-  error: error_message
+  error: error_message;
 }
 ```
